@@ -1,0 +1,120 @@
+# Visual Studio için kullanıcıya özel ayarlar
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln.docstates
+*.user
+*.userosscache
+*.sln
+*.vs/
+.idea/
+# Rider (JetBrains) için özel dosyalar
+.idea/
+
+*.iml
+.idea/**/workspace.xml
+.idea/**/tasks.xml
+.idea/**/shelf/
+
+# Bin ve Obj klasörleri (derleme çıktıları)
+bin/
+obj/
+out/
+*.dll
+*.exe
+*.pdb
+*.cache
+*.ilk
+*.ilk.*
+*.sdf
+*.opensdf
+
+# Temp dosyalar
+*.log
+*.tmp
+*.cache
+*.csproj.user
+*.csproj.nuget.dgspec.json
+*.csproj.nuget.g.props
+*.csproj.nuget.g.targets
+.nuget/
+
+# Paketler ve bağımlılıklar
+node_modules/
+packages/
+project.lock.json
+project.assets.json
+
+# .NET bağımlılıkları
+*.db
+*.bak
+*.mdf
+*.ldf
+*.sqlite
+*.sqlite3
+*.sqlproj.user
+*.sdf
+
+# Test sonuçları
+TestResults/
+*.trx
+*.coverage
+*.testsettings
+*.vsix
+*.vspcc
+*.vspx
+
+# Çeşitli bağımlılıklar
+lib/
+lib64/
+deps/
+publish/
+dist/
+Dockerfile
+
+# Logs & Kişisel dosyalar
+*.swp
+*.swo
+*.DS_Store
+*.orig
+*.rej
+*.log
+*.stackdump
+.env
+.env.local
+.env.production
+.env.development
+.env.test
+.secrets/
+appsettings.json
+appsettings.*.json
+config.json
+secrets.json
+
+# Resharper ve diğer JetBrains IDE ayarları
+**/.idea/
+**/.idea/*
+
+# Deployment (Azure, AWS vb.) ile ilgili dosyalar
+**/publish/
+**/wwwroot/
+
+# ASP.NET Core içerik dosyaları
+**/wwwroot/node_modules/
+**/wwwroot/lib/
+**/wwwroot/dist/
+
+# Swagger için otomatik oluşturulan dosyalar
+swagger/
+swagger.json
+swagger-ui/
+swagger-ui.html
+wwwroot/swagger.json
+
+# Docker dosyaları (Opsiyonel)
+Dockerfile
+*.dockerignore
+docker-compose.yml
+docker-compose.override.yml
