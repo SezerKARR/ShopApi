@@ -17,6 +17,7 @@ public class MapperProfiles : Profile{
        CreateMap<Category, CreateCategoryDto>();
        CreateMap<CreateCategoryDto, Category>();
        CreateMap<Category, ReadCategoryDto>();
+       CreateMap<UpdateCategoryDto, Category>();
     }
 
 }

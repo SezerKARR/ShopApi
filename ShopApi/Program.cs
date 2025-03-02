@@ -5,6 +5,7 @@ using Microsoft.OpenApi.Models;
 using SaplingStore.Helpers;
 using ShopApi.Data;
 using ShopApi.Interface;
+using ShopApi.Repository;
 using ShopApi.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -57,10 +58,14 @@ builder.Services.AddSwaggerGen(option =>
         }
     });
 });
-
+builder.Services.AddMemoryCache();
 builder.Services.AddAutoMapper(typeof(MapperProfiles));
 builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<ICategoryService, CategoryService>();
+builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
+
+builder.Services.AddScoped<IProductRepository, ProductRepository>();
 
 builder.WebHost.ConfigureKestrel(options =>
 {

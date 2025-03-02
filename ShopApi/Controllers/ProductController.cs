@@ -11,28 +11,40 @@ using Services;
 [ApiController] 
 public class ProductController(IProductService productService, ICategoryService categoryService) : Controller {
     [HttpGet]
-    public async Task<List<ReadProductDto>> GetAllProductsAsync() {
+    public async Task<ActionResult<List<ReadProductDto>>> GetAllProductsAsync() {
         Console.WriteLine("asd");
-        return await productService.GetProductsAsync();
+       var products = await productService.GetProductsAsync();
+       if (products.Success)
+       {
+           return Ok(products);
+       }
+       return BadRequest(products.Message);
     }
     [HttpGet("{id}")]
     public async Task<ActionResult<ReadProductDto?>> GetProductById(int id) {
-        return (await productService.GetProductByIdAsync(id));
+        var product = await productService.GetProductByIdAsync(id);
+        if (product.Success)
+        {
+            return Ok(product);
+        }
+        return BadRequest(product.Message);
     }
     
     [HttpPost]
-    public async Task<IActionResult> Create([FromBody] CreateProductDto createProductDto) {
+    public async Task<IActionResult> CreateProduct([FromBody] CreateProductDto createProductDto) {
         Console.WriteLine("Create Product");
         if (!ModelState.IsValid) return BadRequest(ModelState);
-        if (!await categoryService.CategoryExistAsync(createProductDto.CategoryId))
+        var isCategoryExist= await categoryService.CategoryExistAsync(createProductDto.CategoryId);
+        if (!isCategoryExist.Success)
             return BadRequest("Category does not exist");
 
 
         try
         {
-            ReadProductDto product= await productService.CreateProductAsync(createProductDto);
-            return CreatedAtAction(nameof(GetProductById), new { id = product.Id },
-            product);
+            var product= await productService.CreateProductAsync(createProductDto);
+            var a = product.Resource;
+            return CreatedAtAction(nameof(GetProductById), new { id = a.Id },
+            a);
         }
         catch (Exception ex)
         {
