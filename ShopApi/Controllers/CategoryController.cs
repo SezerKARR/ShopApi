@@ -11,13 +11,14 @@ using Services;
 [ApiController] 
 public class CategoryController(ICategoryService categoryService,IMapper mapper):ControllerBase {
     [HttpGet]
-    public async Task<ActionResult<Product>> GetCategories()
+    public async Task<IActionResult> GetCategories()
     {
         var response = await categoryService.GetCategoriesAsync();
         
         if (response.Success)
         {
             var categories = response.Resource; 
+            Console.WriteLine(categories);
             return Ok(categories);
         }
         
@@ -68,5 +69,17 @@ public class CategoryController(ICategoryService categoryService,IMapper mapper)
            return Ok(category);
        }
        return BadRequest(response.Message);
+    }
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> DeleteCategory([FromRoute] int id) {
+        Console.WriteLine("Delete Product");
+        if (!ModelState.IsValid) return BadRequest(ModelState);
+        var response = await categoryService.DeleteCategoryAsync(id);
+        if (response.Success)
+        {
+            var category = response.Resource;
+            return Ok(category);
+        }
+        return BadRequest(response.Message);
     }
 }

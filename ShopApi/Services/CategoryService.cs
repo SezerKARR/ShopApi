@@ -16,7 +16,7 @@ public class CategoryService(IMapper mapper, AppDbContext context,ICategoryRepos
     public  Response<IQueryable<Category>> GetQueryCategories() {
         try
         {
-            var queryCategories = categoryRepository.GetQueryCategories();
+            var queryCategories = categoryRepository.GetQuery();
             return new Response<IQueryable<Category>>(queryCategories);
         }
         catch (Exception ex)
@@ -30,9 +30,9 @@ public class CategoryService(IMapper mapper, AppDbContext context,ICategoryRepos
         {
             var categories = await memoryCache.GetOrCreateAsync(CacheKeys.CategoriesList, entry => {
                 entry.AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(1);
-                return categoryRepository.GetCategoriesAsync();
+                return categoryRepository.GetAsync();
             });
-
+            Console.WriteLine(categories[1].Products.Count);
             return new Response<List<Category>>(categories ?? new List<Category>());
         }
         catch (Exception ex)
@@ -45,7 +45,7 @@ public class CategoryService(IMapper mapper, AppDbContext context,ICategoryRepos
         try
         {
             // Ürün listesini Response ile alıyoruz
-            var category= await categoryRepository.GetCategoryByIdAsync(id);
+            var category= await categoryRepository.GetTByIdAsync(id);
 
             if (category == null) { return new Response<Category>($"Category with id: {id} not found."); }
 
@@ -60,7 +60,7 @@ public class CategoryService(IMapper mapper, AppDbContext context,ICategoryRepos
     public async Task<Response<Category>> GetCategoryBySlugAsync(string slug) { 
         try
         {
-            var category = await categoryRepository.GetCategoryBySlugAsync(slug);
+            var category = await categoryRepository.GetTBySlugAsync(slug);
 
             if (category == null) { return new Response<Category>($"Category with slug: {slug} not found."); }
 
@@ -98,7 +98,8 @@ public class CategoryService(IMapper mapper, AppDbContext context,ICategoryRepos
         {
             Category category = mapper.Map<Category>(createCategoryDto);
             category.Slug = SlugHelper.GenerateSlug(category.Name);
-            await categoryRepository.CreateCategoryAsync(category);
+          
+            await categoryRepository.CreateAsync(category);
             await unitOfWork.CommitAsync();
             memoryCache.Remove(CacheKeys.CategoriesList);
             return new Response<Category>(category);
@@ -116,7 +117,7 @@ public class CategoryService(IMapper mapper, AppDbContext context,ICategoryRepos
         try
         {
             mapper.Map(dto, category);
-            categoryRepository.UpdateCategory(category);
+            categoryRepository.Update(category);
             if (dto.Name != "")
             {
                 category.Slug = SlugHelper.GenerateSlug(category.Name);
@@ -136,7 +137,7 @@ public class CategoryService(IMapper mapper, AppDbContext context,ICategoryRepos
         if (existCategory == null) return new Response<Category>("Product not found.");
         try
         {
-            categoryRepository.DeleteCategory(existCategory);
+            categoryRepository.Delete(existCategory);
             await unitOfWork.CommitAsync();
             memoryCache.Remove(CacheKeys.CategoriesList);
             return new Response<Category>(existCategory);
@@ -180,7 +181,7 @@ public class CategoryService(IMapper mapper, AppDbContext context,ICategoryRepos
     //     return dto;
     // }
     // public Task<ReadCategoryDto?> GetCategoryBySlugAsync(string slug) => throw new NotImplementedException();
-    // public Task<List<ReadCategoryDto>> GetCategoriesAsync(QueryObject queryObject) => throw new NotImplementedException();
+    // public Task<List<ReadCategoryDto>> GetAsync(QueryObject queryObject) => throw new NotImplementedException();
     // public async Task<ReadCategoryDto> CreateCategoryAsync(CreateCategoryDto createCategoryDto) {
     //     Category? category= mapper.Map<Category>(createCategoryDto);
     //     category.Slug = SlugHelper.GenerateSlug(category.Name);

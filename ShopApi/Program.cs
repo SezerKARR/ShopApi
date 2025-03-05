@@ -16,8 +16,7 @@ var connectionString = $"Host={Environment.GetEnvironmentVariable("DB_HOST")};" 
                        $"Username={Environment.GetEnvironmentVariable("DB_USER")};" +
                        $"Password={Environment.GetEnvironmentVariable("DB_PASSWORD")};";
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)),
-    ServiceLifetime.Scoped);
+    options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
 
 builder.Services.AddCors(options =>
 {
@@ -67,11 +66,7 @@ builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
 
-builder.WebHost.ConfigureKestrel(options =>
-{
-    options.Listen(IPAddress.Any, 5000);  // HTTP üzerinden port 5000'de dinle
-    // HTTPS yapılandırmasını kaldırdık
-});
+
 
 var app = builder.Build();
 

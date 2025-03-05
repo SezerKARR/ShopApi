@@ -9,7 +9,7 @@ public class MapperProfiles : Profile{
     public  MapperProfiles () {
        CreateMap<ReadProductDto, Product>();
        CreateMap<Product, ReadProductDto>();
-       CreateMap<Product, CreateProductDto>();
+       CreateMap<CreateProductDto, Product>();
        
        
        

@@ -21,7 +21,7 @@ public class ProductService(IMapper mapper, AppDbContext context, IProductReposi
         {
             var products = await memoryCache.GetOrCreateAsync(CacheKeys.ProductsList, entry => {
                 entry.AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(1);
-                return productRepository.GetProductsAsync();
+                return productRepository.GetAsync();
             });
 
             return new Response<List<Product>>(products ?? new List<Product>());
@@ -36,7 +36,7 @@ public class ProductService(IMapper mapper, AppDbContext context, IProductReposi
     public Response<IQueryable<Product>> GetProductsQueryable() {
         try
         {
-            var queryProducts = productRepository.GetProductsQueryable();
+            var queryProducts = productRepository.GetQuery();
             return new Response<IQueryable<Product>>(queryProducts);
         }
         catch (Exception ex)
@@ -49,7 +49,7 @@ public class ProductService(IMapper mapper, AppDbContext context, IProductReposi
         try
         {
             // Ürün listesini Response ile alıyoruz
-           var product = await productRepository.GetProductByIdAsync(id);
+           var product = await productRepository.GetTByIdAsync(id);
            if (product == null) { return new Response<Product>($"Product with id: {id} not found."); }
             return new Response<Product>(product);
         }
@@ -65,7 +65,7 @@ public class ProductService(IMapper mapper, AppDbContext context, IProductReposi
         try
         {
             // Ürün listesini Response ile alıyoruz
-           var product = await productRepository.GetProductBySlugAsync(slug);
+           var product = await productRepository.GetTBySlugAsync(slug);
            
 
             if (product == null) { return new Response<Product>($"Product with slug: {slug} not found."); }
@@ -105,9 +105,15 @@ public class ProductService(IMapper mapper, AppDbContext context, IProductReposi
         {
             Product product = mapper.Map<Product>(createProductDto);
             product.Slug = SlugHelper.GenerateSlug(product.Name);
+            string rootPath=Directory.GetCurrentDirectory()+"/wwwroot";
+            product.ImageUrl=FormManager.Save(createProductDto.ImageFile, rootPath,"uploads/products",FormTypes.Image);
             await AdjustEntity(product);
-            await productRepository.CreateProductAsync(product);
-            await unitOfWork.CommitAsync();
+            await productRepository.CreateAsync(product);
+            if (!await unitOfWork.CommitAsync())
+            {
+                return new Response<Product>($"An error occurred when creating product: {product.Name}.");
+            }
+            
             memoryCache.Remove(CacheKeys.ProductsList);
             return new Response<Product>(product);
         }
@@ -122,8 +128,6 @@ public class ProductService(IMapper mapper, AppDbContext context, IProductReposi
     private async Task AdjustEntity(Product entity) {
         try
         {
-            entity.Category = await context.Categories
-                .FirstOrDefaultAsync(c => c.Id == entity.CategoryId);
         }
         catch (Exception ex)
         {
@@ -142,7 +146,7 @@ public class ProductService(IMapper mapper, AppDbContext context, IProductReposi
         try
         {
             mapper.Map(dto, product);
-            productRepository.UpdateProduct(product);
+            productRepository.Update(product);
             await unitOfWork.CommitAsync();
             memoryCache.Remove(CacheKeys.ProductsList);
             return new Response<Product>(product);
@@ -158,7 +162,7 @@ public class ProductService(IMapper mapper, AppDbContext context, IProductReposi
         if (existProduct == null) return new Response<Product>("Product not found.");
         try
         {
-            productRepository.DeleteProduct(existProduct);
+            productRepository.Delete(existProduct);
             await unitOfWork.CommitAsync();
             memoryCache.Remove(CacheKeys.ProductsList);
             return new Response<Product>(existProduct);
