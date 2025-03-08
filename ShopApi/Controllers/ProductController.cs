@@ -34,9 +34,7 @@ public class ProductController(IProductService productService, ICategoryService 
     public async Task<IActionResult> CreateProduct(CreateProductDto createProductDto) {
         Console.WriteLine("Create Product");
         if (!ModelState.IsValid) return BadRequest(ModelState);
-        var isCategoryExist= await categoryService.CategoryExistAsync(createProductDto.CategoryId);
-        if (!isCategoryExist.Resource)
-            return BadRequest("Category does not exist");
+        
         try
         {
             var response= await productService.CreateProductAsync(createProductDto);

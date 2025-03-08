@@ -34,7 +34,7 @@ public abstract class BaseRepository<T> : IRepository<T> where T : BaseEntity
     {
         return await Queryable.ToListAsync();
     }
-
+    
     public async Task CreateAsync(T entity)
     {
         await dbSet.AddAsync(entity);

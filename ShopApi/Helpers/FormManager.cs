@@ -13,8 +13,8 @@ public class FormManager {
             FormTypes.Image,new List<string>(){".jpg",".png",".bmp",".gif",".ico"}
         }
     };
-    public static string Save(IFormFile file, string rootPath, string folder, FormTypes type)
-    {
+    public static string Save(IFormFile file, string folder, FormTypes type) {
+        string rootPath = Directory.GetCurrentDirectory() + "/wwwroot";
         if (file == null || file.Length == 0)
         {
             throw new ArgumentException("Invalid file");
@@ -46,6 +46,14 @@ public class FormManager {
         }
 
         return filePath;
+    }
+    public static List<string> Save(IList<IFormFile> files, string folder, FormTypes type) {
+        List<string> Urls = new List<string>();
+        foreach (var file in files)
+        {
+            Urls.Add(Save(file, folder, type));
+        }
+        return Urls;
     }
 
 

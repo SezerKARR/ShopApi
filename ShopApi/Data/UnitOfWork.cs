@@ -1,18 +1,35 @@
 namespace ShopApi.Data;
 
 using AutoMapper;
+using Interface;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Models;
-public interface IUnitOfWork {
+using Repository;
+
+public interface IUnitOfWork
+{
+    IProductRepository ProductRepository { get; }
+    ICategoryRepository CategoryRepository { get; }
+    ICommentRepository CommentRepository { get; }
     Task<bool> CommitAsync();
 }
-public class UnitOfWork(AppDbContext context, IMapper mapper ) :IUnitOfWork{
+public class UnitOfWork :IUnitOfWork{
+    readonly AppDbContext _context;
+    public IProductRepository ProductRepository { get; }
+    public ICategoryRepository CategoryRepository { get; }
+    public ICommentRepository CommentRepository { get; }
+    public UnitOfWork(AppDbContext context, IProductRepository productRepository,ICommentRepository commentRepository,ICategoryRepository categoryRepository) {
+        _context = context;
+        ProductRepository = productRepository;
+        CategoryRepository = categoryRepository;
+        CommentRepository = commentRepository;
+    }
 
     public async Task<bool> CommitAsync() {
         try
         {
-            return await context.SaveChangesAsync() > 0;
+            return await _context.SaveChangesAsync() > 0;
         }
         catch (DbUpdateException ex)
         {
@@ -24,5 +41,6 @@ public class UnitOfWork(AppDbContext context, IMapper mapper ) :IUnitOfWork{
         }
         return false;
     }
+  
 }
 
