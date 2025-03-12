@@ -4,12 +4,9 @@ namespace ShopApi.Helpers;
 
 public static class QueryableExtensions
 {
-    public static IQueryable<T>? ApplySorting<T>(
-        IQueryable<T>? query,
-        string? sortBy,
-        bool isDescending)
+    public static IQueryable<T>? ApplySorting<T>(IQueryable<T>? query, string? sortBy, bool isDescending) 
     {
-        if (string.IsNullOrWhiteSpace(sortBy))
+        if (query == null || string.IsNullOrWhiteSpace(sortBy))
             return query;
 
         var propertyInfo = typeof(T).GetProperty(sortBy);
@@ -22,12 +19,7 @@ public static class QueryableExtensions
 
         var methodName = isDescending ? "OrderByDescending" : "OrderBy";
 
-        var resultExpression = Expression.Call(
-        typeof(Queryable),
-        methodName,
-        new[] { typeof(T), propertyInfo.PropertyType },
-        query.Expression,
-        Expression.Quote(lambda));
+        var resultExpression = Expression.Call(typeof(Queryable), methodName, new[] { typeof(T), propertyInfo.PropertyType }, query.Expression, Expression.Quote(lambda));
 
         return query.Provider.CreateQuery<T>(resultExpression);
     }
@@ -37,7 +29,8 @@ public static class QueryableExtensions
         string? filterBy,
         string? filterValue)
     {
-        if (string.IsNullOrWhiteSpace(filterBy) || string.IsNullOrWhiteSpace(filterValue))
+        // Check if query is null before proceeding
+        if (query == null || string.IsNullOrWhiteSpace(filterBy) || string.IsNullOrWhiteSpace(filterValue))
             return query;
 
         var propertyInfo = typeof(T).GetProperty(filterBy);
@@ -60,6 +53,7 @@ public static class QueryableExtensions
 
                 var lambda = Expression.Lambda<Func<T, bool>>(containsExpression, parameter);
 
+                // Ensure query is not null before calling Where
                 return query.Where(lambda);
             }
         }

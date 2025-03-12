@@ -33,7 +33,6 @@ public class CategoryController(ICategoryService categoryService):ControllerBase
     }
     [HttpPost]
     public async Task<ActionResult<ReadCategoryDto>> CreateCategory([FromBody] CreateCategoryDto createCategoryDto) {
-        Console.WriteLine("Create Product");
         if (!ModelState.IsValid) return BadRequest(ModelState);
 
 

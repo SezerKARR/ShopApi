@@ -79,14 +79,14 @@ public class CategoryService(IMapper mapper, AppDbContext context,ICategoryRepos
         try
         {
             IQueryable<ReadCategoryDto>? query = GetQueryCategories().Resource;
+           
+            // Filtreleme ve sıralama işlemleri
+            query = QueryableExtensions.ApplyFilter(query, queryObject.SortBy, queryObject.FilterBy);
+            query = QueryableExtensions.ApplySorting(query, queryObject.SortBy, queryObject.IsDecSending);
             if (query == null)
             {
                 return new Response<List<ReadCategoryDto>>($"An error occurred while fetching categories");// Hata mesajı döndür
             }
-            // Filtreleme ve sıralama işlemleri
-            query = QueryableExtensions.ApplyFilter(query, queryObject.SortBy, queryObject.FilterBy);
-            query = QueryableExtensions.ApplySorting(query, queryObject.SortBy, queryObject.IsDecSending);
-
             // Sayfalama
             var skipNumber = (queryObject.PageNumber - 1) * queryObject.PageSize;
             var categories = await query.Skip(skipNumber).Take(queryObject.PageSize).ToListAsync();
