@@ -1,24 +1,26 @@
-namespace ShopApi.Abstracts;
+namespace ShopApi.Repository;
 
+using Abstracts;
+using Microsoft.EntityFrameworkCore;
 using Data;
 using Interface;
-using Microsoft.EntityFrameworkCore;
 
 public abstract class BaseRepository<T> : IRepository<T> where T : BaseEntity
 {
     protected readonly AppDbContext _context;
-    internal readonly DbSet<T> dbSet;
-    IQueryable<T> Queryable;
-    public BaseRepository(AppDbContext context)
+    protected readonly DbSet<T> _dbSet; 
+    protected IQueryable<T>? _queryable;
+    IQueryable<T> Queryable => _queryable ??= Include();
+        protected BaseRepository(AppDbContext context)
     {
         _context = context;
-        dbSet = context.Set<T>();
-        Queryable=Include(context.Set<T>().AsQueryable());
+        _dbSet = context.Set<T>();
     }
+   
 
-    protected virtual IQueryable<T> Include(IQueryable<T> query) => query;
+    protected virtual IQueryable<T> Include() => _dbSet.AsQueryable();
 
-    public IQueryable<T> GetQuery() => Queryable;
+    public IQueryable<T>? GetQuery() => _queryable;
 
     public async Task<T?> GetTByIdAsync(int id)
     {
@@ -37,7 +39,10 @@ public abstract class BaseRepository<T> : IRepository<T> where T : BaseEntity
     
     public async Task CreateAsync(T entity)
     {
-        await dbSet.AddAsync(entity);
+        await _dbSet.AddAsync(entity);
+    }
+    public async Task<bool> AnyAsync(int id) {
+        return await Queryable.AnyAsync(x => x.Id == id);
     }
 
     public void Update(T entity)
@@ -47,6 +52,6 @@ public abstract class BaseRepository<T> : IRepository<T> where T : BaseEntity
 
     public void Delete(T entity)
     {
-        dbSet.Remove(entity);
+        _dbSet.Remove(entity);
     }
 }

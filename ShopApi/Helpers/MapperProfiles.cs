@@ -1,9 +1,9 @@
-namespace SaplingStore.Helpers;
+namespace ShopApi.Helpers;
 
 using AutoMapper;
-using ShopApi.Dtos.Category;
-using ShopApi.Dtos.Product;
-using ShopApi.Models;
+using Dtos.Category;
+using Dtos.Product;
+using Models;
 
 public class MapperProfiles : Profile{
     public  MapperProfiles () {

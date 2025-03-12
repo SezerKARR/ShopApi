@@ -12,7 +12,7 @@ namespace ShopApi.Migrations
 {
     [DbContext(typeof(AppDbContext))]
     [Migration("20250303061247_product")]
-    partial class product
+    partial class Product
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

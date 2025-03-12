@@ -1,6 +1,5 @@
 namespace ShopApi.Repository;
 
-using Abstracts;
 using Data;
 using Interface;
 using Models;

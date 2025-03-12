@@ -1,17 +1,14 @@
 namespace ShopApi.Controllers;
 
-using AutoMapper;
 using Dtos.Category;
 using Interface;
 using Microsoft.AspNetCore.Mvc;
-using Models;
-using Services;
 
 [Route("api/[controller]")]
 [ApiController] 
-public class CategoryController(ICategoryService categoryService,IMapper mapper):ControllerBase {
+public class CategoryController(ICategoryService categoryService):ControllerBase {
     [HttpGet]
-    public async Task<IActionResult> GetCategories()
+    public async Task<ActionResult<ReadCategoryDto>> GetCategories()
     {
         var response = await categoryService.GetCategoriesAsync();
         
@@ -24,18 +21,18 @@ public class CategoryController(ICategoryService categoryService,IMapper mapper)
         
         return BadRequest(response.Message);
     }
-    [HttpGet("{id}")]
-    public async Task<IActionResult> GetCategoryById([FromRoute] int id) {
+    [HttpGet("{id:int}")]
+    public async Task<ActionResult<ReadCategoryDto>> GetCategoryById([FromRoute] int id) {
         var response = await categoryService.GetCategoryByIdAsync(id);
         if (response.Success)
         {
-            ReadCategoryDto category =mapper.Map<ReadCategoryDto>(response.Resource);
+            var category = response.Resource;
             return Ok(category);
         }
         return BadRequest(response.Message);
     }
     [HttpPost]
-    public async Task<IActionResult> CreateCategory([FromBody] CreateCategoryDto createCategoryDto) {
+    public async Task<ActionResult<ReadCategoryDto>> CreateCategory([FromBody] CreateCategoryDto createCategoryDto) {
         Console.WriteLine("Create Product");
         if (!ModelState.IsValid) return BadRequest(ModelState);
 
@@ -43,9 +40,9 @@ public class CategoryController(ICategoryService categoryService,IMapper mapper)
         try
         {
             var response = await categoryService.CreateCategoryAsync(createCategoryDto);
-            if (response.Success)
+            if (response.Resource!=null)
             {
-                var category = mapper.Map<ReadCategoryDto>(response.Resource);
+                var category = response.Resource;
                 return CreatedAtAction(nameof(GetCategoryById), new { id = category.Id }, category);
 
             }
@@ -53,13 +50,13 @@ public class CategoryController(ICategoryService categoryService,IMapper mapper)
         }
         catch (Exception ex)
         {
-            // Log the exception
+
             return StatusCode(500, ex + "Internal server error");
         }
         
     }
-    [HttpPut("{id}")]
-    public async Task<IActionResult> UpdateCategory([FromRoute] int id, [FromBody] UpdateCategoryDto updateCategoryDto) {
+    [HttpPut("{id:int}")]
+    public async Task<ActionResult<ReadCategoryDto>> UpdateCategory([FromRoute] int id, [FromBody] UpdateCategoryDto updateCategoryDto) {
         Console.WriteLine("Update Product");
         if (!ModelState.IsValid) return BadRequest(ModelState);
        var response = await categoryService.UpdateCategoryAsync(id, updateCategoryDto);
@@ -70,8 +67,8 @@ public class CategoryController(ICategoryService categoryService,IMapper mapper)
        }
        return BadRequest(response.Message);
     }
-    [HttpDelete("{id}")]
-    public async Task<IActionResult> DeleteCategory([FromRoute] int id) {
+    [HttpDelete("{id:int}")]
+    public async Task<ActionResult<ReadCategoryDto>> DeleteCategory([FromRoute] int id) {
         Console.WriteLine("Delete Product");
         if (!ModelState.IsValid) return BadRequest(ModelState);
         var response = await categoryService.DeleteCategoryAsync(id);

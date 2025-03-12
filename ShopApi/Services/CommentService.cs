@@ -2,60 +2,87 @@ namespace ShopApi.Services;
 
 using AutoMapper;
 using Data;
-using Dtos.Category;
 using Dtos.Comment;
-using Interface;
+using Helpers;
 using Microsoft.Extensions.Caching.Memory;
 using Models;
 using Models.Common;
 using Repository;
-using SaplingStore.Helpers;
 using Shared.Cache;
 
-public class CommentService(IMapper mapper, ICommentRepository commentRepository, IMemoryCache memoryCache, IUnitOfWork unitOfWork, ILogger<CommentService> logger):ICommentService {
+public interface ICommentService {
+    Task<Response<List<ReadCommentDto>>> GetCommentsAsync();
+    Task<Response<ReadCommentDto>> GetCommentByIdAsync(int id);
+    Task<Response<ReadCommentDto>> CreateCommentAsync(CreateCommentDto createCommentDto);
+}
 
-    public async Task<Response<List<Comment>>> GetCommentsAsync() {
+public class CommentService : ICommentService {
+    readonly IMapper _mapper;
+    readonly ICommentRepository _commentRepository;
+    readonly IMemoryCache _memoryCache;
+    readonly IUnitOfWork _unitOfWork;
+    readonly ILogger<CommentService> _logger;
+    public CommentService(IMapper mapper, ICommentRepository commentRepository, IMemoryCache memoryCache, IUnitOfWork unitOfWork, ILogger<CommentService> logger) {
+        _mapper = mapper;
+        _commentRepository = commentRepository;
+        _memoryCache = memoryCache;
+        _unitOfWork = unitOfWork;
+        _logger = logger;
+    }
+
+    public async Task<Response<List<ReadCommentDto>>> GetCommentsAsync() {
         try
         {
-            var comments = await memoryCache.GetOrCreateAsync(CacheKeys.CategoriesList, entry => {
+            List<Comment>? comments = await _memoryCache.GetOrCreateAsync(CacheKeys.CategoriesList, entry => {
                 entry.AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(1);
-                return commentRepository.GetAsync();
+                return _commentRepository.GetAsync();
             });
-            return new Response<List<Comment>>(comments ?? new List<Comment>());
+            List<ReadCommentDto> readCommentDtos = _mapper.Map<List<ReadCommentDto>>(comments);
+
+            return new Response<List<ReadCommentDto>>(readCommentDtos);
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, "An error occurred while fetching Comments.");
-            return new Response<List<Comment>>($"An error occurred while fetching Comments: {ex.Message}");
+            _logger.LogError(ex, "An error occurred while fetching Comments.");
+            return new Response<List<ReadCommentDto>>($"An error occurred while fetching Comments: {ex.Message}");
         }
     }
-    public async Task<Response<Comment>> GetCommentByIdAsync(int id) {
+    public async Task<Response<ReadCommentDto>> GetCommentByIdAsync(int id) {
         try
         {
-            // Ürün listesini Response ile alıyoruz
-            Comment comment = await commentRepository.GetTByIdAsync(id);
-            if (comment == null) { return new Response<Comment>($"Comment with id: {id} not found."); }
-            return new Response<Comment>(comment);
+            Comment? comment = await _commentRepository.GetTByIdAsync(id);
+            if (comment == null) { return new Response<ReadCommentDto>($"Comment with id: {id} not found."); }
+            ReadCommentDto readCommentDto = _mapper.Map<ReadCommentDto>(comment);
+            return new Response<ReadCommentDto>(readCommentDto);
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, "An error occurred while fetching Comment by id.");
-            return new Response<Comment>($"An error occurred: {ex.Message}");
+            _logger.LogError(ex, "An error occurred while fetching Comment by id.");
+            return new Response<ReadCommentDto>($"An error occurred: {ex.Message}");
         }
     }
-    public async Task<Response<Comment>> CreateCommentAsync(CreateCommentDto createCommentDto) {
+    public async Task<Response<ReadCommentDto>> CreateCommentAsync(CreateCommentDto createCommentDto) {
+        bool isProductExist = await _unitOfWork.ProductRepository.AnyAsync( createCommentDto.ProductId);
+    
+        if (!isProductExist)
+            return new Response<ReadCommentDto>("Product does not exist");
         try
         {
-            Comment comment = mapper.Map<Comment>(createCommentDto); 
+            Comment comment = _mapper.Map<Comment>(createCommentDto); 
             comment.Slug = SlugHelper.GenerateSlug(createCommentDto.Name);
-            comment.ImageUrls=FormManager.Save(createCommentDto.Images,"uploads/Comments",FormTypes.Image);
-            await commentRepository.CreateAsync(comment);
-            if (!await unitOfWork.CommitAsync())
+            if (createCommentDto.Images!=null)
             {
-                return new Response<Comment>($"An error occurred when creating product: {comment.Name}.");
+                comment.ImageUrls=FormManager.Save(createCommentDto.Images,"uploads/Comments",FormTypes.Image);
+
             }
-            memoryCache.Remove(CacheKeys.CommentsList);
-                return new Response<Comment>(comment);
+            await _commentRepository.CreateAsync(comment);
+            if (!await _unitOfWork.CommitAsync())
+            {
+                return new Response<ReadCommentDto>($"An error occurred when creating product: {comment.Name}.");
+            }
+            _memoryCache.Remove(CacheKeys.CommentsList);
+            ReadCommentDto readCommentDto = _mapper.Map<ReadCommentDto>(comment);
+            return new Response<ReadCommentDto>(readCommentDto);
             
         }
         catch (Exception e)
@@ -63,29 +90,6 @@ public class CommentService(IMapper mapper, ICommentRepository commentRepository
             Console.WriteLine(e);
             throw;
         }
-        // try
-        // {
-        //     Product product = mapper.Map<Product>(createProductDto);
-        //     product.Slug = SlugHelper.GenerateSlug(product.Name);
-        //     string rootPath=Directory.GetCurrentDirectory()+"/wwwroot";
-        //     product.ImageUrl=FormManager.Save(createProductDto.ImageFile, rootPath,"uploads/products",FormTypes.Image);
-        //     await AdjustEntity(product);
-        //     await productRepository.CreateAsync(product);
-        //     if (!await unitOfWork.CommitAsync())
-        //     {
-        //         return new Response<Product>($"An error occurred when creating product: {product.Name}.");
-        //     }
-        //     
-        //     memoryCache.Remove(CacheKeys.ProductsList);
-        //     return new Response<Product>(product);
-        // }
-        // catch (Exception ex)
-        // {
-        //     logger.LogError(ex, "Could not save product.");
-        //     return new Response<Product>($"An error occurred when saving the product: {ex.Message}");
-        // }
+       
     }
-}
-
-public interface ICommentService {
 }

@@ -5,7 +5,7 @@
 namespace ShopApi.Migrations
 {
     /// <inheritdoc />
-    public partial class product : Migration
+    public partial class Product : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

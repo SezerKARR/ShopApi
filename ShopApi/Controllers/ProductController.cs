@@ -1,15 +1,12 @@
 namespace ShopApi.Controllers;
 
 using Dtos.Product;
-using Interface;
 using Microsoft.AspNetCore.Mvc;
-using Models;
-using SaplingStore.Helpers;
 using Services;
 
 [Route("api/[controller]")]
 [ApiController] 
-public class ProductController(IProductService productService, ICategoryService categoryService) : Controller {
+public class ProductController(IProductService productService) : Controller {
     [HttpGet]
     public async Task<ActionResult<List<ReadProductDto>>> GetAllProductsAsync() {
         Console.WriteLine("asd");
@@ -21,7 +18,7 @@ public class ProductController(IProductService productService, ICategoryService 
        return BadRequest(products.Message);
     }
     [HttpGet("{id:int}")]
-    public async Task<ActionResult<ReadProductDto?>> GetProductById([FromRoute] int id) {
+    public async Task<ActionResult<ReadProductDto>> GetProductById([FromRoute] int id) {
         var product = await productService.GetProductByIdAsync(id);
         if (product.Success)
         {
@@ -31,16 +28,18 @@ public class ProductController(IProductService productService, ICategoryService 
     }
     
     [HttpPost]
-    public async Task<IActionResult> CreateProduct(CreateProductDto createProductDto) {
+    public async Task<ActionResult<ReadProductDto>> CreateProduct(CreateProductDto createProductDto) {
         Console.WriteLine("Create Product");
         if (!ModelState.IsValid) return BadRequest(ModelState);
         
         try
         {
             var response= await productService.CreateProductAsync(createProductDto);
-            if (response.Success)
+            if (response.Resource!=null)
             {
-                var product = response.Resource;
+               var product = response.Resource;
+    
+              
                 return CreatedAtAction(nameof(GetProductById), new { id = product.Id },
                 product);
             }
@@ -51,20 +50,20 @@ public class ProductController(IProductService productService, ICategoryService 
         }
         catch (Exception ex)
         {
-            // Log the exception
+
             return StatusCode(500, ex + "Internal server error");
         }
         
     }
     [HttpPost("upload")]
-    public async Task<IActionResult> UploadFile(IFormFile file)
+    public async Task<ActionResult<ReadProductDto>> UploadFile(IFormFile? file)
     {
         if (file == null || file.Length == 0)
             return BadRequest("No file uploaded.");
 
         var path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", file.FileName);
 
-        using (var stream = new FileStream(path, FileMode.Create))
+        await using (var stream = new FileStream(path, FileMode.Create))
         {
             await file.CopyToAsync(stream);
         }
@@ -72,7 +71,7 @@ public class ProductController(IProductService productService, ICategoryService 
         return Ok(new { filePath = path });
     }
     [HttpDelete("{id:int}")]
-    public async Task<IActionResult> DeleteProduct([FromRoute] int id) {
+    public async Task<ActionResult<ReadProductDto>> DeleteProduct([FromRoute] int id) {
         Console.WriteLine("Delete Product");
         if (!ModelState.IsValid) return BadRequest(ModelState);
         var response = await productService.DeleteProductAsync(id);

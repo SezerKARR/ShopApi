@@ -3,14 +3,26 @@ namespace ShopApi.Services;
 using AutoMapper;
 using Data;
 using Dtos.Product;
-using Interface;
+using Helpers;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
 using Models;
 using Models.Common;
-using SaplingStore.Helpers;
+using Repository;
 using Shared.Cache;
-using QueryableExtensions=QueryableExtensions;
+using QueryableExtensions=Helpers.QueryableExtensions;
+
+public interface IProductService {
+    Task<Response<List<ReadProductDto>>> GetProductsAsync();
+    Task<Response<List<ReadProductDto>>> GetProductsAsync(QueryObject queryObject);
+    Response<IQueryable<ReadProductDto>> GetProductsQueryable();
+    Task<Response<ReadProductDto>> GetProductByIdAsync(int id);
+    Task<Response<ReadProductDto>> GetProductBySlugAsync(string slug);
+    Task<Response<ReadProductDto>> CreateProductAsync(CreateProductDto createProductDto);
+    Task<Response<ReadProductDto>> UpdateProductAsync(int id, UpdateProductDto dto);
+    Task<Response<ReadProductDto>> DeleteProductAsync(int id);
+    Task<Response<bool>> ProductExistAsync(int id);
+}
 
 public class ProductService : IProductService {
     readonly IMapper _mapper;
@@ -20,7 +32,7 @@ public class ProductService : IProductService {
     readonly ILogger<ProductService> _logger;
     public ProductService(IMapper mapper, IMemoryCache memoryCache, IUnitOfWork unitOfWork, ILogger<ProductService> logger) {
         _mapper = mapper;
-       
+
         _memoryCache = memoryCache;
         _unitOfWork = unitOfWork;
         _productRepository = _unitOfWork.ProductRepository;
@@ -28,185 +40,177 @@ public class ProductService : IProductService {
     }
 
 
-    public async Task<Response<List<Product>>> GetProductsAsync() {
+    public async Task<Response<List<ReadProductDto>>> GetProductsAsync() {
         try
         {
             var products = await _memoryCache.GetOrCreateAsync(CacheKeys.ProductsList, entry => {
                 entry.AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(1);
                 return _productRepository.GetAsync();
             });
-
-            return new Response<List<Product>>(products ?? new List<Product>());
+            if (products == null)
+            {
+                return new Response<List<ReadProductDto>>("products not found");
+            }
+            List<ReadProductDto> productDto = products.Select(product => _mapper.Map<ReadProductDto>(product)).ToList();
+                return new Response<List<ReadProductDto>>(productDto);
+            
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "An error occurred while fetching products.");
-            return new Response<List<Product>>($"An error occurred while fetching products: {ex.Message}");
+            return new Response<List<ReadProductDto>>($"An error occurred while fetching products: {ex.Message}");
         }
     }
 
-    public Response<IQueryable<Product>> GetProductsQueryable() {
+    public Response<IQueryable<ReadProductDto>> GetProductsQueryable() {
         try
         {
             var queryProducts = _productRepository.GetQuery();
-            return new Response<IQueryable<Product>>(queryProducts);
+            if(queryProducts == null){return new Response<IQueryable<ReadProductDto>>("products not found");}
+            IQueryable<ReadProductDto> readProductDtos = queryProducts.Select(product => _mapper.Map<ReadProductDto>(product));
+            return new Response<IQueryable<ReadProductDto>>(readProductDtos);
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "An error occurred while fetching product query.");
-            return new Response<IQueryable<Product>>($"An error occurred while fetching product query: {ex.Message}");
+            return new Response<IQueryable<ReadProductDto>>($"An error occurred while fetching product query: {ex.Message}");
         }
     }
-    public async Task<Response<Product>> GetProductByIdAsync(int id) {
+    public async Task<Response<ReadProductDto>> GetProductByIdAsync(int id) {
         try
         {
-            // Ürün listesini Response ile alıyoruz
-           var product = await _productRepository.GetTByIdAsync(id);
-           if (product == null) { return new Response<Product>($"Product with id: {id} not found."); }
-            return new Response<Product>(product);
+            var product = await _productRepository.GetTByIdAsync(id);
+            if (product == null) { return new Response<ReadProductDto>($"Product with id: {id} not found."); }
+            ReadProductDto productDto = _mapper.Map<ReadProductDto>(product);
+            return new Response<ReadProductDto>(productDto);
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "An error occurred while fetching product by id.");
-            return new Response<Product>($"An error occurred: {ex.Message}");
+            return new Response<ReadProductDto>($"An error occurred: {ex.Message}");
         }
     }
 
 
-    public async Task<Response<Product>> GetProductBySlugAsync(string slug) {
+    public async Task<Response<ReadProductDto>> GetProductBySlugAsync(string slug) {
         try
         {
-            // Ürün listesini Response ile alıyoruz
-           var product = await _productRepository.GetTBySlugAsync(slug);
-           
+            var product = await _productRepository.GetTBySlugAsync(slug);
 
-            if (product == null) { return new Response<Product>($"Product with slug: {slug} not found."); }
 
-            return new Response<Product>(product);
+            if (product == null) { return new Response<ReadProductDto>($"Product with slug: {slug} not found."); }
+            ReadProductDto productDto = _mapper.Map<ReadProductDto>(product);
+            return new Response<ReadProductDto>(productDto);
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "An error occurred while fetching product by slug.");
-            return new Response<Product>($"An error occurred: {ex.Message}");
+            return new Response<ReadProductDto>($"An error occurred: {ex.Message}");
         }
     }
-    public async Task<Response<List<Product>>> GetProductsAsync(QueryObject queryObject) {
-        try
-        {
-            var query = GetProductsQueryable().Resource;
+    public async Task<Response<List<ReadProductDto>>> GetProductsAsync(QueryObject queryObject)
+    {
+        var query = _productRepository.GetQuery();
 
-            // Filtreleme ve sıralama işlemleri
-            query = QueryableExtensions.ApplyFilter(query, queryObject.SortBy, queryObject.FilterBy);
-            query = QueryableExtensions.ApplySorting(query, queryObject.SortBy, queryObject.IsDecSending);
+        query = QueryableExtensions.ApplyFilter(query, queryObject.SortBy, queryObject.FilterBy);
+        query = QueryableExtensions.ApplySorting(query, queryObject.SortBy, queryObject.IsDecSending);
+        if (query == null)
+            return new Response<List<ReadProductDto>>("No products found.");
+        var skipNumber = (queryObject.PageNumber - 1) * queryObject.PageSize;
 
-            // Sayfalama
-            var skipNumber = (queryObject.PageNumber - 1) * queryObject.PageSize;
-            var products = await query.Skip(skipNumber).Take(queryObject.PageSize).ToListAsync();
+        var productDtos = await query
+            .Skip(skipNumber)
+            .Take(queryObject.PageSize)
+            .Select(product => _mapper.Map<ReadProductDto>(product))
+            .ToListAsync();
 
-            return new Response<List<Product>>(products);// Başarılı şekilde döndür
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "An error occurred while fetching products.");
-            return new Response<List<Product>>($"An error occurred while fetching products: {ex.Message}");// Hata mesajı döndür
-        }
+        return productDtos.Any()
+            ? new Response<List<ReadProductDto>>(productDtos)
+            : new Response<List<ReadProductDto>>("No products found.");
     }
 
-    public async Task<Response<Product>> CreateProductAsync(CreateProductDto createProductDto) {
-        var isCategoryExist= await _unitOfWork.CategoryRepository.GetTByIdAsync(createProductDto.CategoryId);
-        if (isCategoryExist==null)
-            return new Response<Product>("Category does not exist");
+
+
+    public async Task<Response<ReadProductDto>> CreateProductAsync(CreateProductDto createProductDto) {
+        var isCategoryExist = await _unitOfWork.CategoryRepository.AnyAsync(createProductDto.CategoryId);
+        if (!isCategoryExist)
+            return new Response<ReadProductDto>("Category does not exist");
         try
         {
             Product product = _mapper.Map<Product>(createProductDto);
             product.Slug = SlugHelper.GenerateSlug(product.Name);
-            product.ImageUrl=FormManager.Save(createProductDto.ImageFile,"uploads/products",FormTypes.Image);
+            product.ImageUrl = FormManager.Save(createProductDto.ImageFile, "uploads/products", FormTypes.Image);
             await AdjustEntity(product);
             await _productRepository.CreateAsync(product);
-            if (!await _unitOfWork.CommitAsync())
-            {
-                return new Response<Product>($"An error occurred when creating product: {product.Name}.");
-            }
-            
+            if (!await _unitOfWork.CommitAsync()) { return new Response<ReadProductDto>($"An error occurred when creating product: {product.Name}."); }
+            ReadProductDto productDto = _mapper.Map<ReadProductDto>(product);
             _memoryCache.Remove(CacheKeys.ProductsList);
-            return new Response<Product>(product);
+            return new Response<ReadProductDto>(productDto);
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Could not save product.");
-            return new Response<Product>($"An error occurred when saving the product: {ex.Message}");
+            return new Response<ReadProductDto>($"An error occurred when saving the product: {ex.Message}");
         }
 
 
     }
-    private async Task AdjustEntity(Product entity) {
-        try
-        {
-        }
+    private Task AdjustEntity(Product entity) {
+        try { }
         catch (Exception ex)
         {
-            // Exception'ı loglayalım
-            _logger.LogWarning(ex, "Error loading category for product {ProductName} with category ID {CategoryId}", 
+            _logger.LogWarning(ex, "Error loading category for product {ProductName} with category ID {CategoryId}",
             entity.Name, entity.CategoryId);
-        
-            // Ya da exception'ı yukarı fırlatabiliriz
-            // throw;
         }
+        return Task.CompletedTask;
     }
-    public async Task<Response<Product>> UpdateProductAsync(int id, UpdateProductDto dto) {
-        var existingProduct = await GetProductByIdAsync(id);
-        Product product = existingProduct.Resource;
-        if (product == null) return new Response<Product>($"Product with id: {id} does not exist.");
+    public async Task<Response<ReadProductDto>> UpdateProductAsync(int id, UpdateProductDto dto) {
+        var existingProduct = await _productRepository.GetTByIdAsync(id);
+        if (existingProduct == null) return new Response<ReadProductDto>($"Product with id: {id} does not exist.");
         try
         {
-            _mapper.Map(dto, product);
-            _productRepository.Update(product);
+            _mapper.Map(dto, existingProduct);
+            _productRepository.Update(existingProduct);
             await _unitOfWork.CommitAsync();
             _memoryCache.Remove(CacheKeys.ProductsList);
-            return new Response<Product>(product);
+            ReadProductDto productDto = _mapper.Map<ReadProductDto>(existingProduct);
+            return new Response<ReadProductDto>(productDto);
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Could not update Product with ID {id}.", id);
-            return new Response<Product>($"An error occurred when updating the Product: {ex.Message}");
+            return new Response<ReadProductDto>($"An error occurred when updating the Product: {ex.Message}");
         }
     }
-    public async Task<Response<Product>> DeleteProductAsync(int id) {
+    public async Task<Response<ReadProductDto>> DeleteProductAsync(int id) {
         var existProduct = await _productRepository.GetTByIdAsync(id);
-        if (existProduct == null) return new Response<Product>("Product not found.");
+        if (existProduct == null) return new Response<ReadProductDto>("Product not found.");
         try
         {
             _productRepository.Delete(existProduct);
             await _unitOfWork.CommitAsync();
             _memoryCache.Remove(CacheKeys.ProductsList);
-            return new Response<Product>(existProduct);
+            ReadProductDto productDto = _mapper.Map<ReadProductDto>(existProduct);
+            return new Response<ReadProductDto>(productDto);
         }
         catch (Exception e)
         {
             _logger.LogError(e, "Could not delete Product with ID {id}.", id);
-            return new Response<Product>($"An error occurred when deleting the Product: {e.Message}");
+            return new Response<ReadProductDto>($"An error occurred when deleting the Product: {e.Message}");
         }
     }
-    public async Task<Response<bool>> ProductExistAsync(int id)
-    {
+    public async Task<Response<bool>> ProductExistAsync(int id) {
         try
         {
-            // Ürünün var olup olmadığını kontrol et
             var exists = await _productRepository.GetTByIdAsync(id);
 
-            if (exists!=null)
-            {
-                return new Response<bool>(true); // Ürün bulunduysa başarılı cevap döndür
-            }
-            else
-            {
-                return new Response<bool>(false); // Ürün bulunmadıysa başarısız cevap döndür
-            }
+            if (exists != null) { return new Response<bool>(true); }
+            else { return new Response<bool>(false); }
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "An error occurred while checking if product exists.");
-            return new Response<bool>($"An error occurred while checking if product exists: {ex.Message}"); // Hata mesajı döndür
+            return new Response<bool>($"An error occurred while checking if product exists: {ex.Message}");
         }
     }
 

@@ -1,10 +1,7 @@
 namespace ShopApi.Data;
 
-using AutoMapper;
 using Interface;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Models;
 using Repository;
 
 public interface IUnitOfWork

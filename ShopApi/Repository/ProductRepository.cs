@@ -1,9 +1,7 @@
 
-using AutoMapper;
-using Microsoft.EntityFrameworkCore;
-namespace ShopApi.Interface;
+namespace ShopApi.Repository;
 
-using Abstracts;
+using Interface;
 using Data;
 using Models;
 

@@ -1,9 +1,8 @@
-using System.Net;
 using dotenv.net;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
-using SaplingStore.Helpers;
 using ShopApi.Data;
+using ShopApi.Helpers;
 using ShopApi.Interface;
 using ShopApi.Repository;
 using ShopApi.Services;
@@ -59,11 +58,14 @@ builder.Services.AddSwaggerGen(option =>
 });
 builder.Services.AddMemoryCache();
 builder.Services.AddAutoMapper(typeof(MapperProfiles));
+
 builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<ICategoryService, CategoryService>();
+builder.Services.AddScoped<ICommentService, CommentService>();
+
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
-
+builder.Services.AddScoped<ICommentRepository, CommentRepository>();
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
 
 

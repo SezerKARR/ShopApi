@@ -5,16 +5,8 @@ using Models;
 
 public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(options) {
     public DbSet<Product> Products { get; set; }
-    public DbSet<Category?> Categories { get; set; }
-    // builder.Entity<SaplingHeight>()
-    // .HasOne(s => s.Sapling)
-    //     .WithMany(h => h.SaplingHeights)
-    //     .HasForeignKey(s => s.SaplingId);
-    //
-    // builder.Entity<Sapling>()
-    // .HasOne(s => s.SaplingCategory)
-    //     .WithMany(c => c.Saplings)
-    //     .HasForeignKey(s => s.SaplingCategoryId);
+    public DbSet<Category> Categories { get; set; }
+    
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);

@@ -1,10 +1,10 @@
-namespace SaplingStore.Helpers;
+namespace ShopApi.Helpers;
 
 public enum FormTypes {
     Image,
     
 }
-public class FormManager {
+public static class FormManager {
     
     public static Dictionary<FormTypes, List<string>> AllowedExtensions = new Dictionary<FormTypes, List<string>>()
     {
@@ -20,21 +20,18 @@ public class FormManager {
             throw new ArgumentException("Invalid file");
         }
 
-        // Dosya uzantısını kontrol et
-        string extension = Path.GetExtension(file.FileName).ToLower();
-        if (!AllowedExtensions[type].Contains(extension))
-        {
-            throw new ArgumentException("Unsupported file type");
-        }
+        // string extension = Path.GetExtension(file.FileName).ToLower();
+        // if (!AllowedExtensions[type].Contains(extension))
+        // {
+        //     throw new ArgumentException("Unsupported file type");
+        // }
 
-        // Klasör yolunu oluştur (eğer yoksa)
         string directoryPath = Path.Combine(rootPath, folder);
         if (!Directory.Exists(directoryPath))
         {
             Directory.CreateDirectory(directoryPath);
         }
 
-        // Dosya adını düzenle (çok uzun isimleri kısalt)
         string newFileName = Guid.NewGuid().ToString() + 
                              (file.FileName.Length > 64 ? file.FileName.Substring(file.FileName.Length - 64) : file.FileName);
 
@@ -48,12 +45,12 @@ public class FormManager {
         return filePath;
     }
     public static List<string> Save(IList<IFormFile> files, string folder, FormTypes type) {
-        List<string> Urls = new List<string>();
+        List<string> urls = new List<string>();
         foreach (var file in files)
         {
-            Urls.Add(Save(file, folder, type));
+            urls.Add(Save(file, folder, type));
         }
-        return Urls;
+        return urls;
     }
 
 

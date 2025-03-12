@@ -1,4 +1,4 @@
-namespace SaplingStore.Helpers;
+namespace ShopApi.Helpers;
 
 public class QueryObject
 {

@@ -1,50 +1,50 @@
 namespace ShopApi.Interface;
 
 using Dtos.Category;
-using Models;
+using Helpers;
 using Models.Common;
-using SaplingStore.Helpers;
+using UpdateCategoryDto=Dtos.Category.UpdateCategoryDto;
 
 public interface ICategoryService {
     /// <summary>
     /// Returns a queryable collection of categories
     /// </summary>
-    Response<IQueryable<Category>> GetQueryCategories();
+    Response<IQueryable<ReadCategoryDto>> GetQueryCategories();
     
     /// <summary>
     /// Gets all categories asynchronously
     /// </summary>
-    Task<Response<List<Category>>> GetCategoriesAsync();
+    Task<Response<List<ReadCategoryDto>>> GetCategoriesAsync();
     
     /// <summary>
     /// Gets a category by its ID asynchronously
     /// </summary>
-    Task<Response<Category>> GetCategoryByIdAsync(int id);
+    Task<Response<ReadCategoryDto?>> GetCategoryByIdAsync(int id);
     
     /// <summary>
     /// Gets a category by its slug asynchronously
     /// </summary>
-    Task<Response<Category>> GetCategoryBySlugAsync(string slug);
+    Task<Response<ReadCategoryDto>> GetCategoryBySlugAsync(string slug);
     
     /// <summary>
     /// Gets categories with filtering, sorting, and pagination asynchronously
     /// </summary>
-    Task<Response<List<Category>>> GetCategoriesAsync(QueryObject queryObject);
+    Task<Response<List<ReadCategoryDto>>> GetCategoriesAsync(QueryObject queryObject);
     
     /// <summary>
     /// Creates a new category asynchronously
     /// </summary>
-    Task<Response<Category>> CreateCategoryAsync(CreateCategoryDto createCategoryDto);
+    Task<Response<ReadCategoryDto>> CreateCategoryAsync(CreateCategoryDto createCategoryDto);
     
     /// <summary>
     /// Updates an existing category asynchronously
     /// </summary>
-    Task<Response<Category>> UpdateCategoryAsync(int id, UpdateCategoryDto dto);
+    Task<Response<ReadCategoryDto>> UpdateCategoryAsync(int id, UpdateCategoryDto dto);
     
     /// <summary>
     /// Deletes a category asynchronously
     /// </summary>
-    Task<Response<Category>> DeleteCategoryAsync(int id);
+    Task<Response<ReadCategoryDto>> DeleteCategoryAsync(int id);
     
     /// <summary>
     /// Checks if a category exists asynchronously

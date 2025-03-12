@@ -2,7 +2,7 @@ namespace ShopApi.Interface;
 
 public interface IRepository<T> where T : class,IEntity {
 
-        IQueryable<T> GetQuery();
+        IQueryable<T>? GetQuery();
 
         Task<T?> GetTByIdAsync(int id);
 
@@ -11,7 +11,7 @@ public interface IRepository<T> where T : class,IEntity {
         Task<List<T>> GetAsync();
 
         Task CreateAsync(T entity);
-
+        Task<bool> AnyAsync(int id);
 
         void Update(T entity);
 

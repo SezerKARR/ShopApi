@@ -1,9 +1,11 @@
 using System.Linq.Expressions;
 
+namespace ShopApi.Helpers;
+
 public static class QueryableExtensions
 {
-    public static IQueryable<T> ApplySorting<T>(
-        IQueryable<T> query,
+    public static IQueryable<T>? ApplySorting<T>(
+        IQueryable<T>? query,
         string? sortBy,
         bool isDescending)
     {
@@ -21,17 +23,17 @@ public static class QueryableExtensions
         var methodName = isDescending ? "OrderByDescending" : "OrderBy";
 
         var resultExpression = Expression.Call(
-            typeof(Queryable),
-            methodName,
-            new[] { typeof(T), propertyInfo.PropertyType },
-            query.Expression,
-            Expression.Quote(lambda));
+        typeof(Queryable),
+        methodName,
+        new[] { typeof(T), propertyInfo.PropertyType },
+        query.Expression,
+        Expression.Quote(lambda));
 
         return query.Provider.CreateQuery<T>(resultExpression);
     }
 
-    public static IQueryable<T> ApplyFilter<T>(
-        IQueryable<T> query,
+    public static IQueryable<T>? ApplyFilter<T>(
+        IQueryable<T>? query,
         string? filterBy,
         string? filterValue)
     {
@@ -46,14 +48,21 @@ public static class QueryableExtensions
         var property = Expression.Property(parameter, propertyInfo.Name);
 
         var toLowerMethod = typeof(string).GetMethod("ToLower", Type.EmptyTypes);
-        var propertyToLower = Expression.Call(property, toLowerMethod!);
+        if (toLowerMethod != null)
+        {
+            var propertyToLower = Expression.Call(property, toLowerMethod);
 
-        var filterValueExpression = Expression.Constant(filterValue.ToLower());
-        var containsMethod = typeof(string).GetMethod("Contains", new[] { typeof(string) });
-        var containsExpression = Expression.Call(propertyToLower, containsMethod!, filterValueExpression);
+            var filterValueExpression = Expression.Constant(filterValue.ToLower());
+            var containsMethod = typeof(string).GetMethod("Contains", new[] { typeof(string) });
+            if (containsMethod != null)
+            {
+                var containsExpression = Expression.Call(propertyToLower, containsMethod, filterValueExpression);
 
-        var lambda = Expression.Lambda<Func<T, bool>>(containsExpression, parameter);
+                var lambda = Expression.Lambda<Func<T, bool>>(containsExpression, parameter);
 
-        return query.Where(lambda);
+                return query.Where(lambda);
+            }
+        }
+        return query;
     }
 }
