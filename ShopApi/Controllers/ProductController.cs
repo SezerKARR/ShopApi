@@ -28,7 +28,7 @@ public class ProductController(IProductService productService) : Controller {
     }
     
     [HttpPost]
-    public async Task<ActionResult<ReadProductDto>> CreateProduct(CreateProductDto createProductDto) {
+    public async Task<ActionResult<ReadProductDto?>> CreateProduct(CreateProductDto createProductDto) {
         Console.WriteLine("Create Product");
         if (!ModelState.IsValid) return BadRequest(ModelState);
         

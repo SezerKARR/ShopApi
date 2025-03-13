@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ShopApi.Data;
 
@@ -10,9 +11,11 @@ using ShopApi.Data;
 namespace ShopApi.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250312122812_Comment")]
+    partial class Comment
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -35,12 +38,7 @@ namespace ShopApi.Migrations
                     b.Property<string>("Slug")
                         .HasColumnType("longtext");
 
-                    b.Property<int?>("mainCategoryId")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
-
-                    b.HasIndex("mainCategoryId");
 
                     b.ToTable("Categories");
                 });
@@ -54,8 +52,7 @@ namespace ShopApi.Migrations
                     MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Content")
-                        .HasMaxLength(300)
-                        .HasColumnType("varchar(300)");
+                        .HasColumnType("longtext");
 
                     b.PrimitiveCollection<string>("ImageUrls")
                         .HasColumnType("longtext");
@@ -69,25 +66,6 @@ namespace ShopApi.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Comments");
-                });
-
-            modelBuilder.Entity("ShopApi.Models.MainCategory", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Name")
-                        .HasColumnType("longtext");
-
-                    b.Property<string>("Slug")
-                        .HasColumnType("longtext");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("MainCategories");
                 });
 
             modelBuilder.Entity("ShopApi.Models.Product", b =>
@@ -122,13 +100,6 @@ namespace ShopApi.Migrations
                     b.ToTable("Products");
                 });
 
-            modelBuilder.Entity("ShopApi.Models.Category", b =>
-                {
-                    b.HasOne("ShopApi.Models.MainCategory", null)
-                        .WithMany("Categories")
-                        .HasForeignKey("mainCategoryId");
-                });
-
             modelBuilder.Entity("ShopApi.Models.Product", b =>
                 {
                     b.HasOne("ShopApi.Models.Category", null)
@@ -141,11 +112,6 @@ namespace ShopApi.Migrations
             modelBuilder.Entity("ShopApi.Models.Category", b =>
                 {
                     b.Navigation("Products");
-                });
-
-            modelBuilder.Entity("ShopApi.Models.MainCategory", b =>
-                {
-                    b.Navigation("Categories");
                 });
 #pragma warning restore 612, 618
         }

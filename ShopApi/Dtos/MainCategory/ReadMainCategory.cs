@@ -1,7 +1,7 @@
-namespace ShopApi.Dtos.Comment;
+namespace ShopApi.Dtos.MainCategory;
 
-public class ReadCommentDto {
-   
+
+public class ReadMainCategory {
     public int Id { get; set; }
     public string? Name { get; set; }
 }

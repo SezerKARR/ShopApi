@@ -5,4 +5,5 @@ public enum CacheKeys : byte
     CategoriesList,
     ProductsList,
     CommentsList,
+    MainCategoryList,
 }

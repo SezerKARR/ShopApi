@@ -1,8 +1,8 @@
 namespace ShopApi.Controllers;
 
 using Dtos.Category;
-using Interface;
 using Microsoft.AspNetCore.Mvc;
+using Services;
 
 [Route("api/[controller]")]
 [ApiController] 

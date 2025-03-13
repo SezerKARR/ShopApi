@@ -2,6 +2,7 @@ namespace ShopApi.Helpers;
 
 using AutoMapper;
 using Dtos.Category;
+using Dtos.MainCategory;
 using Dtos.Product;
 using Models;
 
@@ -18,6 +19,12 @@ public class MapperProfiles : Profile{
        CreateMap<CreateCategoryDto, Category>();
        CreateMap<Category, ReadCategoryDto>();
        CreateMap<UpdateCategoryDto, Category>();
+
+       CreateMap<ReadMainCategory, MainCategory>();
+       CreateMap<CreateMainCategory, MainCategory>();
+       CreateMap<UpdateMainCategory, MainCategory>();
+       CreateMap<MainCategory, ReadMainCategory>();
+
     }
 
 }

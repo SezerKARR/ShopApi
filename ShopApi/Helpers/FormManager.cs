@@ -13,7 +13,7 @@ public static class FormManager {
             FormTypes.Image,new List<string>(){".jpg",".png",".bmp",".gif",".ico"}
         }
     };
-    public static string Save(IFormFile file, string folder, FormTypes type) {
+    public static string Save(IFormFile? file, string folder, FormTypes type) {
         string rootPath = Directory.GetCurrentDirectory() + "/wwwroot";
         if (file == null || file.Length == 0)
         {

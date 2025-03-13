@@ -11,35 +11,59 @@ using Models;
 using Models.Common;
 using Shared.Cache;
 using UpdateCategoryDto=Dtos.Category.UpdateCategoryDto;
+public interface ICategoryService {
+    Response<IQueryable<ReadCategoryDto>> GetQueryCategories();
+    Task<Response<List<ReadCategoryDto>>> GetCategoriesAsync();
+    Task<Response<ReadCategoryDto?>> GetCategoryByIdAsync(int id);
+    Task<Response<ReadCategoryDto>> GetCategoryBySlugAsync(string slug);
+    Task<Response<List<ReadCategoryDto>>> GetCategoriesAsync(QueryObject queryObject);
+    Task<Response<ReadCategoryDto>> CreateCategoryAsync(CreateCategoryDto createCategoryDto);
+    Task<Response<ReadCategoryDto>> UpdateCategoryAsync(int id, UpdateCategoryDto dto);
+    Task<Response<ReadCategoryDto>> DeleteCategoryAsync(int id);
+    Task<Response<bool>> CategoryExistAsync(int id);
+}
+public class CategoryService : ICategoryService {
+    readonly IMapper _mapper;
+    readonly AppDbContext _context;
+    readonly ICategoryRepository _categoryRepository;
+    readonly IMemoryCache _memoryCache;
+    readonly IUnitOfWork _unitOfWork;
+    readonly ILogger<CategoryService> _logger;
+    public CategoryService(IMapper mapper, AppDbContext context,ICategoryRepository categoryRepository,IMemoryCache memoryCache,IUnitOfWork unitOfWork,ILogger<CategoryService> logger) {
+        _mapper = mapper;
+        _context = context;
+        _categoryRepository = categoryRepository;
+        _memoryCache = memoryCache;
+        _unitOfWork = unitOfWork;
+        _logger = logger;
+    }
 
-public class CategoryService(IMapper mapper, AppDbContext context,ICategoryRepository categoryRepository,IMemoryCache memoryCache,IUnitOfWork unitOfWork,ILogger<CategoryService> logger) : ICategoryService {
-   
     public  Response<IQueryable<ReadCategoryDto>> GetQueryCategories() {
         try
         {
-            var queryCategories = categoryRepository.GetQuery();
-            IQueryable<ReadCategoryDto> readCategoryDtosQuery= mapper.Map<IQueryable<ReadCategoryDto>>(queryCategories);
+            var queryCategories = _categoryRepository.GetQuery();
+            IQueryable<ReadCategoryDto> readCategoryDtosQuery= _mapper.Map<IQueryable<ReadCategoryDto>>(queryCategories);
             return new Response<IQueryable<ReadCategoryDto>>(readCategoryDtosQuery);
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, "An error occurred while fetching product query.");
+            _logger.LogError(ex, "An error occurred while fetching product query.");
             return new Response<IQueryable<ReadCategoryDto>>($"An error occurred while fetching product query: {ex.Message}");
         }
     }
     public async Task<Response<List<ReadCategoryDto>>> GetCategoriesAsync() {
         try
         {
-            List<Category>? categories = await memoryCache.GetOrCreateAsync(CacheKeys.CategoriesList, entry => {
+            List<Category>? categories = await _memoryCache.GetOrCreateAsync(CacheKeys.CategoriesList, entry => {
                 entry.AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(1);
-                return categoryRepository.GetAsync();
+                return _categoryRepository.GetAsync();
             });
-            List<ReadCategoryDto> readCategoryDtos = mapper.Map<List<ReadCategoryDto>>(categories);
+            List<ReadCategoryDto> readCategoryDtos = _mapper.Map<List<ReadCategoryDto>>(categories);
             return new Response<List<ReadCategoryDto>>(readCategoryDtos);
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, "An error occurred while fetching Categoryies.");
+            _logger.LogError(ex, "An error occurred while fetching Categoryies.");
             return new Response<List<ReadCategoryDto>>($"An error occurred while fetching Categories: {ex.Message}");
         }
     }
@@ -47,15 +71,15 @@ public class CategoryService(IMapper mapper, AppDbContext context,ICategoryRepos
         try
         {
             // Ürün listesini Response ile alıyoruz
-            Category? category= await categoryRepository.GetTByIdAsync(id);
+            Category? category= await _categoryRepository.GetTByIdAsync(id);
 
             if (category == null) { return new Response<ReadCategoryDto?>($"Category with id: {id} not found."); }
-            ReadCategoryDto readCategoryDto = mapper.Map<ReadCategoryDto>(category);
+            ReadCategoryDto readCategoryDto = _mapper.Map<ReadCategoryDto>(category);
             return new Response<ReadCategoryDto?>(readCategoryDto);
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, "An error occurred while fetching Category by id.");
+            _logger.LogError(ex, "An error occurred while fetching Category by id.");
             return new Response<ReadCategoryDto?>($"An error occurred: {ex.Message}");
         }
     }
@@ -63,15 +87,15 @@ public class CategoryService(IMapper mapper, AppDbContext context,ICategoryRepos
     public async Task<Response<ReadCategoryDto>> GetCategoryBySlugAsync(string slug) { 
         try
         {
-            var category = await categoryRepository.GetTBySlugAsync(slug);
+            var category = await _categoryRepository.GetTBySlugAsync(slug);
 
             if (category == null) { return new Response<ReadCategoryDto>($"Category with slug: {slug} not found."); }
-            ReadCategoryDto readCategoryDto = mapper.Map<ReadCategoryDto>(category);
+            ReadCategoryDto readCategoryDto = _mapper.Map<ReadCategoryDto>(category);
             return new Response<ReadCategoryDto>(readCategoryDto);
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, "An error occurred while fetching Category by slug.");
+            _logger.LogError(ex, "An error occurred while fetching Category by slug.");
             return new Response<ReadCategoryDto>($"An error occurred: {ex.Message}");
         }
     }
@@ -95,31 +119,34 @@ public class CategoryService(IMapper mapper, AppDbContext context,ICategoryRepos
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, "An error occurred while fetching categories.");
+            _logger.LogError(ex, "An error occurred while fetching categories.");
             return new Response<List<ReadCategoryDto>>($"An error occurred while fetching categories: {ex.Message}");// Hata mesajı döndür
         }
     }
     public async Task<Response<ReadCategoryDto>> CreateCategoryAsync(CreateCategoryDto createCategoryDto) {
+        var isMainCategoryExist = await _unitOfWork.MainCategoryRepository.AnyAsync(createCategoryDto.MainCategoryId);
+        if (!isMainCategoryExist)
+            return new Response<ReadCategoryDto>("MainCategory does not exist");
         try
         {
-            Category category = mapper.Map<Category>(createCategoryDto);
+            Category category = _mapper.Map<Category>(createCategoryDto);
             category.Slug = SlugHelper.GenerateSlug(category.Name);
           
-            await categoryRepository.CreateAsync(category);
-            await unitOfWork.CommitAsync();
-            memoryCache.Remove(CacheKeys.CategoriesList);
-            ReadCategoryDto readCategoryDto = mapper.Map<ReadCategoryDto>(category);
+            await _categoryRepository.CreateAsync(category);
+            await _unitOfWork.CommitAsync();
+            _memoryCache.Remove(CacheKeys.CategoriesList);
+            ReadCategoryDto readCategoryDto = _mapper.Map<ReadCategoryDto>(category);
             return new Response<ReadCategoryDto>(readCategoryDto);
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, "Could not save category.");
+            _logger.LogError(ex, "Could not save category.");
             return new Response<ReadCategoryDto>($"An error occurred when saving the category: {ex.Message}");
         }
     }
     public async Task<Response<ReadCategoryDto>> UpdateCategoryAsync(int id, UpdateCategoryDto dto) 
     {
-        var existingCategory = await categoryRepository.GetTByIdAsync(id);
+        var existingCategory = await _categoryRepository.GetTByIdAsync(id);
         if (existingCategory == null) 
         {
             return new Response<ReadCategoryDto>($"Category with id: {id} not found.");
@@ -127,42 +154,42 @@ public class CategoryService(IMapper mapper, AppDbContext context,ICategoryRepos
 
         try
         {
-            mapper.Map(dto, existingCategory);
+            _mapper.Map(dto, existingCategory);
 
             if (!string.IsNullOrEmpty(dto.Name)) 
             {
                 existingCategory.Slug = SlugHelper.GenerateSlug(existingCategory.Name);
             }
 
-            categoryRepository.Update(existingCategory);
+            _categoryRepository.Update(existingCategory);
         
-            await unitOfWork.CommitAsync();
+            await _unitOfWork.CommitAsync();
 
-            memoryCache.Remove(CacheKeys.CategoriesList);
+            _memoryCache.Remove(CacheKeys.CategoriesList);
 
-            var updatedCategoryDto = mapper.Map<ReadCategoryDto>(existingCategory);
+            var updatedCategoryDto = _mapper.Map<ReadCategoryDto>(existingCategory);
             return new Response<ReadCategoryDto>(updatedCategoryDto);
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, "Could not update Category with ID {id}.", id);
+            _logger.LogError(ex, "Could not update Category with ID {id}.", id);
             return new Response<ReadCategoryDto>($"An error occurred when updating the Category: {ex.Message}");
         }
     }
     public async Task<Response<ReadCategoryDto>> DeleteCategoryAsync(int id) {
-        var existCategory = await context.Categories.FirstOrDefaultAsync(x => x.Id == id);
+        var existCategory = await _context.Categories.FirstOrDefaultAsync(x => x.Id == id);
         if (existCategory == null) return new Response<ReadCategoryDto>("Product not found.");
         try
         {
-            categoryRepository.Delete(existCategory);
-            await unitOfWork.CommitAsync();
-            memoryCache.Remove(CacheKeys.CategoriesList);
-            ReadCategoryDto readCategoryDto = mapper.Map<ReadCategoryDto>(existCategory);
+            _categoryRepository.Delete(existCategory);
+            await _unitOfWork.CommitAsync();
+            _memoryCache.Remove(CacheKeys.CategoriesList);
+            ReadCategoryDto readCategoryDto = _mapper.Map<ReadCategoryDto>(existCategory);
             return new Response<ReadCategoryDto>(readCategoryDto);
         }
         catch (Exception e)
         {
-            logger.LogError(e, "Could not delete Category with ID {id}.", id);
+            _logger.LogError(e, "Could not delete Category with ID {id}.", id);
             return new Response<ReadCategoryDto>($"An error occurred when deleting the Category: {e.Message}");
         }
     }
@@ -170,7 +197,7 @@ public class CategoryService(IMapper mapper, AppDbContext context,ICategoryRepos
         try
         {
             // Ürünün var olup olmadığını kontrol et
-            var exists = await context.Categories.AnyAsync(e => e.Id == id);
+            var exists = await _context.Categories.AnyAsync(e => e.Id == id);
 
             if (exists)
             {
@@ -183,7 +210,7 @@ public class CategoryService(IMapper mapper, AppDbContext context,ICategoryRepos
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, "An error occurred while checking if Category exists.");
+            _logger.LogError(ex, "An error occurred while checking if Category exists.");
             return new Response<bool>($"An error occurred while checking if Category exists: {ex.Message}"); // Hata mesajı döndür
         }
     }

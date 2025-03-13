@@ -1,5 +1,7 @@
 namespace ShopApi.Dtos.Abstracts;
 
-public class CreateDto {
+using Interfaces;
+
+public class CreateDto:ICreate {
     
 }
