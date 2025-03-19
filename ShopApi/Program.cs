@@ -58,7 +58,8 @@ builder.Services.AddSwaggerGen(option =>
 });
 builder.Services.AddMemoryCache();
 builder.Services.AddAutoMapper(typeof(MapperProfiles));
-
+builder.Services.AddScoped<IBasketRepository, BasketRepository>();
+builder.Services.AddScoped<IBasketService, BasketService>();
 builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddScoped<ICommentService, CommentService>();
@@ -71,14 +72,14 @@ builder.Services.AddScoped<IMainCategoryRepository, MainCategoryRepository>();
 
 
 var app = builder.Build();
-
+app.UseCors("AllowAll");
 app.UseRouting();
 // Configure the HTTP request pipeline.
 app.UseSwagger();
 app.UseSwaggerUI();
 
 app.UseHttpsRedirection();  // Apply it globally
-app.UseCors("AllowAll");
+
 
 app.UseAuthorization();
 app.MapControllers();

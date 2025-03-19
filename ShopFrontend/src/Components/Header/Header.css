@@ -1,0 +1,193 @@
+.Header {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    height: auto;
+    padding-top: 25px;
+    max-height: 100px;
+    gap: 35px;
+    position: relative;
+}
+
+.Header__Logo {
+    display: flex;
+    flex-direction: column;
+
+
+}
+
+.Header__Logo__DiscoverPremiumContainer {
+    display: flex;
+    flex-direction: row;
+    gap: 4px;
+}
+
+.header__logo_Prem {
+    text-shadow: 1px 1px 1px #d5650e;
+    color: #d5650e;
+    cursor: pointer;
+    margin: 0;
+    text-align: end;
+}
+.header__logo_Prem:hover {
+    box-shadow: inset 0 -1px 0 #d5650e;
+}
+.header__logo_Discover {
+    color: black;
+
+    margin: 0;
+}
+
+.Header__logo_name {
+    cursor:pointer;
+    text-align: end;
+    font-size: 25px;
+    text-shadow: 1px 1px 1px #d5650e;
+    color: #d5650e;
+    margin: 0;
+}
+
+.SearchOutline {
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    transform: translate(0%, -50%);
+    transition: transform 0.3s, padding 0.3s, border 0.3s; /* Adds a smooth transition effect */
+    box-sizing: border-box; /* Ensures padding and border are included in the element's total width and height */
+
+}
+
+.SearchOutline:focus-within {
+    border-radius: 10px;
+    padding: 20px;
+    border: 2px solid black;
+    background-color: green;
+    z-index: 1; /* Ensures the scaled element appears above other elements */
+}
+
+.SearchContainer {
+
+    position: relative;
+    z-index: 12;
+    border-radius: 5px;
+    border: 2px solid #ccc;
+    background-color: white;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    width: auto; /* Maksimum genişlik */
+}
+
+.SearchBar {
+    background-color: #ffffff;
+    height: 35px;
+    outline: none;
+    border: none;
+    left: 0;
+    width: 20vw;
+    transition: width 0.3s ease-in-out;
+}
+
+.SearchBar:focus {
+    width: 40vw;
+}
+
+.Search {
+    background-color: white;
+    padding: 10px;
+}
+
+.RelativeSearch {
+    justify-content: center;
+    align-items: center;
+    width: 22vw;
+    position: relative;
+    height: 5px;
+
+}
+
+.Location {
+    cursor: pointer;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 10px;
+}
+
+.Location__Name__Container {
+    display: flex;
+    flex-direction: column;
+}
+
+.Location__Label {
+    font-size: 20px;
+    color: #040000;
+    margin: 0;
+}
+
+.LocationSelect__Label {
+    margin: 0;
+    font-size: 20px;
+    color: #da772a;
+}
+
+.Authorize {
+    border: rgba(51, 49, 49, 0.88) solid 1px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 10px;
+    padding: 0 15px;
+}
+
+.Authorize__Login {
+    color:black;
+    margin: 0;
+}
+
+
+.Authorize__SingUp {
+    color: rgba(41, 38, 38, 0.85);
+    margin: 0;
+}
+
+.BasketCircle {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 20px;               
+    height: 20px;              
+    border-radius: 50%;       
+    border: 1px solid white;
+    background-color: #ff6347; 
+    color: white;             
+    font-size: 15px;           
+    display: flex;            
+    justify-content: center;   
+    align-items: center;       
+    margin: 0;                
+}
+.Basket__Container {
+    background-color: #888888;
+    padding:10px;
+    gap:10px;
+    border-radius: 15px;
+    cursor:pointer;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    position: relative;
+    border: 1px solid #ccc;
+}
+
+.Basket__MyBasket {
+    margin: 0;
+    font-size: 20px;
+}
+
+.Basket__Cart {
+    position: relative;
+    padding: 1px;
+}

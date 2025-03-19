@@ -4,7 +4,7 @@ using Dtos.MainCategory;
 using Microsoft.AspNetCore.Mvc;
 using Services;
 
-[Route("api/[controller]")]
+[Route("api/main-category")]
 [ApiController]
 public class MainCategoryController(IMainCategoryService mainCategoryService):ControllerBase{
     [HttpGet]

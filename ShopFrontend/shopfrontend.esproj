@@ -8,4 +8,11 @@
     <!-- Folder where production build objects will be placed -->
     <BuildOutputFolder>$(MSBuildProjectDirectory)\dist</BuildOutputFolder>
   </PropertyGroup>
+  <ItemGroup>
+    <Folder Include="packages\axios.0.16.2\Content\Scripts\" />
+    <Folder Include="public\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Script Include="src\Pages\asd.ts" />
+  </ItemGroup>
 </Project>
