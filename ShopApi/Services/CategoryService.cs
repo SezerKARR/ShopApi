@@ -70,7 +70,6 @@ public class CategoryService : ICategoryService {
     public async Task<Response<ReadCategoryDto?>> GetCategoryByIdAsync(int id) {
         try
         {
-            // Ürün listesini Response ile alıyoruz
             Category? category= await _categoryRepository.GetTByIdAsync(id);
 
             if (category == null) { return new Response<ReadCategoryDto?>($"Category with id: {id} not found."); }
@@ -177,8 +176,9 @@ public class CategoryService : ICategoryService {
         }
     }
     public async Task<Response<ReadCategoryDto>> DeleteCategoryAsync(int id) {
-        var existCategory = await _context.Categories.FirstOrDefaultAsync(x => x.Id == id);
-        if (existCategory == null) return new Response<ReadCategoryDto>("Product not found.");
+        
+        var existCategory = await _categoryRepository.GetTByIdAsync(id);
+        if (existCategory == null) return new Response<ReadCategoryDto>("Category not found.");
         try
         {
             _categoryRepository.Delete(existCategory);

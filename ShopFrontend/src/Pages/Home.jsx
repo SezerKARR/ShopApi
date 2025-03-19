@@ -32,6 +32,11 @@ const Home = () => {
                 <li className="MainCategoryName">{mainCategory?.[0]?.name}</li>
 
             </ul>
+            <div className={"math"}>
+                <div className={"Increase"}>+</div>
+                <div className={"Decrease"}>-</div>
+            </div>
+
         </div>
     );
 };

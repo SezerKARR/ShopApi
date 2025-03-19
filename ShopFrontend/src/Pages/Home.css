@@ -3,3 +3,19 @@
 
 .MainCategoryHolder {
 }
+
+.Increase {
+    cursor: pointer;
+    padding-left: 50px;
+    font-size: 200px;
+}
+.Decrease {
+    cursor: pointer;
+    padding-left: 50px;
+    font-size: 200px;
+}
+
+.math {
+    display: flex;
+    flex-direction: row;
+}

@@ -11,5 +11,6 @@ public class Product: BaseEntity{
     public int CategoryId { get; set; }
     [MaxLength(120)]
     public string? ImageUrl { get; set; }
+    public decimal Price { get; set; }
     
 }

@@ -12,7 +12,4 @@
     <Folder Include="packages\axios.0.16.2\Content\Scripts\" />
     <Folder Include="public\" />
   </ItemGroup>
-  <ItemGroup>
-    <Script Include="src\Pages\asd.ts" />
-  </ItemGroup>
 </Project>

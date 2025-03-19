@@ -10,7 +10,7 @@ public abstract class BaseRepository<T> : IRepository<T> where T : BaseEntity
     protected readonly AppDbContext _context;
     protected readonly DbSet<T> _dbSet; 
     protected IQueryable<T>? _queryable;
-    IQueryable<T> Queryable => _queryable ??= Include();
+    protected IQueryable<T> Queryable => _queryable ??= Include();
         protected BaseRepository(AppDbContext context)
     {
         _context = context;
