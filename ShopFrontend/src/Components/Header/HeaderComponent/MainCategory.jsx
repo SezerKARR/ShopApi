@@ -1,10 +1,15 @@
 import React, {useEffect, useState} from 'react';
+import { useNavigate } from "react-router-dom";
 import './MainCategory.css';
 import axios from "axios";
 import foto from "../../../../public/Foto.png"
+import {Link} from "react-router-dom";
 const MainCategory = () => {
+    const navigate = useNavigate();
     const [mainCategories, setMainCategories] = useState(null)
     const [hoveredMainCategory, setHoveredMainCategory] = useState(null)
+    const [a, seta] = useState(0)
+    
     const API_URL = import.meta.env.VITE_API_URL;
     useEffect(() => {
         axios.get(`${API_URL}/api/category`)
@@ -16,7 +21,6 @@ const MainCategory = () => {
                     const filteredCategories = response.data.filter(category => category.parentId === -1);
                     setMainCategories(filteredCategories); // Filtrelenmiş kategorileri set et
                     setHoveredMainCategory(filteredCategories[2]);
-                    console.log(filteredCategories[2]);
                 } catch (error) {
                     console.log(error);
                 }
@@ -47,7 +51,7 @@ const MainCategory = () => {
         );
     };
     const SelectedMainCategorya= () => {
-     
+        
        
         return (
           
@@ -55,9 +59,9 @@ const MainCategory = () => {
                 <div className="selected-main-category__categories">
                     {mainCategories[2]?.subCategories?.map((subCategory) => (
                         <div key={subCategory.id} className="selected-main-category__subcategory">
-                            <h3 className="selected-main-category__subcategory-name">{subCategory.name}</h3>
+                            <p  className="selected-main-category__subcategory-name" onClick={() => navigate(`/category/${subCategory.slug}-${subCategory.id}`)}>{subCategory.name}</p>
                             {subCategory.subCategories?.map((category) => (
-                                <p key={category.id} className="selected-main-category__category">{category.name}</p>
+                                <p key={category.id} onClick={() => navigate(`/category/${category.slug}-${category.id}`)} className="selected-main-category__category">{category.name}</p>
                             ))}
                         </div>
                     ))}
@@ -79,8 +83,8 @@ const MainCategory = () => {
                 ))}
 
             </div>
-
-            {mainCategories !== null && <SelectedMainCategorya />}
+            <div className="closemc" onClick={() => seta(a+1)} >close</div>
+            {a % 2 !== 0 && <SelectedMainCategorya />}
         </div>
     );
 };

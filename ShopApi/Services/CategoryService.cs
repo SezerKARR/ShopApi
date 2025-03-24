@@ -19,8 +19,8 @@ public interface ICategoryService {
     Task<Response<ReadCategoryDto?>> GetCategoryByIdAsync(int id);
     Task<Response<ReadCategoryDto>> GetCategoryBySlugAsync(string slug);
     Task<Response<ReadCategoryDto>> CreateCategoryAsync(CreateCategoryDto createCategoryDto);
-    Task<List<ReadCategoryDto>> GetSubCategories(int categoryId);
-    Task<List<Category>> GetParentCategories(int categoryId);
+    // Task<List<ReadCategoryDto>> GetSubCategories(int categoryId);
+    // Task<List<Category>> GetParentCategories(int categoryId);
     Task<Response<ReadCategoryDto>> UpdateCategoryAsync(int id, UpdateCategoryDto dto);
     Task<Response<ReadCategoryDto>> DeleteCategoryAsync(int id);
     Task<Response<bool>> CategoryExistAsync(int id);
@@ -34,10 +34,10 @@ public class CategoryService : ICategoryService {
     readonly IMemoryCache _memoryCache;
     readonly IUnitOfWork _unitOfWork;
     readonly ILogger<CategoryService> _logger;
-    public CategoryService(IMapper mapper, AppDbContext context, ICategoryRepository categoryRepository, IMemoryCache memoryCache, IUnitOfWork unitOfWork, ILogger<CategoryService> logger) {
+    public CategoryService(IMapper mapper, AppDbContext context, IMemoryCache memoryCache, IUnitOfWork unitOfWork, ILogger<CategoryService> logger) {
         _mapper = mapper;
         _context = context;
-        _categoryRepository = categoryRepository;
+        _categoryRepository = unitOfWork.CategoryRepository;
         _memoryCache = memoryCache;
         _unitOfWork = unitOfWork;
         _logger = logger;
@@ -95,7 +95,14 @@ public class CategoryService : ICategoryService {
             Category? category = await _categoryRepository.GetTByIdAsync(id);
 
             if (category == null) { return new Response<ReadCategoryDto?>($"Category with id: {id} not found."); }
+            // var products = await _unitOfWork.ProductRepository.GetAsync();
+            // foreach (var product in products)
+            // {
+            //     if(product.CategoryId == category.Id) { category.Products.Add(product); }
+            // }
             ReadCategoryDto readCategoryDto = _mapper.Map<ReadCategoryDto>(category);
+            readCategoryDto.SubCategories = await GetSubCategoriesRecursive(category.Id);
+            
             return new Response<ReadCategoryDto?>(readCategoryDto);
         }
         catch (Exception ex)
@@ -160,7 +167,7 @@ public class CategoryService : ICategoryService {
             await _categoryRepository.CreateAsync(category);
             await _unitOfWork.CommitAsync();
 
-            await UpdateCategoryTreeAsync(category.Id, createCategoryDto.ParentId);
+            // await UpdateCategoryTreeAsync(category.Id, createCategoryDto.ParentId);
 
             _memoryCache.Remove(CacheKeys.CategoriesList);
 
@@ -179,44 +186,44 @@ public class CategoryService : ICategoryService {
         }
     }
 
-    private async Task UpdateCategoryTreeAsync(int categoryId, int parentId = -1) {
-        _context.CategoryTrees.Add(new CategoryTree
-        {
-            AncestorId = categoryId, DescendantId = categoryId, Depth = 0
-        });
-
-        if (parentId != -1)
-        {
-            var parentRelations = await _context.CategoryTrees
-                .Where(ct => ct.DescendantId == parentId)
-                .ToListAsync();
-
-            foreach (var relation in parentRelations)
-            {
-                _context.CategoryTrees.Add(new CategoryTree
-                {
-                    AncestorId = relation.AncestorId, DescendantId = categoryId, Depth = relation.Depth + 1
-                });
-            }
-        }
-
-        await _unitOfWork.CommitAsync();
-    }
-    public async Task<List<ReadCategoryDto>> GetSubCategories(int categoryId) {
-        var categories = await _context.CategoryTrees
-            .Where(ct => ct.AncestorId == categoryId && ct.Depth > 0)
-            .Select(ct => ct.Descendant)
-            .ToListAsync();
-        var readCategoryDtos = _mapper.Map<List<ReadCategoryDto>>(categories);
-        return readCategoryDtos;
-    }
-
-    public async Task<List<Category>> GetParentCategories(int categoryId) {
-        return await _context.CategoryTrees
-            .Where(ct => ct.DescendantId == categoryId && ct.Depth > 0)
-            .Select(ct => ct.Ancestor)
-            .ToListAsync();
-    }
+    // private async Task UpdateCategoryTreeAsync(int categoryId, int parentId = -1) {
+    //     _context.CategoryTrees.Add(new CategoryTree
+    //     {
+    //         AncestorId = categoryId, DescendantId = categoryId, Depth = 0
+    //     });
+    //
+    //     if (parentId != -1)
+    //     {
+    //         var parentRelations = await _context.CategoryTrees
+    //             .Where(ct => ct.DescendantId == parentId)
+    //             .ToListAsync();
+    //
+    //         foreach (var relation in parentRelations)
+    //         {
+    //             _context.CategoryTrees.Add(new CategoryTree
+    //             {
+    //                 AncestorId = relation.AncestorId, DescendantId = categoryId, Depth = relation.Depth + 1
+    //             });
+    //         }
+    //     }
+    //
+    //     await _unitOfWork.CommitAsync();
+    // }
+    // public async Task<List<ReadCategoryDto>> GetSubCategories(int categoryId) {
+    //     var categories = await _context.CategoryTrees
+    //         .Where(ct => ct.AncestorId == categoryId && ct.Depth > 0)
+    //         .Select(ct => ct.Descendant)
+    //         .ToListAsync();
+    //     var readCategoryDtos = _mapper.Map<List<ReadCategoryDto>>(categories);
+    //     return readCategoryDtos;
+    // }
+    //
+    // public async Task<List<Category>> GetParentCategories(int categoryId) {
+    //     return await _context.CategoryTrees
+    //         .Where(ct => ct.DescendantId == categoryId && ct.Depth > 0)
+    //         .Select(ct => ct.Ancestor)
+    //         .ToListAsync();
+    // }
     public async Task<Response<ReadCategoryDto>> UpdateCategoryAsync(int id, UpdateCategoryDto dto) {
         var existingCategory = await _categoryRepository.GetTByIdAsync(id);
         if (existingCategory == null) { return new Response<ReadCategoryDto>($"Category with id: {id} not found."); }

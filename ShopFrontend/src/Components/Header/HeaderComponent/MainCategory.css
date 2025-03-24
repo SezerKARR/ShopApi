@@ -66,17 +66,22 @@
     margin-bottom: 10px;
     border-radius: 5px;
 }
-
-.selected-main-category__category {
-    z-index: 5;
-    color:black;
-}
 .selected-main-category__subcategory-name {
     font-weight: bold;
     font-size: 18px;
     color:orange;
+    cursor:pointer;
 }
 
+
+.selected-main-category__category {
+    z-index: 5;
+    color:black;
+    cursor:pointer;
+}
+.selected-main-category__category:hover {
+   color:orange;
+}
 .selected-main-category__ad-container {
     width: 42%;
     display: flex;
@@ -91,3 +96,14 @@
     object-fit: contain;
 }
 
+.closemc {
+    position: absolute;
+    cursor : pointer;
+    border: 2px solid black;
+    top: 0;
+}
+.closemc:hover {
+    background-color: lightgray;
+    cursor: pointer;
+    color: blue;
+}

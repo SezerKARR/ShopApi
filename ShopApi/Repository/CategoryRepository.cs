@@ -5,14 +5,15 @@ using Interface;
 using Microsoft.EntityFrameworkCore;
 using Models;
 
-public class CategoryRepository :BaseRepository<Category>,ICategoryRepository{
-    
+public class CategoryRepository : BaseRepository<Category>, ICategoryRepository {
+
     public CategoryRepository(AppDbContext context) : base(context) {
         _queryable = _context.Categories.AsQueryable();
     }
     protected override IQueryable<Category> Include() {
-        return _dbSet.Include(c => c.Products);
+        Console.WriteLine("CategoryRepository");
+        return _dbSet.Include(c => c.Products).AsQueryable().Include(c => c.SubCategories).Include(c => c.Filters);
     }
-    
+
 
 }

@@ -10,7 +10,9 @@ public abstract class BaseRepository<T> : IRepository<T> where T : BaseEntity
     protected readonly AppDbContext _context;
     protected readonly DbSet<T> _dbSet; 
     protected IQueryable<T>? _queryable;
-    protected IQueryable<T> Queryable => _queryable ??= Include();
+
+    protected IQueryable<T> Queryable => Include();
+    
         protected BaseRepository(AppDbContext context)
     {
         _context = context;
@@ -24,6 +26,7 @@ public abstract class BaseRepository<T> : IRepository<T> where T : BaseEntity
 
     public async Task<T?> GetTByIdAsync(int id)
     {
+        Console.WriteLine(_queryable);
         return await Queryable.FirstOrDefaultAsync(x => x.Id == id);
     }
 

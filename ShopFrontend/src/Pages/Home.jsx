@@ -5,9 +5,8 @@ import Login from "./Login.jsx";
 import { useGlobalContext} from "../../GlobalProvider.jsx";
 
 const Home = () => {
-    const{setBasketCount} =useGlobalContext();
+    const{setBasketCount,API_URL} =useGlobalContext();
     const [mainCategory, setMainCategory] = useState(null)
-    const API_URL = import.meta.env.VITE_API_URL;
     useEffect(() => {
         axios.get(`${API_URL}/api/main-category`)
             .then(response => {
