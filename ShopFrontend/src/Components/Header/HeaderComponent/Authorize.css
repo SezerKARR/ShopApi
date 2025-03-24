@@ -1,0 +1,40 @@
+.Authorize {
+  /* Your CSS styles here */
+}
+.Authorize {
+    border: rgba(51, 49, 49, 0.88) solid 1px;
+    display: flex;
+    flex-direction: column;
+    border-radius: 10px;
+    align-items: center;
+    gap: 10px;
+    padding: 0 15px;
+}
+
+.Authorize__Login {
+    color:black;
+    margin: 0;
+}
+
+
+.Authorize__SingUp {
+    color: rgba(41, 38, 38, 0.85);
+    margin: 0;
+}
+.Authorize__LoginLabel {
+
+}
+
+.Authorized {
+    padding: 20px;
+}
+
+.Account {
+    margin: 0;
+    font-size: 20px;
+}
+
+.Account__Name {
+    margin: 0;
+    font-size: 20px;
+}

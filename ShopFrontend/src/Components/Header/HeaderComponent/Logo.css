@@ -1,0 +1,40 @@
+.Logo {
+  /* Your CSS styles here */
+}
+.Header__Logo {
+    display: flex;
+    flex-direction: column;
+
+
+}
+
+.Header__Logo__DiscoverPremiumContainer {
+    display: flex;
+    flex-direction: row;
+    gap: 4px;
+}
+
+.header__logo_Prem {
+    text-shadow: 1px 1px 1px #d5650e;
+    color: #d5650e;
+    cursor: pointer;
+    margin: 0;
+    text-align: end;
+}
+.header__logo_Prem:hover {
+    box-shadow: inset 0 -1px 0 #d5650e;
+}
+.header__logo_Discover {
+    color: black;
+
+    margin: 0;
+}
+
+.Header__logo_name {
+    cursor:pointer;
+    text-align: end;
+    font-size: 25px;
+    text-shadow: 1px 1px 1px #d5650e;
+    color: #d5650e;
+    margin: 0;
+}

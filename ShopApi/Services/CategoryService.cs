@@ -11,25 +11,30 @@ using Models;
 using Models.Common;
 using Shared.Cache;
 using UpdateCategoryDto=Dtos.Category.UpdateCategoryDto;
+
 public interface ICategoryService {
     Response<IQueryable<ReadCategoryDto>> GetQueryCategories();
     Task<Response<List<ReadCategoryDto>>> GetCategoriesAsync();
+    Task<Response<List<ReadCategoryDto>>> GetCategoriesAsync(QueryObject queryObject);
     Task<Response<ReadCategoryDto?>> GetCategoryByIdAsync(int id);
     Task<Response<ReadCategoryDto>> GetCategoryBySlugAsync(string slug);
-    Task<Response<List<ReadCategoryDto>>> GetCategoriesAsync(QueryObject queryObject);
     Task<Response<ReadCategoryDto>> CreateCategoryAsync(CreateCategoryDto createCategoryDto);
+    Task<List<ReadCategoryDto>> GetSubCategories(int categoryId);
+    Task<List<Category>> GetParentCategories(int categoryId);
     Task<Response<ReadCategoryDto>> UpdateCategoryAsync(int id, UpdateCategoryDto dto);
     Task<Response<ReadCategoryDto>> DeleteCategoryAsync(int id);
     Task<Response<bool>> CategoryExistAsync(int id);
 }
+
 public class CategoryService : ICategoryService {
     readonly IMapper _mapper;
+
     readonly AppDbContext _context;
     readonly ICategoryRepository _categoryRepository;
     readonly IMemoryCache _memoryCache;
     readonly IUnitOfWork _unitOfWork;
     readonly ILogger<CategoryService> _logger;
-    public CategoryService(IMapper mapper, AppDbContext context,ICategoryRepository categoryRepository,IMemoryCache memoryCache,IUnitOfWork unitOfWork,ILogger<CategoryService> logger) {
+    public CategoryService(IMapper mapper, AppDbContext context, ICategoryRepository categoryRepository, IMemoryCache memoryCache, IUnitOfWork unitOfWork, ILogger<CategoryService> logger) {
         _mapper = mapper;
         _context = context;
         _categoryRepository = categoryRepository;
@@ -38,11 +43,11 @@ public class CategoryService : ICategoryService {
         _logger = logger;
     }
 
-    public  Response<IQueryable<ReadCategoryDto>> GetQueryCategories() {
+    public Response<IQueryable<ReadCategoryDto>> GetQueryCategories() {
         try
         {
             var queryCategories = _categoryRepository.GetQuery();
-            IQueryable<ReadCategoryDto> readCategoryDtosQuery= _mapper.Map<IQueryable<ReadCategoryDto>>(queryCategories);
+            IQueryable<ReadCategoryDto> readCategoryDtosQuery = _mapper.Map<IQueryable<ReadCategoryDto>>(queryCategories);
             return new Response<IQueryable<ReadCategoryDto>>(readCategoryDtosQuery);
         }
         catch (Exception ex)
@@ -59,6 +64,7 @@ public class CategoryService : ICategoryService {
                 return _categoryRepository.GetAsync();
             });
             List<ReadCategoryDto> readCategoryDtos = _mapper.Map<List<ReadCategoryDto>>(categories);
+            foreach (var readCategoryDto in readCategoryDtos) { readCategoryDto.SubCategories = await GetSubCategoriesRecursive(readCategoryDto.Id); }
             return new Response<List<ReadCategoryDto>>(readCategoryDtos);
         }
         catch (Exception ex)
@@ -67,10 +73,26 @@ public class CategoryService : ICategoryService {
             return new Response<List<ReadCategoryDto>>($"An error occurred while fetching Categories: {ex.Message}");
         }
     }
+    private async Task<List<ReadCategoryDto>> GetSubCategoriesRecursive(int id) {
+        var subCategories = await _categoryRepository.GetAsync();
+           
+        var a=  subCategories.Where(c => c.ParentId == id).ToList();
+        
+        List<ReadCategoryDto> subCategoryDtos = new List<ReadCategoryDto>();
+
+        foreach (var subCategory in a)
+        {
+            var subCategoryDto = _mapper.Map<ReadCategoryDto>(subCategory);
+            subCategoryDto.SubCategories = await GetSubCategoriesRecursive(subCategory.Id);// Alt kategorilerini al
+            subCategoryDtos.Add(subCategoryDto);
+        }
+
+        return subCategoryDtos;
+    }
     public async Task<Response<ReadCategoryDto?>> GetCategoryByIdAsync(int id) {
         try
         {
-            Category? category= await _categoryRepository.GetTByIdAsync(id);
+            Category? category = await _categoryRepository.GetTByIdAsync(id);
 
             if (category == null) { return new Response<ReadCategoryDto?>($"Category with id: {id} not found."); }
             ReadCategoryDto readCategoryDto = _mapper.Map<ReadCategoryDto>(category);
@@ -82,8 +104,8 @@ public class CategoryService : ICategoryService {
             return new Response<ReadCategoryDto?>($"An error occurred: {ex.Message}");
         }
     }
- 
-    public async Task<Response<ReadCategoryDto>> GetCategoryBySlugAsync(string slug) { 
+
+    public async Task<Response<ReadCategoryDto>> GetCategoryBySlugAsync(string slug) {
         try
         {
             var category = await _categoryRepository.GetTBySlugAsync(slug);
@@ -102,7 +124,7 @@ public class CategoryService : ICategoryService {
         try
         {
             IQueryable<ReadCategoryDto>? query = GetQueryCategories().Resource;
-           
+
             // Filtreleme ve sıralama işlemleri
             query = QueryableExtensions.ApplyFilter(query, queryObject.SortBy, queryObject.FilterBy);
             query = QueryableExtensions.ApplySorting(query, queryObject.SortBy, queryObject.IsDecSending);
@@ -123,45 +145,90 @@ public class CategoryService : ICategoryService {
         }
     }
     public async Task<Response<ReadCategoryDto>> CreateCategoryAsync(CreateCategoryDto createCategoryDto) {
-        var isMainCategoryExist = await _unitOfWork.MainCategoryRepository.AnyAsync(createCategoryDto.MainCategoryId);
-        if (!isMainCategoryExist)
-            return new Response<ReadCategoryDto>("MainCategory does not exist");
         try
         {
-            Category category = _mapper.Map<Category>(createCategoryDto);
+            if (createCategoryDto.ParentId != -1)
+            {
+                bool isParentCategoryExist = await _unitOfWork.CategoryRepository.AnyAsync(createCategoryDto.ParentId);
+                if (!isParentCategoryExist)
+                    return new Response<ReadCategoryDto>("Parent Category does not exist");
+            }
+
+            var category = _mapper.Map<Category>(createCategoryDto);
             category.Slug = SlugHelper.GenerateSlug(category.Name);
-          
+
             await _categoryRepository.CreateAsync(category);
             await _unitOfWork.CommitAsync();
+
+            await UpdateCategoryTreeAsync(category.Id, createCategoryDto.ParentId);
+
             _memoryCache.Remove(CacheKeys.CategoriesList);
-            ReadCategoryDto readCategoryDto = _mapper.Map<ReadCategoryDto>(category);
+
+            var readCategoryDto = _mapper.Map<ReadCategoryDto>(category);
             return new Response<ReadCategoryDto>(readCategoryDto);
+        }
+        catch (DbUpdateException dbEx)
+        {
+            _logger.LogError(dbEx, "Database error while saving category.");
+            return new Response<ReadCategoryDto>($"Database error: {dbEx.Message}");
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Could not save category.");
-            return new Response<ReadCategoryDto>($"An error occurred when saving the category: {ex.Message}");
+            return new Response<ReadCategoryDto>($"An unexpected error occurred: {ex.Message}");
         }
     }
-    public async Task<Response<ReadCategoryDto>> UpdateCategoryAsync(int id, UpdateCategoryDto dto) 
-    {
-        var existingCategory = await _categoryRepository.GetTByIdAsync(id);
-        if (existingCategory == null) 
+
+    private async Task UpdateCategoryTreeAsync(int categoryId, int parentId = -1) {
+        _context.CategoryTrees.Add(new CategoryTree
         {
-            return new Response<ReadCategoryDto>($"Category with id: {id} not found.");
+            AncestorId = categoryId, DescendantId = categoryId, Depth = 0
+        });
+
+        if (parentId != -1)
+        {
+            var parentRelations = await _context.CategoryTrees
+                .Where(ct => ct.DescendantId == parentId)
+                .ToListAsync();
+
+            foreach (var relation in parentRelations)
+            {
+                _context.CategoryTrees.Add(new CategoryTree
+                {
+                    AncestorId = relation.AncestorId, DescendantId = categoryId, Depth = relation.Depth + 1
+                });
+            }
         }
+
+        await _unitOfWork.CommitAsync();
+    }
+    public async Task<List<ReadCategoryDto>> GetSubCategories(int categoryId) {
+        var categories = await _context.CategoryTrees
+            .Where(ct => ct.AncestorId == categoryId && ct.Depth > 0)
+            .Select(ct => ct.Descendant)
+            .ToListAsync();
+        var readCategoryDtos = _mapper.Map<List<ReadCategoryDto>>(categories);
+        return readCategoryDtos;
+    }
+
+    public async Task<List<Category>> GetParentCategories(int categoryId) {
+        return await _context.CategoryTrees
+            .Where(ct => ct.DescendantId == categoryId && ct.Depth > 0)
+            .Select(ct => ct.Ancestor)
+            .ToListAsync();
+    }
+    public async Task<Response<ReadCategoryDto>> UpdateCategoryAsync(int id, UpdateCategoryDto dto) {
+        var existingCategory = await _categoryRepository.GetTByIdAsync(id);
+        if (existingCategory == null) { return new Response<ReadCategoryDto>($"Category with id: {id} not found."); }
 
         try
         {
             _mapper.Map(dto, existingCategory);
 
-            if (!string.IsNullOrEmpty(dto.Name)) 
-            {
-                existingCategory.Slug = SlugHelper.GenerateSlug(existingCategory.Name);
-            }
+            if (!string.IsNullOrEmpty(dto.Name)) { existingCategory.Slug = SlugHelper.GenerateSlug(existingCategory.Name); }
 
             _categoryRepository.Update(existingCategory);
-        
+
             await _unitOfWork.CommitAsync();
 
             _memoryCache.Remove(CacheKeys.CategoriesList);
@@ -176,7 +243,7 @@ public class CategoryService : ICategoryService {
         }
     }
     public async Task<Response<ReadCategoryDto>> DeleteCategoryAsync(int id) {
-        
+
         var existCategory = await _categoryRepository.GetTByIdAsync(id);
         if (existCategory == null) return new Response<ReadCategoryDto>("Category not found.");
         try
@@ -201,20 +268,37 @@ public class CategoryService : ICategoryService {
 
             if (exists)
             {
-                return new Response<bool>(true); // Ürün bulunduysa başarılı cevap döndür
+                return new Response<bool>(true);// Ürün bulunduysa başarılı cevap döndür
             }
             else
             {
-                return new Response<bool>(false); // Ürün bulunmadıysa başarısız cevap döndür
+                return new Response<bool>(false);// Ürün bulunmadıysa başarısız cevap döndür
             }
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "An error occurred while checking if Category exists.");
-            return new Response<bool>($"An error occurred while checking if Category exists: {ex.Message}"); // Hata mesajı döndür
+            return new Response<bool>($"An error occurred while checking if Category exists: {ex.Message}");// Hata mesajı döndür
         }
     }
-   
-  
-}
+    // public async Task<Response<List<ReadCategoryDto>>> GetSubcategoriesByMainCategory(int id) {
+    //     try
+    //     {
+    //         var subCategory = await _context.Categories
+    //             .Where(c => c.ParentId == id)
+    //             
+    //             .ToListAsync();;
+    //         
+    //         if (subCategory.Count == 0) { return new Response<List<ReadCategoryDto>>($"Category with  not found."); }
+    //         List<ReadCategoryDto> readCategoryDto = _mapper.Map<List<ReadCategoryDto>>(subCategory);
+    //         return new Response<List<ReadCategoryDto>>(readCategoryDto);
+    //     }
+    //     catch (Exception ex)
+    //     {
+    //         _logger.LogError(ex, "An error occurred while fetching Category by slug.");
+    //         return new  Response<List<ReadCategoryDto>>($"An error occurred: {ex.Message}");
+    //     }
+    // }
 
+
+}

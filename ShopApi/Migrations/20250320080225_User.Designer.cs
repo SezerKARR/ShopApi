@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ShopApi.Data;
 
@@ -10,9 +11,11 @@ using ShopApi.Data;
 namespace ShopApi.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250320080225_User")]
+    partial class User
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -89,46 +92,20 @@ namespace ShopApi.Migrations
 
                     MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int?>("MainCategoryId")
-                        .HasColumnType("int");
-
                     b.Property<string>("Name")
                         .HasColumnType("longtext");
-
-                    b.Property<int?>("ParentCategoryId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("ParentId")
-                        .HasColumnType("int");
 
                     b.Property<string>("Slug")
                         .HasColumnType("longtext");
 
+                    b.Property<int?>("mainCategoryId")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
-                    b.HasIndex("MainCategoryId");
-
-                    b.HasIndex("ParentCategoryId");
+                    b.HasIndex("mainCategoryId");
 
                     b.ToTable("Categories");
-                });
-
-            modelBuilder.Entity("ShopApi.Models.CategoryTree", b =>
-                {
-                    b.Property<int>("AncestorId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("DescendantId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Depth")
-                        .HasColumnType("int");
-
-                    b.HasKey("AncestorId", "DescendantId");
-
-                    b.HasIndex("DescendantId");
-
-                    b.ToTable("CategoryTrees");
                 });
 
             modelBuilder.Entity("ShopApi.Models.Comment", b =>
@@ -256,32 +233,7 @@ namespace ShopApi.Migrations
                 {
                     b.HasOne("ShopApi.Models.MainCategory", null)
                         .WithMany("Categories")
-                        .HasForeignKey("MainCategoryId");
-
-                    b.HasOne("ShopApi.Models.Category", "ParentCategory")
-                        .WithMany("SubCategories")
-                        .HasForeignKey("ParentCategoryId");
-
-                    b.Navigation("ParentCategory");
-                });
-
-            modelBuilder.Entity("ShopApi.Models.CategoryTree", b =>
-                {
-                    b.HasOne("ShopApi.Models.Category", "Ancestor")
-                        .WithMany()
-                        .HasForeignKey("AncestorId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("ShopApi.Models.Category", "Descendant")
-                        .WithMany()
-                        .HasForeignKey("DescendantId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Ancestor");
-
-                    b.Navigation("Descendant");
+                        .HasForeignKey("mainCategoryId");
                 });
 
             modelBuilder.Entity("ShopApi.Models.Product", b =>
@@ -301,8 +253,6 @@ namespace ShopApi.Migrations
             modelBuilder.Entity("ShopApi.Models.Category", b =>
                 {
                     b.Navigation("Products");
-
-                    b.Navigation("SubCategories");
                 });
 
             modelBuilder.Entity("ShopApi.Models.MainCategory", b =>

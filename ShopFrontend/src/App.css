@@ -37,7 +37,14 @@
   color: #888;
 }
 
+@media screen and (-ms-high-contrast: active) {
+  /* High contrast styles */
+}
 
+/* New way - Forced Colors Mode */
+@media (forced-colors: active) {
+  /* High contrast styles */
+}
 
 
 

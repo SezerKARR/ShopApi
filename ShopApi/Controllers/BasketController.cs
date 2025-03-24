@@ -21,7 +21,7 @@ public class BasketController :ControllerBase {
         }
         return BadRequest(response.Message);
     }
-    [HttpPost]
+    [HttpGet("Basket")]
     public async Task<ActionResult<ReadBasketDto>> GetBasket([FromBody] CreateBasketDto createBasketDto) {
         
         var response = await _basketService.GetBasketAsync(createBasketDto);

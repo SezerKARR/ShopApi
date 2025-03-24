@@ -1,0 +1,27 @@
+.Location {
+  /* Your CSS styles here */
+}
+.Location {
+    cursor: pointer;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 10px;
+}
+
+.Location__Name__Container {
+    display: flex;
+    flex-direction: column;
+}
+
+.Location__Label {
+    font-size: 20px;
+    color: #040000;
+    margin: 0;
+}
+
+.LocationSelect__Label {
+    margin: 0;
+    font-size: 20px;
+    color: #da772a;
+}

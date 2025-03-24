@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ShopApi.Data;
 
@@ -10,9 +11,11 @@ using ShopApi.Data;
 namespace ShopApi.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250322093545_CategoryTree")]
+    partial class CategoryTree
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -95,20 +98,12 @@ namespace ShopApi.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("longtext");
 
-                    b.Property<int?>("ParentCategoryId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("ParentId")
-                        .HasColumnType("int");
-
                     b.Property<string>("Slug")
                         .HasColumnType("longtext");
 
                     b.HasKey("Id");
 
                     b.HasIndex("MainCategoryId");
-
-                    b.HasIndex("ParentCategoryId");
 
                     b.ToTable("Categories");
                 });
@@ -257,12 +252,6 @@ namespace ShopApi.Migrations
                     b.HasOne("ShopApi.Models.MainCategory", null)
                         .WithMany("Categories")
                         .HasForeignKey("MainCategoryId");
-
-                    b.HasOne("ShopApi.Models.Category", "ParentCategory")
-                        .WithMany("SubCategories")
-                        .HasForeignKey("ParentCategoryId");
-
-                    b.Navigation("ParentCategory");
                 });
 
             modelBuilder.Entity("ShopApi.Models.CategoryTree", b =>
@@ -301,8 +290,6 @@ namespace ShopApi.Migrations
             modelBuilder.Entity("ShopApi.Models.Category", b =>
                 {
                     b.Navigation("Products");
-
-                    b.Navigation("SubCategories");
                 });
 
             modelBuilder.Entity("ShopApi.Models.MainCategory", b =>

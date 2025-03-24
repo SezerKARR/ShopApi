@@ -1,4 +1,3 @@
-using dotenv.net;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using ShopApi.Data;
@@ -6,39 +5,55 @@ using ShopApi.Helpers;
 using ShopApi.Interface;
 using ShopApi.Repository;
 using ShopApi.Services;
+using DotNetEnv;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.Google;
 
 var builder = WebApplication.CreateBuilder(args);
-DotEnv.Load();
-var connectionString = $"Host={Environment.GetEnvironmentVariable("DB_HOST")};" +
-                       $"Port={Environment.GetEnvironmentVariable("DB_PORT")};" +
-                       $"Database={Environment.GetEnvironmentVariable("DB_NAME")};" +
-                       $"Username={Environment.GetEnvironmentVariable("DB_USER")};" +
-                       $"Password={Environment.GetEnvironmentVariable("DB_PASSWORD")};";
+
+Env.Load(".env.development");
+
+var connectionString = $"Host={Env.GetString("DB_HOST")};" +
+                       $"Port={Env.GetString("DB_PORT")};" +
+                       $"Database={Env.GetString("DB_NAME")};" +
+                       $"Username={Env.GetString("DB_USER")};" +
+                       $"Password={Env.GetString("DB_PASSWORD")};";
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
 
+
+builder.Services.AddAuthentication(options => {
+        options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+        options.DefaultChallengeScheme = GoogleDefaults.AuthenticationScheme;
+    }).AddCookie()
+    .AddGoogle(GoogleDefaults.AuthenticationScheme, options => {
+        options.ClientId = Env.GetString("GOOGLE_CLIENT_ID");
+        options.ClientSecret = Env.GetString("GOOGLE_CLIENT_SECRET");
+    });
+
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowAll", policy =>
-    {
-        policy.AllowAnyOrigin()
-            .AllowAnyMethod()
-            .AllowAnyHeader();
-    });
+    options.AddPolicy("configurePolicy", configurePolicy =>
+            configurePolicy.WithOrigins("http://localhost:5173")
+        .AllowAnyMethod()
+        .AllowAnyHeader()
+        .AllowCredentials());
 });
+
+
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(option =>
 {
     option.SwaggerDoc("v1", new OpenApiInfo { Title = "Demo API", Version = "v1" });
-    option.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    // Remove JWT security definition and requirement for Google authentication
+    option.AddSecurityDefinition("Google", new OpenApiSecurityScheme
     {
         In = ParameterLocation.Header,
-        Description = "Please enter a valid token",
+        Description = "Please log in using Google",
         Name = "Authorization",
         Type = SecuritySchemeType.Http,
-        BearerFormat = "JWT",
         Scheme = "Bearer"
     });
     option.AddSecurityRequirement(new OpenApiSecurityRequirement
@@ -49,7 +64,7 @@ builder.Services.AddSwaggerGen(option =>
                 Reference = new OpenApiReference
                 {
                     Type = ReferenceType.SecurityScheme,
-                    Id = "Bearer"
+                    Id = "Google"
                 }
             },
             new string[] { }
@@ -58,6 +73,7 @@ builder.Services.AddSwaggerGen(option =>
 });
 builder.Services.AddMemoryCache();
 builder.Services.AddAutoMapper(typeof(MapperProfiles));
+builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IBasketItemService, BasketItemService>();
 builder.Services.AddScoped<IBasketItemRepository, BasketItemRepository>();
 builder.Services.AddScoped<IBasketRepository, BasketRepository>();
@@ -74,14 +90,21 @@ builder.Services.AddScoped<IMainCategoryRepository, MainCategoryRepository>();
 
 
 var app = builder.Build();
-app.UseCors("AllowAll");
+app.UseCors("configurePolicy");
+app.Use(async (context, next) =>
+{
+    context.Response.Headers["Cross-Origin-Opener-Policy"] = "same-origin-allow-popups";  // Popup'lara izin ver
+    context.Response.Headers["Cross-Origin-Embedder-Policy"] = "require-corp";  // COEP başlığını da ayarlıyoruz
+    await next();
+});
 app.UseRouting();
-// Configure the HTTP request pipeline.
 app.UseSwagger();
 app.UseSwaggerUI();
 
-app.UseHttpsRedirection();  // Apply it globally
+app.UseHttpsRedirection();  
+app.UseHttpsRedirection();  
 
+app.UseAuthentication();
 
 app.UseAuthorization();
 app.MapControllers();

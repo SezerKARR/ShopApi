@@ -1,0 +1,41 @@
+.Basket {
+  /* Your CSS styles here */
+}
+.BasketCircle {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    border: 1px solid white;
+    background-color: #ff6347;
+    color: white;
+    font-size: 15px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0;
+}
+.Basket__Container {
+    background-color: #888888;
+    padding:10px;
+    gap:10px;
+    border-radius: 15px;
+    cursor:pointer;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    position: relative;
+    border: 1px solid #ccc;
+}
+
+.Basket__MyBasket {
+    margin: 0;
+    font-size: 20px;
+}
+
+.Basket__Cart {
+    position: relative;
+    padding: 1px;
+}
