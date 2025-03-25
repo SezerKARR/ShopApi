@@ -9,7 +9,9 @@ public interface IUnitOfWork
     IProductRepository ProductRepository { get; }
     ICategoryRepository CategoryRepository { get; }
     ICommentRepository CommentRepository { get; }
+    IFilterRepository FilterRepository { get; }
     IMainCategoryRepository MainCategoryRepository { get; }
+    IFilterValueRepository FilterValueRepository { get; }
     Task<bool> CommitAsync();
 }
 public class UnitOfWork :IUnitOfWork{
@@ -17,12 +19,18 @@ public class UnitOfWork :IUnitOfWork{
     public IProductRepository ProductRepository { get; }
     public ICategoryRepository CategoryRepository { get; }
     public ICommentRepository CommentRepository { get; }
+    public IFilterRepository FilterRepository { get; }
     public IMainCategoryRepository MainCategoryRepository { get; }
-    public UnitOfWork(AppDbContext context, IProductRepository productRepository,ICommentRepository commentRepository,ICategoryRepository categoryRepository, IMainCategoryRepository mainCategoryRepository) {
+    public IFilterValueRepository FilterValueRepository { get; }
+    public UnitOfWork(AppDbContext context, IProductRepository productRepository,ICommentRepository commentRepository,
+        ICategoryRepository categoryRepository, IMainCategoryRepository mainCategoryRepository, IFilterRepository filterRepository,
+        IFilterValueRepository filterValueRepository) {
         _context = context;
         ProductRepository = productRepository;
         CategoryRepository = categoryRepository;
         MainCategoryRepository = mainCategoryRepository;
+        FilterRepository = filterRepository;
+        FilterValueRepository = filterValueRepository;
         CommentRepository = commentRepository;
     }
 

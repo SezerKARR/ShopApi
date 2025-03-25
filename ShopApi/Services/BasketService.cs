@@ -76,7 +76,7 @@ public class BasketService : IBasketService {
         {
             List<Basket>? baskets = await _memoryCache.GetOrCreateAsync(CacheKeys.BasketList, entry => {
                 entry.AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(1);
-                return _basketRepository.GetAsync();
+                return _basketRepository.GetAllAsync();
             });
             List<ReadBasketDto> readBasketDtos = _mapper.Map<List<ReadBasketDto>>(baskets);
             return new Response<List<ReadBasketDto>>(readBasketDtos);

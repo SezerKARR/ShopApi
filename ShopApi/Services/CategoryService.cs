@@ -61,7 +61,7 @@ public class CategoryService : ICategoryService {
         {
             List<Category>? categories = await _memoryCache.GetOrCreateAsync(CacheKeys.CategoriesList, entry => {
                 entry.AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(1);
-                return _categoryRepository.GetAsync();
+                return _categoryRepository.GetAllAsync();
             });
             List<ReadCategoryDto> readCategoryDtos = _mapper.Map<List<ReadCategoryDto>>(categories);
             foreach (var readCategoryDto in readCategoryDtos) { readCategoryDto.SubCategories = await GetSubCategoriesRecursive(readCategoryDto.Id); }
@@ -74,7 +74,7 @@ public class CategoryService : ICategoryService {
         }
     }
     private async Task<List<ReadCategoryDto>> GetSubCategoriesRecursive(int id) {
-        var subCategories = await _categoryRepository.GetAsync();
+        var subCategories = await _categoryRepository.GetAllAsync();
            
         var a=  subCategories.Where(c => c.ParentId == id).ToList();
         
@@ -95,7 +95,7 @@ public class CategoryService : ICategoryService {
             Category? category = await _categoryRepository.GetTByIdAsync(id);
 
             if (category == null) { return new Response<ReadCategoryDto?>($"Category with id: {id} not found."); }
-            // var products = await _unitOfWork.ProductRepository.GetAsync();
+            // var products = await _unitOfWork.ProductRepository.GetAllAsync();
             // foreach (var product in products)
             // {
             //     if(product.CategoryId == category.Id) { category.Products.Add(product); }

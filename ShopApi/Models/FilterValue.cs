@@ -1,6 +1,8 @@
 namespace ShopApi.Models;
 
-public class FilterValue {
-    public int Id { get; set; }
+using Abstracts;
+
+public class FilterValue:BaseEntity {
     public string? Value { get; set; }
+    public int? FilterId { get; set; }
 }

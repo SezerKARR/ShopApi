@@ -34,7 +34,7 @@ public class MainCategoryService:IMainCategoryService {
         {
             var mainCategories = await _memoryCache.GetOrCreateAsync(CacheKeys.MainCategoryList, entry => {
                 entry.AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(1);
-                return _mainCategoryRepository.GetAsync();
+                return _mainCategoryRepository.GetAllAsync();
             });
             if (mainCategories == null)
             {

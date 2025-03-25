@@ -35,7 +35,7 @@ public abstract class BaseRepository<T> : IRepository<T> where T : BaseEntity
         return await Queryable.FirstOrDefaultAsync(x => x.Slug == slug);
     }
 
-    public async Task<List<T>> GetAsync()
+    public async Task<List<T>> GetAllAsync()
     {
         return await Queryable.ToListAsync();
     }

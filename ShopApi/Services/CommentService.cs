@@ -35,7 +35,7 @@ public class CommentService : ICommentService {
         {
             List<Comment>? comments = await _memoryCache.GetOrCreateAsync(CacheKeys.CategoriesList, entry => {
                 entry.AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(1);
-                return _commentRepository.GetAsync();
+                return _commentRepository.GetAllAsync();
             });
             List<ReadCommentDto> readCommentDtos = _mapper.Map<List<ReadCommentDto>>(comments);
 

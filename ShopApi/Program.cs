@@ -87,8 +87,9 @@ builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 builder.Services.AddScoped<ICommentRepository, CommentRepository>();
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddScoped<IMainCategoryRepository, MainCategoryRepository>();
-
-
+builder.Services.AddScoped<IFilterRepository, FilterRepository>();
+builder.Services.AddScoped<IFilterService, FilterService>();
+builder.Services.AddScoped<IFilterValueRepository, FilterValueRepository>();
 var app = builder.Build();
 app.UseCors("configurePolicy");
 app.Use(async (context, next) =>

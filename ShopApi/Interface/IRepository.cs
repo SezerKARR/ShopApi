@@ -8,7 +8,7 @@ public interface IRepository<T> where T : class,IEntity {
 
         Task<T?> GetTBySlugAsync(string slug);
 
-        Task<List<T>> GetAsync();
+        Task<List<T>> GetAllAsync();
 
         Task CreateAsync(T entity);
         Task<bool> AnyAsync(int id);

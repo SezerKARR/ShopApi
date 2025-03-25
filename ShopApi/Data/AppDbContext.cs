@@ -25,7 +25,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
             .HasOne<Basket>()
             .WithMany(basket=>basket.BasketItems)
             .HasForeignKey(basketItem => basketItem.BasketId);
-        
+        builder.Entity<FilterValue>().HasOne<Filter>().WithMany(f => f.Values).HasForeignKey(f => f.FilterId);
         // builder.Entity<Category>()
         //     .HasOne<MainCategory>()
         //     .WithMany(mainCategory=>mainCategory.Categories)

@@ -45,7 +45,7 @@ public class ProductService : IProductService {
         {
             var products = await _memoryCache.GetOrCreateAsync(CacheKeys.ProductsList, entry => {
                 entry.AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(1);
-                return _productRepository.GetAsync();
+                return _productRepository.GetAllAsync();
             });
             if (products == null)
             {
