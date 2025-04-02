@@ -13,7 +13,7 @@ using Shared.Cache;
 using UpdateCategoryDto=Dtos.Category.UpdateCategoryDto;
 
 public interface ICategoryService {
-    Response<IQueryable<ReadCategoryDto>> GetQueryCategories();
+    Response<IQueryable<ReadCategoryDto>?> GetQueryCategories();
     Task<Response<List<ReadCategoryDto>>> GetCategoriesAsync();
     Task<Response<List<ReadCategoryDto>>> GetCategoriesAsync(QueryObject queryObject);
     Task<Response<ReadCategoryDto?>> GetCategoryByIdAsync(int id);
@@ -43,28 +43,31 @@ public class CategoryService : ICategoryService {
         _logger = logger;
     }
 
-    public Response<IQueryable<ReadCategoryDto>> GetQueryCategories() {
+    public Response<IQueryable<ReadCategoryDto>?> GetQueryCategories() {
         try
         {
             var queryCategories = _categoryRepository.GetQuery();
             IQueryable<ReadCategoryDto> readCategoryDtosQuery = _mapper.Map<IQueryable<ReadCategoryDto>>(queryCategories);
-            return new Response<IQueryable<ReadCategoryDto>>(readCategoryDtosQuery);
+            return new Response<IQueryable<ReadCategoryDto>?>(readCategoryDtosQuery);
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "An error occurred while fetching product query.");
-            return new Response<IQueryable<ReadCategoryDto>>($"An error occurred while fetching product query: {ex.Message}");
+            return new Response<IQueryable<ReadCategoryDto>?>($"An error occurred while fetching product query: {ex.Message}");
         }
     }
     public async Task<Response<List<ReadCategoryDto>>> GetCategoriesAsync() {
         try
         {
-            List<Category>? categories = await _memoryCache.GetOrCreateAsync(CacheKeys.CategoriesList, entry => {
+            List<Category>? categories = await _memoryCache.GetOrCreateAsync(
+            CacheKeys.CategoriesList, async entry =>  
+            {
                 entry.AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(1);
-                return _categoryRepository.GetAllAsync();
+                var categories = await _categoryRepository.GetAllAsync();
+                return categories.Skip(1).ToList(); // İlk elemanı atla ve liste olarak döndür
             });
             List<ReadCategoryDto> readCategoryDtos = _mapper.Map<List<ReadCategoryDto>>(categories);
-            foreach (var readCategoryDto in readCategoryDtos) { readCategoryDto.SubCategories = await GetSubCategoriesRecursive(readCategoryDto.Id); }
+            // foreach (var readCategoryDto in readCategoryDtos) { readCategoryDto.SubCategories = await GetSubCategoriesRecursive(readCategoryDto.Id); }
             return new Response<List<ReadCategoryDto>>(readCategoryDtos);
         }
         catch (Exception ex)
@@ -73,7 +76,10 @@ public class CategoryService : ICategoryService {
             return new Response<List<ReadCategoryDto>>($"An error occurred while fetching Categories: {ex.Message}");
         }
     }
-    private async Task<List<ReadCategoryDto>> GetSubCategoriesRecursive(int id) {
+    private async Task<List<ReadCategoryDto>?> GetSubCategoriesRecursive(int id) {
+        if (id == 21) return null;
+        int b = 1;
+        Console.WriteLine(b);
         var subCategories = await _categoryRepository.GetAllAsync();
            
         var a=  subCategories.Where(c => c.ParentId == id).ToList();
@@ -130,7 +136,7 @@ public class CategoryService : ICategoryService {
     public async Task<Response<List<ReadCategoryDto>>> GetCategoriesAsync(QueryObject queryObject) {
         try
         {
-            IQueryable<ReadCategoryDto>? query = GetQueryCategories().Resource;
+            IQueryable<ReadCategoryDto>? query = (GetQueryCategories().Resource ?? throw new InvalidOperationException()).Skip(1);
 
             // Filtreleme ve sıralama işlemleri
             query = QueryableExtensions.ApplyFilter(query, queryObject.SortBy, queryObject.FilterBy);

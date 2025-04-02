@@ -11,6 +11,18 @@ namespace ShopApi.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropForeignKey(
+                name: "FK_Categories_Categories_ParentCategoryId",
+                table: "Categories");
+
+            migrationBuilder.DropIndex(
+                name: "IX_Categories_ParentCategoryId",
+                table: "Categories");
+
+            migrationBuilder.DropColumn(
+                name: "ParentCategoryId",
+                table: "Categories");
+
             migrationBuilder.CreateTable(
                 name: "Filters",
                 columns: table => new
@@ -18,6 +30,7 @@ namespace ShopApi.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     CategoryId = table.Column<int>(type: "int", nullable: false),
+                    Type = table.Column<int>(type: "int", nullable: true),
                     Name = table.Column<string>(type: "longtext", nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     Slug = table.Column<string>(type: "longtext", nullable: true)
@@ -36,7 +49,7 @@ namespace ShopApi.Migrations
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
-                name: "ProductFilterValue",
+                name: "ProductFilterValues",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -52,9 +65,9 @@ namespace ShopApi.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ProductFilterValue", x => x.Id);
+                    table.PrimaryKey("PK_ProductFilterValues", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_ProductFilterValue_Products_ProductId",
+                        name: "FK_ProductFilterValues_Products_ProductId",
                         column: x => x.ProductId,
                         principalTable: "Products",
                         principalColumn: "Id",
@@ -63,7 +76,7 @@ namespace ShopApi.Migrations
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
-                name: "FilterValue",
+                name: "FilterValues",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -78,9 +91,9 @@ namespace ShopApi.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_FilterValue", x => x.Id);
+                    table.PrimaryKey("PK_FilterValues", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_FilterValue_Filters_FilterId",
+                        name: "FK_FilterValues_Filters_FilterId",
                         column: x => x.FilterId,
                         principalTable: "Filters",
                         principalColumn: "Id");
@@ -98,13 +111,13 @@ namespace ShopApi.Migrations
                 column: "CategoryId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_FilterValue_FilterId",
-                table: "FilterValue",
+                name: "IX_FilterValues_FilterId",
+                table: "FilterValues",
                 column: "FilterId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ProductFilterValue_ProductId",
-                table: "ProductFilterValue",
+                name: "IX_ProductFilterValues_ProductId",
+                table: "ProductFilterValues",
                 column: "ProductId");
 
             migrationBuilder.AddForeignKey(
@@ -112,7 +125,8 @@ namespace ShopApi.Migrations
                 table: "Categories",
                 column: "ParentId",
                 principalTable: "Categories",
-                principalColumn: "Id");
+                principalColumn: "Id",
+                onDelete: ReferentialAction.SetNull);
         }
 
         /// <inheritdoc />
@@ -123,10 +137,10 @@ namespace ShopApi.Migrations
                 table: "Categories");
 
             migrationBuilder.DropTable(
-                name: "FilterValue");
+                name: "FilterValues");
 
             migrationBuilder.DropTable(
-                name: "ProductFilterValue");
+                name: "ProductFilterValues");
 
             migrationBuilder.DropTable(
                 name: "Filters");
@@ -134,6 +148,24 @@ namespace ShopApi.Migrations
             migrationBuilder.DropIndex(
                 name: "IX_Categories_ParentId",
                 table: "Categories");
+
+            migrationBuilder.AddColumn<int>(
+                name: "ParentCategoryId",
+                table: "Categories",
+                type: "int",
+                nullable: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Categories_ParentCategoryId",
+                table: "Categories",
+                column: "ParentCategoryId");
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_Categories_Categories_ParentCategoryId",
+                table: "Categories",
+                column: "ParentCategoryId",
+                principalTable: "Categories",
+                principalColumn: "Id");
         }
     }
 }

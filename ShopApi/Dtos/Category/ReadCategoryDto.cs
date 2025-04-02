@@ -9,6 +9,7 @@ public class ReadCategoryDto {
 
     public string? Name { get; set; }
     public int? ParentId { get; set; }
-    public List<ReadCategoryDto> SubCategories { get; set; } = new List<ReadCategoryDto>();
+    public List<ReadCategoryDto>? SubCategories { get; set; } = new List<ReadCategoryDto>();
     public List<Product> Products { get; set; } = new List<Product>();
+    // public List<Filter> Filters { get; set; } = new List<Filter>();
 }

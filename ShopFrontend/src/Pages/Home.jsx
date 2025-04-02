@@ -8,9 +8,11 @@ const Home = () => {
     const{setBasketCount,API_URL} =useGlobalContext();
     const [mainCategory, setMainCategory] = useState(null)
     useEffect(() => {
-        axios.get(`${API_URL}/api/main-category`)
+        axios.get(`${API_URL}/api/category`)
             .then(response => {
                 try {
+                   
+                    
                     if (!response.data || response.data.length === 0) {
                         console.log("main category not found");
                     }

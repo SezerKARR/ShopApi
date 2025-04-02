@@ -9,7 +9,6 @@
     <BuildOutputFolder>$(MSBuildProjectDirectory)\dist</BuildOutputFolder>
   </PropertyGroup>
   <ItemGroup>
-    <Folder Include="GlobalProvider\" />
     <Folder Include="packages\axios.0.16.2\Content\Scripts\" />
     <Folder Include="public\" />
   </ItemGroup>

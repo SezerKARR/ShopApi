@@ -11,7 +11,7 @@ using ShopApi.Data;
 namespace ShopApi.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250325061217_Filter")]
+    [Migration("20250325102736_Filter")]
     partial class Filter
     {
         /// <inheritdoc />
@@ -95,9 +95,6 @@ namespace ShopApi.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("longtext");
 
-                    b.Property<int?>("ParentCategoryId")
-                        .HasColumnType("int");
-
                     b.Property<int?>("ParentId")
                         .HasColumnType("int");
 
@@ -105,8 +102,6 @@ namespace ShopApi.Migrations
                         .HasColumnType("longtext");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("ParentCategoryId");
 
                     b.HasIndex("ParentId");
 
@@ -156,6 +151,9 @@ namespace ShopApi.Migrations
                     b.Property<string>("Slug")
                         .HasColumnType("longtext");
 
+                    b.Property<int?>("Type")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
                     b.HasIndex("CategoryId");
@@ -187,7 +185,7 @@ namespace ShopApi.Migrations
 
                     b.HasIndex("FilterId");
 
-                    b.ToTable("FilterValue");
+                    b.ToTable("FilterValues");
                 });
 
             modelBuilder.Entity("ShopApi.Models.Product", b =>
@@ -252,7 +250,7 @@ namespace ShopApi.Migrations
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("ProductFilterValue");
+                    b.ToTable("ProductFilterValues");
                 });
 
             modelBuilder.Entity("ShopApi.Models.User", b =>
@@ -299,12 +297,9 @@ namespace ShopApi.Migrations
             modelBuilder.Entity("ShopApi.Models.Category", b =>
                 {
                     b.HasOne("ShopApi.Models.Category", "ParentCategory")
-                        .WithMany()
-                        .HasForeignKey("ParentCategoryId");
-
-                    b.HasOne("ShopApi.Models.Category", null)
                         .WithMany("SubCategories")
-                        .HasForeignKey("ParentId");
+                        .HasForeignKey("ParentId")
+                        .OnDelete(DeleteBehavior.SetNull);
 
                     b.Navigation("ParentCategory");
                 });

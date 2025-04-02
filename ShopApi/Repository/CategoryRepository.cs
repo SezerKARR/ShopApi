@@ -12,7 +12,8 @@ public class CategoryRepository : BaseRepository<Category>, ICategoryRepository 
     }
     protected override IQueryable<Category> Include() {
         Console.WriteLine("CategoryRepository");
-        return _dbSet.Include(c => c.Products).AsQueryable().Include(c => c.SubCategories).Include(c => c.Filters);
+        return _dbSet.Include(c => c.Products).Include(c => c.SubCategories).
+            Include(c => c.Filters).AsQueryable();
     }
 
 

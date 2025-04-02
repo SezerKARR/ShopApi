@@ -21,6 +21,7 @@ const MainCategory = () => {
                     const filteredCategories = response.data.filter(category => category.parentId === -1);
                     setMainCategories(filteredCategories); // Filtrelenmiş kategorileri set et
                     setHoveredMainCategory(filteredCategories[2]);
+                    console.log(filteredCategories);
                 } catch (error) {
                     console.log(error);
                 }
@@ -51,8 +52,7 @@ const MainCategory = () => {
         );
     };
     const SelectedMainCategorya= () => {
-        
-       
+       console.log(mainCategories[2]);
         return (
           
             <div className="selected-main-category">
