@@ -16,7 +16,6 @@ const FilterItem = memo(({filter, onFilterChange, selectedValue}) => {
         />,
 
     };
-
     return (
         <div className="filter-item">
             <h4>{filter.name}</h4>

@@ -24,6 +24,13 @@ public class FilterController : ControllerBase {
         return BadRequest(response.Message);
 
     }
+    [HttpGet("{CategoryId}")]
+    public async Task<ActionResult<Filter>> GetFilterByCategoryId(int id) {
+        var response = await _filterService.GetFilterById(id);
+        if (response.Success) { return Ok(response.Resource); }
+        return BadRequest(response.Message);
+
+    }
     [HttpPost]
     public async Task<ActionResult<Filter>> CreateFilter([FromBody]Filter filter) {
         var response = await _filterService.CreateFilter(filter);

@@ -2,16 +2,16 @@ import React, { memo } from "react";
 
 const CheckboxFilter = memo(({ filter, onFilterChange, selectedOptions = {} }) => {
     const handleChange = (optionId, checked) => {
-        // Varolan seçimleri kopyalayarak yeni bir nesne oluşturuyoruz
+        
         const newSelectedOptions = {
+            
             ...selectedOptions,
             [optionId]: checked
         };
-
+       
         // Ana bileşene değişikliği bildiriyoruz
         onFilterChange(filter.id, newSelectedOptions);
     };
-
     return (
         <div className="checkbox-filter">
             {filter.values?.map(option => (

@@ -1,9 +1,10 @@
-import React, {useCallback, useEffect, useMemo, useState} from 'react';
+import React, { useEffect, useMemo, useRef, useState} from 'react';
 import './CategoryPage.css';
 import {useParams} from "react-router-dom";
 import {useGlobalContext} from "../../GlobalProvider.jsx";
 import axios from "axios";
 import FilterItem from "../Components/CategoryPage/Component/FilterItem.jsx";
+
 
 const CategoryPage = () => {
     const {slugAndId} = useParams();
@@ -14,9 +15,15 @@ const CategoryPage = () => {
     const [filters, setFilters] = useState([]);
     const [category, setCategory] = useState({});
     const [products, setProducts] = useState([]);
-    const [selectedFilters, setSelectedFilters] = useState({});
+
 
     useEffect(() => {
+        console.log(API_URL);
+        axios.get(`${API_URL}/api/product`).then((response) => {
+            console.log(response.data);
+        }).catch((error) => {
+            console.log(error);
+        })
         axios.get(`${API_URL}/api/category/${id}`)
             .then(response => {
                 try {
@@ -40,8 +47,7 @@ const CategoryPage = () => {
 
         })
     }, [slugAndId])
-    useEffect(() => {
-    }, [slugAndId])
+
     const productCountMessage = useMemo(() => {
         if (category.products?.length > 3) {
             return "3+ ürün listeleniyor"
@@ -52,37 +58,62 @@ const CategoryPage = () => {
         }
     }, [category]);
 
+    const [selectedFilters, setSelectedFilters] = useState({});
+
     const handleFilterChange = (filterType, value) => {
-        console.log(selectedFilters);
-        setSelectedFilters(prev => ({
-            ...prev,
-            [filterType]: value
-        }));
-        console.log(selectedFilters);
-    }
+        setTimeout(() => {
+            setSelectedFilters(prev => ({
+                ...prev,
+                [filterType]: value
+            }));
 
 
-    const FiltersColumn = useCallback(() => {
-        return (
-            <div className="category-filter-container">
-                <div>
-                    <a className="products-filter-count">{productCountMessage}</a>
-                </div>
-                {filters.map((filter) => (
+        }, 250);
+    };
+    useEffect(() => {
+        console.log("Tüm Filtreler:", selectedFilters);
+    }, [selectedFilters]);
+
+
+    const FiltersColumn = () => {
+        return (<div className="category-filter-container">
+            <div>
+                <a className="products-filter-count">{productCountMessage}</a>
+            </div>
+            {filters.map((filter) => {
+
+                return (
                     <FilterItem
                         key={filter.id}
                         filter={filter}
                         onFilterChange={handleFilterChange}
                         selectedValue={selectedFilters[filter.id]}
                     />
-                ))}
-            </div>
-        );
-    }, [filters, handleFilterChange, productCountMessage, selectedFilters]);
-    return <div>
-        <h1 className="category-name">{category.name} Prices And Models</h1>
-        <FiltersColumn/>
+                );
+            })}
 
-        Kategori: {slug} (ID: {id})</div>;
+        </div>);
+    }
+
+    function ProductsColumn() {
+        return (<div className={"products-container"}>
+            {products?.map((product) => (
+                <div key={product.id} className={"products-Container__product"}>
+                    {/*{console.log(product)}*/}
+                    <img src={`${product.imageurl}`}
+                         alt="Product image"/>
+
+                </div>
+            ))}
+        </div>)
+    }
+
+    return (<div>
+            <h1 className="category-name">{category.name} Prices And Models</h1>
+            <FiltersColumn/>
+            <ProductsColumn/>
+
+            Kategori: {slug} (ID: {id})</div>
+    )
 };
 export default CategoryPage;

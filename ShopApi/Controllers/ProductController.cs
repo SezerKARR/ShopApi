@@ -26,7 +26,7 @@ public class ProductController(IProductService productService) : Controller {
         }
         return BadRequest(product.Message);
     }
-    
+   
     [HttpPost]
     public async Task<ActionResult<ReadProductDto?>> CreateProduct(CreateProductDto createProductDto) {
         Console.WriteLine("Create Product");

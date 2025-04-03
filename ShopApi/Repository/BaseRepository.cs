@@ -22,7 +22,7 @@ public abstract class BaseRepository<T> : IRepository<T> where T : BaseEntity
 
     protected virtual IQueryable<T> Include() => _dbSet.AsQueryable();
 
-    public IQueryable<T>? GetQuery() => _queryable;
+    public IQueryable<T>? GetQuery() => Queryable;
 
     public async Task<T?> GetTByIdAsync(int id)
     {

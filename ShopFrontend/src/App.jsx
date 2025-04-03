@@ -3,8 +3,8 @@ import {BrowserRouter, BrowserRouter as Router, Route, Routes, useLocation} from
 import './App.css'
 import Header from "./Components/Header/Header.jsx";
 import Home from "./Pages/Home.jsx";
+import AdminHome from "./Admin/Pages/Home.jsx"
 import Login from "./Pages/Login.jsx";
-import Admin from "./Pages/Admin.jsx";
 import {GlobalProvider} from "../GlobalProvider.jsx";
 import CategoryPage from "./Pages/CategoryPage.jsx";
 import {FilterProvider} from "../GlobalProvider/FilterContext.jsx";
@@ -34,9 +34,11 @@ const App = () => {
                     <Routes>
                         <Route path="/" element={<Home/>}/>
                         <Route path="/login" element={<Login/>}/>
-                        <Route path="/admin" element={<Admin/>}/>
                         <Route path="/category/:slugAndId" element={<CategoryPage/>}/>
 
+
+                        {/* Admin Panel */}
+                        <Route path="/admin" element={<AdminHome/>}/>
                     </Routes>
                 </Layout>
             </GlobalProvider>

@@ -28,7 +28,7 @@
     right: 0;
     bottom: 0;
     background-color: #ccc;
-    transition: .4s;
+    transition: .2s;
 }
 
 .slider:before {

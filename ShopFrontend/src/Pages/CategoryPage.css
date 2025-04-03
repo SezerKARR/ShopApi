@@ -30,3 +30,8 @@
 .category-filter-container > *:not(:last-child) {
     border-bottom: 1px solid #ddd; 
 }
+
+.products-Container__product {
+    display:flex;
+    flex-direction: row;
+}

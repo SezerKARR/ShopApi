@@ -41,8 +41,8 @@ public static class FormManager {
         {
             file.CopyTo(stream);
         }
-
-        return filePath;
+        string asd = Path.Combine(folder, newFileName);
+        return asd;
     }
     public static List<string> Save(IList<IFormFile> files, string folder, FormTypes type) {
         List<string> urls = new List<string>();
