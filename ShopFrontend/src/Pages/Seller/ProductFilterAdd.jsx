@@ -4,8 +4,7 @@ import axios from "axios";
 import {useGlobalContext} from "../../../GlobalProvider.jsx";
 
 const ProductFilterAdd = () => {
-    const {API_URL} = useGlobalContext();
-    const [categories, setCategories] = useState([]);
+    const {API_URL,categories} = useGlobalContext();
     const [products, setProducts] = useState([]);
     const [selectedCategory, setSelectedCategory] = useState(null);
     const [filters, setFilters] = useState([])
@@ -23,16 +22,16 @@ const ProductFilterAdd = () => {
         }).catch(err => {
             console.log(err);
         })
-        axios.get(`${API_URL}/api/category`).then(response => {
-            try {
-                console.log(response.data);
-                setCategories(response.data);
-            } catch (e) {
-                console.log(e);
-            }
-        }).catch(err => {
-            console.log(err);
-        })
+        // axios.get(`${API_URL}/api/category`).then(response => {
+        //     try {
+        //         console.log(response.data);
+        //         setCategories(response.data);
+        //     } catch (e) {
+        //         console.log(e);
+        //     }
+        // }).catch(err => {
+        //     console.log(err);
+        // })
         axios.get(`${API_URL}/api/filter`).then(response => {
             try {
                 console.log(response.data);

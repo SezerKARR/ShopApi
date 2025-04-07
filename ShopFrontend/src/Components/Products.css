@@ -1,0 +1,49 @@
+.Products {
+    /* Your CSS styles here */
+}
+.products-container {
+    min-width: 800px;
+    width: 800px;
+    gap:15px;
+    padding: 10px;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+}
+
+.products-Container__product {
+    cursor: pointer;
+    display:flex;
+    max-width: 150px;
+    padding: 10px;
+    flex-direction: column;
+    height: 350px;
+    border: 1px solid #040000;
+    border-radius: 5px;
+}
+.products-Container__product:hover{
+    border: 1px solid rgba(0, 0, 0, 0.85);
+}
+.products-Container__product-photo {
+    border: 1px solid #f61111;
+    width: 100%;
+    height: 220px;
+}
+
+.products-Container__product-name {
+}
+
+
+.products-Container__product-price {
+    padding: 5px 10px;
+    background-color: rgba(138, 141, 145, 0.59);
+    border-radius: 4px;
+    margin-top: auto;
+}
+
+
+.products-Container__product-price:hover {
+
+    background-color: #787e85;
+
+}

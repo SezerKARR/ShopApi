@@ -14,6 +14,7 @@ const CheckboxFilter = memo(({ filter, onFilterChange, selectedOptions = {} }) =
     };
     return (
         <div className="checkbox-filter">
+            <h4>{filter.name}</h4>
             {filter.values?.map(option => (
                 <div key={option.id} className="checkbox-option">
                     <input

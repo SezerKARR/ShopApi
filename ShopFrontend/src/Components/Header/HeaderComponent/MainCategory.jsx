@@ -4,33 +4,21 @@ import './MainCategory.css';
 import axios from "axios";
 import foto from "../../../../public/Foto.png"
 import {Link} from "react-router-dom";
+import {useGlobalContext} from "../../../../GlobalProvider.jsx";
 
 const MainCategory = () => {
     const navigate = useNavigate();
     const [mainCategories, setMainCategories] = useState(null)
     const [hoveredMainCategory, setHoveredMainCategory] = useState(null)
     const [a, seta] = useState(0)
-
-    const API_URL = import.meta.env.VITE_API_URL;
+    const {API_URL,categories}=useGlobalContext();
+   
     useEffect(() => {
-        axios.get(`${API_URL}/api/category`)
-            .then(response => {
-                try {
-                    if (!response.data || response.data.length === 0) {
-                        console.log("main category not found");
-                    }
-                    const filteredCategories = response.data.filter(category => category.parentId === -1);
-                    setMainCategories(filteredCategories); // Filtrelenmiş kategorileri set et
-                    // setHoveredMainCategory(filteredCategories[2]);
-                    console.log(filteredCategories);
-                } catch (error) {
-                    console.log(error);
-                }
-            })
-            .catch(error => {
-                console.error("Veri yüklenirken hata oluştu:", error);
-            });
-    }, []);
+        console.log(categories)
+        const filteredCategories = categories.filter(category => category.parentId === -1);
+        setMainCategories(filteredCategories);
+       
+    }, [categories]);
     const SelectedMainCategory = (mainCategory) => {
 
         return (

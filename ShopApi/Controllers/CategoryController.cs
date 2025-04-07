@@ -10,7 +10,6 @@ public class CategoryController(ICategoryService categoryService) : ControllerBa
     [HttpGet]
     public async Task<ActionResult<ReadCategoryDto>> GetCategories() {
         var response = await categoryService.GetCategoriesAsync();
-
         if (response.Success)
         {
             var categories = response.Resource;
@@ -22,6 +21,7 @@ public class CategoryController(ICategoryService categoryService) : ControllerBa
     }
     [HttpGet("{id:int}")]
     public async Task<ActionResult<ReadCategoryDto>> GetCategoryById([FromRoute] int id) {
+        Console.WriteLine("asdsad");
         var response = await categoryService.GetCategoryByIdAsync(id);
         if (response.Success)
         {

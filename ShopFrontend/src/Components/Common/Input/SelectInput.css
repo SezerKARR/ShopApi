@@ -1,0 +1,21 @@
+.SelectInput {
+  /* Your CSS styles here */
+}
+
+.Select {
+    display: flex;
+    flex-direction:column;
+    gap: 4px;
+    
+}
+
+.Select-label {
+    color: rgba(38, 38, 38, 1);
+}
+.null-main > *{
+    color: rgba(38, 38, 38, 0.45);
+}
+
+.SelectInput-Select {
+    width: 200px;
+}

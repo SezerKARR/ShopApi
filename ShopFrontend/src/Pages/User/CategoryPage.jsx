@@ -1,9 +1,13 @@
-import React, { useEffect, useMemo, useRef, useState} from 'react';
+import React, {useEffect, useMemo, useRef, useState} from 'react';
 import './CategoryPage.css';
 import {useParams} from "react-router-dom";
-import {useGlobalContext} from "../../GlobalProvider.jsx";
+import {useGlobalContext} from "../../../GlobalProvider.jsx";
 import axios from "axios";
-import FilterItem from "../Components/CategoryPage/Component/FilterItem.jsx";
+import FilterItem from "../../Components/CategoryPage/Component/FilterItem.jsx";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faStar} from "@fortawesome/free-solid-svg-icons";
+import Product from "../Seller/Product.jsx";
+import Products from "../../Components/Products.jsx";
 
 
 const CategoryPage = () => {
@@ -95,25 +99,28 @@ const CategoryPage = () => {
         </div>);
     }
 
-    function ProductsColumn() {
-        return (<div className={"products-container"}>
-            {products?.map((product) => (
-                <div key={product.id} className={"products-Container__product"}>
-                    {/*{console.log(product)}*/}
-                    <img src={`${product.imageurl}`}
-                         alt="Product image"/>
+   
 
+
+    return (
+        <div className="CategoryPage">
+
+            <div>
+
+                <h1 className="category-name">{category.name} Prices And Models</h1>
+                <div className={"category-column-container"}>
+                    <div className="filters-sticky">
+                        <FiltersColumn/>
+                    </div>
+                    <div style={{flex: 1}}>
+                        <Products products={products}/>
+                    </div>
                 </div>
-            ))}
-        </div>)
-    }
 
-    return (<div>
-            <h1 className="category-name">{category.name} Prices And Models</h1>
-            <FiltersColumn/>
-            <ProductsColumn/>
 
-            Kategori: {slug} (ID: {id})</div>
+                Kategori: {slug} (ID: {id})
+            </div>
+        </div>
     )
 };
 export default CategoryPage;

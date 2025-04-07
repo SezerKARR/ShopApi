@@ -1,6 +1,5 @@
-using Microsoft.AspNetCore.Mvc;
 namespace ShopApi.Controllers;
-
+using Microsoft.AspNetCore.Mvc;
 using System.IdentityModel.Tokens.Jwt;
 using System.Text;
 using Google.Apis.Auth;
@@ -17,8 +16,22 @@ public class AuthController : ControllerBase {
     {
         _userService = userService;
     }
-   
- 
+
+    [HttpGet("{id:int}")]
+    public async Task<IActionResult> GetUser([FromRoute]int id) {
+        Console.WriteLine("asd");
+        try
+        {
+            var user = await _userService.GetUserByIdAsync(id);
+            return Ok(user);
+            
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
+    }
 
     [HttpPost]
     public async Task<IActionResult> GoogleLogin([FromHeader] string Authorization)

@@ -1,7 +1,7 @@
 import React, {memo} from "react";
 import CheckboxFilter from "./FilterType/CheckboxFilter.jsx";
 import ToggleFilter from "./FilterType/ToggleFilter.jsx";
-
+import './FilterItem.css';
 const FilterItem = memo(({filter, onFilterChange, selectedValue}) => {
     const filterComponents = {
         1: <ToggleFilter
@@ -17,8 +17,8 @@ const FilterItem = memo(({filter, onFilterChange, selectedValue}) => {
 
     };
     return (
-        <div className="filter-item">
-            <h4>{filter.name}</h4>
+        <div className="FilterItem">
+          
             {filterComponents[filter.type] || null}
         </div>
     );

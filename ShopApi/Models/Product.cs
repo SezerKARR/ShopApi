@@ -13,5 +13,6 @@ public class Product: BaseEntity{
     public string? ImageUrl { get; set; }
     public decimal Price { get; set; }
     public List<ProductFilterValue>? FilterValues { get; set; }
+    public int? SellerId { get; set; }
     
 }

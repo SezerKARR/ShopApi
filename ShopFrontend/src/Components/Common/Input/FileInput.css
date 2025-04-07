@@ -1,0 +1,21 @@
+.FileInput {
+    display: flex;
+    flex-direction: column;
+    /* Your CSS styles here */
+}
+.file-input-error{
+    color: red;   
+    font-size: 50px;
+}
+
+.file-error {
+    color: red;
+}
+.upload-button{
+    width: 100px;
+    background-color: #4CAF50;
+    color: white;
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+}

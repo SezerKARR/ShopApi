@@ -1,17 +1,15 @@
 
-/* Switch container */
 .toggle-container {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 8px; 
 }
 
 .toggle {
-    left:80%;
     position: relative;
     display: inline-block;
-    width: 60px;
-    height: 34px;
+    width: 50px;  
+    height: 28px; 
 }
 
 .toggle input {
@@ -34,8 +32,8 @@
 .slider:before {
     position: absolute;
     content: "";
-    height: 26px;
-    width: 26px;
+    height: 20px; 
+    width: 20px;  
     left: 4px;
     bottom: 4px;
     background-color: white;
@@ -51,17 +49,16 @@ input:focus + .slider {
 }
 
 input:checked + .slider:before {
-    transform: translateX(26px);
+    transform: translateX(22px); 
 }
 
 .slider.round {
-    border-radius: 34px;
+    border-radius: 28px;
 }
 
 .slider.round:before {
     border-radius: 50%;
 }
-
 
 .category-filter-container__Toggle {
     display: flex;

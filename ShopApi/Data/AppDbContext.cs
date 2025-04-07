@@ -37,6 +37,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
             .HasOne<Category>() 
             .WithMany(c => c.Products)
             .HasForeignKey(p => p.CategoryId);
+        builder.Entity<Product>().HasOne<User>().WithMany(u=>u.Products).HasForeignKey(u => u.SellerId);
     }
 
 }

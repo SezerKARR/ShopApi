@@ -1,0 +1,13 @@
+.Product {
+    display: flex;
+    flex-direction: row;
+  /* Your CSS styles here */
+}
+
+.product__addProduct {
+    height:100px;
+    width:300px;
+    background-color: rgba(86, 111, 165, 0.7);
+}.product__addProduct:hover {
+    background-color: rgba(86, 111, 165, 1);
+ }

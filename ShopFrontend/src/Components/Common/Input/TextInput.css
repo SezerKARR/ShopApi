@@ -1,0 +1,30 @@
+.TextInput {
+  /* Your CSS styles here */
+}
+
+.form-group {
+    width: 300px;
+    display: flex;          
+    flex-direction: column;
+}
+
+.formLabel {
+}
+.form-input {
+    all: unset;
+    width: 180px;
+    border: 1px solid black;
+    border-radius: 4px;
+}
+.form-input:focus {
+    
+   border-color: #646cff;
+    width: 180px;
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.3);
+}
+
+.input-error {
+   
+        border-color: #ef4444;
+   
+}

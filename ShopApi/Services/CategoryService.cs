@@ -59,6 +59,8 @@ public class CategoryService : ICategoryService {
     public async Task<Response<List<ReadCategoryDto>>> GetCategoriesAsync() {
         try
         {
+
+            _logger.LogWithLocation("Fetching categories");
             List<Category>? categories = await _memoryCache.GetOrCreateAsync(
             CacheKeys.CategoriesList, async entry =>  
             {
