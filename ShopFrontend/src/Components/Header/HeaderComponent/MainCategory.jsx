@@ -42,6 +42,11 @@ const MainCategory = () => {
         );
     };
     const menuRef = useRef(null);
+    const HandleCategoryClick = (category) => {
+        console.log(category);
+        navigate(`/category/${category.slug}-${category.id}`)
+        setHoveredMainCategory(null);
+    }
     const SelectedMainCategorya = ({mainCategory}) => {
         return (
             <div className="selected-main-category">
@@ -49,12 +54,12 @@ const MainCategory = () => {
                     {mainCategory?.subCategories?.map((subCategory) => (
                         <div key={subCategory.id} className="selected-main-category__subcategory">
                             <p className="selected-main-category__subcategory-name"
-                               onClick={() => navigate(`/category/${subCategory.slug}-${subCategory.id}`)}>
+                               onClick={() =>HandleCategoryClick(subCategory) }>
                                 {subCategory.name}
                             </p>
                             {subCategory.subCategories?.map((category) => (
                                 <p key={category.id}
-                                   onClick={() => navigate(`/category/${category.slug}-${category.id}`)}
+                                   onClick={() => HandleCategoryClick(category) }
                                    className="selected-main-category__category">
                                     {category.name}
                                 </p>
@@ -62,9 +67,7 @@ const MainCategory = () => {
                         </div>
                     ))}
                 </div>
-                <div className="selected-main-category__ad-container">
-                    <img alt="ad" src={foto} className="selected-main-category__ad-image"/>
-                </div>
+              
             </div>
         );
 

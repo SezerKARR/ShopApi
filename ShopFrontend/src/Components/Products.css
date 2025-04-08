@@ -36,6 +36,7 @@
 
 .products-Container__product-price {
     padding: 5px 10px;
+    color: black;
     background-color: rgba(138, 141, 145, 0.59);
     border-radius: 4px;
     margin-top: auto;
@@ -46,4 +47,9 @@
 
     background-color: #787e85;
 
+}
+
+.products-Container__product-price-Tl {
+    color: rgba(0, 0, 0, 0.81);
+    font-size: 12px;
 }

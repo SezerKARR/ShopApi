@@ -1,12 +1,11 @@
 import React, {useEffect, useMemo, useRef, useState} from 'react';
 import './CategoryPage.css';
-import {useParams} from "react-router-dom";
+import {Navigate, useNavigate, useParams} from "react-router-dom";
 import {useGlobalContext} from "../../../GlobalProvider.jsx";
 import axios from "axios";
 import FilterItem from "../../Components/CategoryPage/Component/FilterItem.jsx";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faStar} from "@fortawesome/free-solid-svg-icons";
-import Product from "../Seller/Product.jsx";
 import Products from "../../Components/Products.jsx";
 
 
@@ -19,8 +18,8 @@ const CategoryPage = () => {
     const [filters, setFilters] = useState([]);
     const [category, setCategory] = useState({});
     const [products, setProducts] = useState([]);
-
-
+    const navigate = useNavigate();
+    
     useEffect(() => {
         console.log(API_URL);
         axios.get(`${API_URL}/api/product`).then((response) => {
@@ -99,9 +98,11 @@ const CategoryPage = () => {
         </div>);
     }
 
-   
 
-
+    const handleProductClick = (product) => {
+        console.log(product);
+        navigate(`/product/${product.id}`);
+    }
     return (
         <div className="CategoryPage">
 
@@ -113,7 +114,7 @@ const CategoryPage = () => {
                         <FiltersColumn/>
                     </div>
                     <div style={{flex: 1}}>
-                        <Products products={products}/>
+                        <Products products={products} OnClickProduct={handleProductClick}/>
                     </div>
                 </div>
 

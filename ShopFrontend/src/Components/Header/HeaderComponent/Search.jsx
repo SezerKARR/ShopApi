@@ -5,16 +5,15 @@ import {faSearch} from "@fortawesome/free-solid-svg-icons";
 
 const Search = () => {
     return (
-        <div>
+        <div className="Search-container">
             <div className={'SearchOutline'}>
                 <div className={'SearchContainer'}>
-                    <div className={'Search'}>
+                    <div className={'search-container__search-icon'}>
                         <FontAwesomeIcon icon={faSearch}/>
                     </div>
                     <input className={'SearchBar'}/>
                 </div>
             </div>
-            <div className={'RelativeSearch'}></div>
         </div>
     );
 };

@@ -1,6 +1,9 @@
 .Authorize {
   /* Your CSS styles here */
 }
+.Authorize>*{
+    width: max-content;
+}
 .Authorize {
     border: rgba(51, 49, 49, 0.88) solid 1px;
     display: flex;

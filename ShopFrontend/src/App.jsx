@@ -9,6 +9,7 @@ import CategoryPage from "./Pages/User/CategoryPage.jsx";
 import ProductAdd from "./Pages/Seller/ProductAdd.jsx";
 import axios from "axios";
 import {GlobalProvider, useGlobalContext} from "../GlobalProvider.jsx";
+import Product from "./Pages/User/Product.jsx";
 
 
 const Layout = ({children}) => {
@@ -41,7 +42,9 @@ const App = () => {
                             <Route path="/" element={<Home/>}/>
                             <Route path="/login" element={<Login/>}/>
                             <Route path="/category/:slugAndId" element={<CategoryPage/>}/>
-
+                            <Route path="/product/:productId" element={<Product/>}/>
+                            
+                            
                             {/* Seller Panel */}
                             <Route path="/admin" element={<SellerHome/>}/>
                             <Route path="/productAdd" element={<ProductAdd/>}/>

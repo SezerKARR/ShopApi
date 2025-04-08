@@ -1,11 +1,15 @@
-.Search {
-    /* Your CSS styles here */
+.Search-container {
+    padding: 10px;
+    min-width: 200px;
+    max-width: 200px;
 }
-
+.search-container__search-icon{
+    padding-left: 5px;
+}
 .SearchOutline {
+    position: absolute;
     align-items: center;
     justify-content: center;
-    position: absolute;
     transform: translate(0%, -50%);
     transition: transform 0.3s, padding 0.3s, border 0.3s; /* Adds a smooth transition effect */
     box-sizing: border-box; /* Ensures padding and border are included in the element's total width and height */
@@ -22,7 +26,6 @@
 
 .SearchContainer {
 
-    position: relative;
     z-index: 12;
     border-radius: 5px;
     border: 2px solid #ccc;
@@ -31,15 +34,15 @@
     flex-direction: row;
     justify-content: center;
     align-items: center;
-    width: auto; /* Maksimum genişlik */
 }
 .SearchBar {
+    min-width: max-content;
     background-color: #ffffff;
     height: 35px;
     outline: none;
     border: none;
     left: 0;
-    width: 20vw;
+    width: 199px;
     transition: width 0.3s ease-in-out;
 }
 
@@ -47,16 +50,5 @@
     width: 40vw;
 }
 
-.Search {
-    background-color: white;
-    padding: 10px;
-}
 
-.RelativeSearch {
-    justify-content: center;
-    align-items: center;
-    width: 22vw;
-    position: relative;
-    height: 5px;
 
-}

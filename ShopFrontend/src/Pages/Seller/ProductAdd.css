@@ -75,6 +75,13 @@
 
 
 .product-add-container {
+    width: 800px;
+    background-color: rgba(149, 162, 177, 0.26);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+    justify-content: center;
     margin: 10px ;
     
 }
@@ -87,3 +94,15 @@
 }
 
 
+.product-add__add-product-button {
+    width: max-content;
+    padding: 10px 0;
+    font-size: 20px;
+    color: rgba(0, 111, 248, 0.89);
+    background-color: rgba(132, 148, 181, 0.59);
+}
+
+.form-label {
+    display: flex;
+    justify-content: center;
+}

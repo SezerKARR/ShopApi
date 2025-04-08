@@ -5,7 +5,6 @@ const SelectInput = ({elements,label, name, onChange, value}) => {
     
     const [selectedElement, setSelectedElement] = useState(null);
     let isSelectable=elements?.length > 0;
-    isSelectable=true;
     // label="Product Name"
     // name="productName"
     // value={formik.values.productName}

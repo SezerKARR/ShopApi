@@ -276,7 +276,6 @@ import axios from "axios";
 import "./ProductAdd.css";
 
 const validationSchema = Yup.object({
-    id: Yup.number().positive("id must be positive").required("id is required"),
     name: Yup.string().required("Product name is required"),
     price: Yup.number().positive("Price must be positive").required("Price is required"),
     categoryId: Yup.number().required("Category is required"),
@@ -299,19 +298,18 @@ const ProductAdd = () => {
     };
 
     const formik = useFormik({
-        initialValues: { id: "12", name: "saas", price: "1", categoryId: "59", imageFile: null },
+        initialValues: {  name: "saas", price: "1", categoryId: "59", imageFile: null },
         validationSchema,
         onSubmit: async (values) => {
             try {
                 setIsSubmitting(true);
-                // Form verileri ile dosya yüklemesi yapıyoruz
                 const formData = new FormData();
-                formData.append("id", values.id);
+                // formData.append("id", values.id);
                 formData.append("name", values.name);
                 formData.append("price", values.price);
                 formData.append("categoryId", values.categoryId);
-                formData.append("imageFile", values.imageFile);  // Dosya alanını ekliyoruz
-
+                formData.append("imageFile", values.imageFile);  
+                    
                 const response = await axios.post(`${API_URL}/api/product`, formData, {
                     headers: {
                         "Content-Type": "multipart/form-data",
@@ -320,6 +318,7 @@ const ProductAdd = () => {
                 console.log(response.data);
                 showSuccess("Product added successfully!");
             } catch (error) {
+                console.log("as");
                 if (error.response) {
                     console.log(error.response);
                     // API'den gelen hata mesajına erişim
@@ -332,6 +331,7 @@ const ProductAdd = () => {
                 }
                 showError(error.message || "Failed to add product");
             } finally {
+               
                 setIsSubmitting(false);
             }
         },
@@ -355,23 +355,24 @@ const ProductAdd = () => {
 
     return (
         <div className="product-add-container">
-            <h2>Add New Product</h2>
+            <h1 style={{fontSize:"36px"}}>Add New Product</h1>
+
             <form onSubmit={formik.handleSubmit} className="product-form">
-                <TextInput
-                    label="id"
-                    name="id"
-                    type="number"
-                    value={formik.values.id}
-                    onChange={formik.handleChange}
-                    error={formik.touched.id && formik.errors.id}
-                />
+                {/*<TextInput*/}
+                {/*    label="id"*/}
+                {/*    name="id"*/}
+                {/*    type="number"*/}
+                {/*    value={formik.values.id}*/}
+                {/*    onChange={formik.handleChange}*/}
+                {/*    error={formik.touched.id && formik.errors.id}*/}
+                {/*/>*/}
                 <TextInput
                     label="Product Name"
                     type="text"
                     name="name"
                     value={formik.values.name}
                     onChange={formik.handleChange}
-                    error={formik.touched.productName && formik.errors.productName}
+                    error={formik.touched.name  && formik.errors.name }
                 />
 
                 <TextInput
@@ -396,15 +397,17 @@ const ProductAdd = () => {
                     value={formik.values.categoryId}
                     main={selectedMainCategory}
                 />
-
                 <FileInput
                     onChange={(e) => formik.setFieldValue("imageFile", e.target.files[0])}
+                    error={formik.touched.imageFile  && formik.errors.imageFile }
                     name="imageFile"
                 />
-                <button type="submit" onClick={formik.handleSubmit}>
+                <button className="product-add__add-product-button" type="submit" onClick={formik.handleSubmit}>
                     {isSubmitting ? "Adding..." : "Add New Product"}
                 </button>
             </form>
+         
+
         </div>
     );
 };
