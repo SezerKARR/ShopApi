@@ -1,22 +1,39 @@
 .Product {
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
     padding: 20px;
   /* Your CSS styles here */
 }
 
-.Product-container__main-categories-container {
+.main-categories-container {
     display: flex;
     flex-direction: row;
     align-items: center;
     gap:5px;
 }
 
-.Product-container__main-categories-container__item {
+.main-categories-container__item {
     cursor: pointer;
     color: rgba(130, 131, 118, 0.6);
 }
-.Product-container__main-categories-container__item:hover {
+.main-categories-container__item:hover {
     cursor: pointer;
     color:black;
+}
+
+.product--image {
+    width: 100%;
+    border: 1px solid rgba(130, 131, 118, 0.6);
+    border-radius: 10px;
+    box-shadow: 2px 2px 10px rgba(130, 131, 118, 0.6);
+}
+
+.image-container {
+    width: 422px;
+    max-height: 600px;
+    min-height: 590px;
+}
+
+.product__main {
+    
 }
