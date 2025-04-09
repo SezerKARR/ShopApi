@@ -11,8 +11,10 @@ public class Product: BaseEntity{
     public int CategoryId { get; set; }
     [MaxLength(120)]
     public string? ImageUrl { get; set; }
+    [MaxLength(150)]
+    public required string Brand { get; set; } 
     public decimal Price { get; set; }
-    public List<ProductFilterValue>? FilterValues { get; set; }
+    public List<ProductFilterValue>? FilterValues { get; set; } = new List<ProductFilterValue>();
     public int? SellerId { get; set; }
     
 }

@@ -1,4 +1,3 @@
-using System.Text.Json;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using ShopApi.Data;
@@ -92,6 +91,10 @@ builder.Services.AddScoped<IMainCategoryRepository, MainCategoryRepository>();
 builder.Services.AddScoped<IFilterRepository, FilterRepository>();
 builder.Services.AddScoped<IFilterService, FilterService>();
 builder.Services.AddScoped<IFilterValueRepository, FilterValueRepository>();
+builder.Services.AddScoped<IProductFilterValueRepository, ProductFilterValueRepository>();
+builder.Services.AddScoped<IProductFilterValueService, ProductFilterValueService>();
+builder.Services.AddScoped<IFilterValueService, FilterValueService>();
+
 var app = builder.Build();
 app.UseCors("configurePolicy");
 app.Use(async (context, next) =>

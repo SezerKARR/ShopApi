@@ -46,7 +46,7 @@ namespace ShopApi.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Baskets");
+                    b.ToTable("Baskets", (string)null);
                 });
 
             modelBuilder.Entity("ShopApi.Models.BasketItem", b =>
@@ -78,7 +78,7 @@ namespace ShopApi.Migrations
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("BasketItems");
+                    b.ToTable("BasketItems", (string)null);
                 });
 
             modelBuilder.Entity("ShopApi.Models.Category", b =>
@@ -102,7 +102,7 @@ namespace ShopApi.Migrations
 
                     b.HasIndex("ParentId");
 
-                    b.ToTable("Categories");
+                    b.ToTable("Categories", (string)null);
                 });
 
             modelBuilder.Entity("ShopApi.Models.Comment", b =>
@@ -128,7 +128,7 @@ namespace ShopApi.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Comments");
+                    b.ToTable("Comments", (string)null);
                 });
 
             modelBuilder.Entity("ShopApi.Models.Filter", b =>
@@ -155,7 +155,7 @@ namespace ShopApi.Migrations
 
                     b.HasIndex("CategoryId");
 
-                    b.ToTable("Filters");
+                    b.ToTable("Filters", (string)null);
                 });
 
             modelBuilder.Entity("ShopApi.Models.FilterValue", b =>
@@ -182,7 +182,7 @@ namespace ShopApi.Migrations
 
                     b.HasIndex("FilterId");
 
-                    b.ToTable("FilterValues");
+                    b.ToTable("FilterValues", (string)null);
                 });
 
             modelBuilder.Entity("ShopApi.Models.Product", b =>
@@ -222,7 +222,7 @@ namespace ShopApi.Migrations
 
                     b.HasIndex("SellerId");
 
-                    b.ToTable("Products");
+                    b.ToTable("Products", (string)null);
                 });
 
             modelBuilder.Entity("ShopApi.Models.ProductFilterValue", b =>
@@ -252,7 +252,7 @@ namespace ShopApi.Migrations
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("ProductFilterValues");
+                    b.ToTable("ProductFilterValues", (string)null);
                 });
 
             modelBuilder.Entity("ShopApi.Models.User", b =>
@@ -276,7 +276,7 @@ namespace ShopApi.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Users");
+                    b.ToTable("Users", (string)null);
                 });
 
             modelBuilder.Entity("ShopApi.Models.BasketItem", b =>

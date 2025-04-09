@@ -1,9 +1,6 @@
 namespace ShopApi.Controllers;
 using Microsoft.AspNetCore.Mvc;
-using System.IdentityModel.Tokens.Jwt;
-using System.Text;
 using Google.Apis.Auth;
-using Microsoft.IdentityModel.Tokens;
 using Models;
 using Services;
 
@@ -19,7 +16,6 @@ public class AuthController : ControllerBase {
 
     [HttpGet("{id:int}")]
     public async Task<IActionResult> GetUser([FromRoute]int id) {
-        Console.WriteLine("asd");
         try
         {
             var user = await _userService.GetUserByIdAsync(id);
@@ -34,9 +30,9 @@ public class AuthController : ControllerBase {
     }
 
     [HttpPost]
-    public async Task<IActionResult> GoogleLogin([FromHeader] string Authorization)
+    public async Task<IActionResult> GoogleLogin([FromHeader] string authorization)
     {
-        var token = Authorization?.Replace("Bearer ", "");
+        var token = authorization.Replace("Bearer ", "");
     
         Console.WriteLine(token);
         try
@@ -50,24 +46,24 @@ public class AuthController : ControllerBase {
             return Unauthorized("Invalid Google token");
         }
     }
-    private string GenerateJwtToken(User user)
-    {
-        var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("your_secret_key"));
-        var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
-
-        var token = new JwtSecurityToken(
-        issuer: "yourIssuer",
-        audience: "yourAudience",
-        expires: DateTime.Now.AddHours(1), // 1 saatlik geçerlilik süresi
-        signingCredentials: credentials
-        );
-        TokenRequest tokenRequest = new TokenRequest
-        {
-            Token = new JwtSecurityTokenHandler().WriteToken(token)
-        };
-        return new JwtSecurityTokenHandler().WriteToken(token);
-    }
-    
+    // private string GenerateJwtToken(User user)
+    // {
+    //     var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("your_secret_key"));
+    //     var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
+    //
+    //     var token = new JwtSecurityToken(
+    //     issuer: "yourIssuer",
+    //     audience: "yourAudience",
+    //     expires: DateTime.Now.AddHours(1), // 1 saatlik geçerlilik süresi
+    //     signingCredentials: credentials
+    //     );
+    //     TokenRequest tokenRequest = new TokenRequest
+    //     {
+    //         Token = new JwtSecurityTokenHandler().WriteToken(token)
+    //     };
+    //     return new JwtSecurityTokenHandler().WriteToken(token);
+    // }
+    //
 }
 public class TokenRequest
 {

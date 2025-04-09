@@ -7,5 +7,8 @@ public enum CacheKeys : byte
     ProductsList,
     CommentsList,
     MainCategoryList,
-    BasketItemList
+    BasketItemList,
+    ProductFilterValueList,
+    FilterValueList,
+    BrandList
 }

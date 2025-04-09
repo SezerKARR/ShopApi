@@ -6,6 +6,7 @@ using Repository;
 
 public interface IUnitOfWork
 {
+    IBrandRepository BrandRepository { get; set; }
     IProductRepository ProductRepository { get; }
     ICategoryRepository CategoryRepository { get; }
     ICommentRepository CommentRepository { get; }
@@ -16,6 +17,7 @@ public interface IUnitOfWork
 }
 public class UnitOfWork :IUnitOfWork{
     readonly AppDbContext _context;
+    public IBrandRepository BrandRepository { get; set; }
     public IProductRepository ProductRepository { get; }
     public ICategoryRepository CategoryRepository { get; }
     public ICommentRepository CommentRepository { get; }
@@ -24,13 +26,14 @@ public class UnitOfWork :IUnitOfWork{
     public IFilterValueRepository FilterValueRepository { get; }
     public UnitOfWork(AppDbContext context, IProductRepository productRepository,ICommentRepository commentRepository,
         ICategoryRepository categoryRepository, IMainCategoryRepository mainCategoryRepository, IFilterRepository filterRepository,
-        IFilterValueRepository filterValueRepository) {
+        IFilterValueRepository filterValueRepository, IBrandRepository brandRepository) {
         _context = context;
         ProductRepository = productRepository;
         CategoryRepository = categoryRepository;
         MainCategoryRepository = mainCategoryRepository;
         FilterRepository = filterRepository;
         FilterValueRepository = filterValueRepository;
+        BrandRepository = brandRepository;
         CommentRepository = commentRepository;
     }
 

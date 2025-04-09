@@ -11,29 +11,25 @@ const Product = () => {
     const {API_URL, categories} = useGlobalContext();
     const [productData, setProductData] = useState({
         product: null,
-        category: null,
         mainCategories: [],
     });
 
     useEffect(() => {
         axios.get(`${API_URL}/api/product/${productId}`).then((res) => {
             const tempProduct = res.data;
-            const tempCategory = categories.find((c) => c.id == tempProduct.categoryId);
-            const mainCategories = findAllMainCategories(tempCategory?.parentId);
-
+            const mainCategories = findAllMainCategories(tempProduct);
+            console.log(tempProduct);
             setProductData({
                 product: tempProduct,
-                category: tempCategory,
                 mainCategories: mainCategories
             });
         }).catch((err) => {
             console.log(err);
         })
     }, [productId]);
-    const findAllMainCategories = (startId) => {
+    const findAllMainCategories = (product) => {
         const result = [];
-        let currentId = startId;
-
+        let currentId = product.categoryId;
         while (currentId > 0) {
             const category = categories.find(c => c.id === currentId);
             if (!category) break;
@@ -41,7 +37,6 @@ const Product = () => {
             result.unshift(category);
             currentId = category.parentId;
         }
-
         return result;
     };
 
@@ -86,7 +81,9 @@ const Product = () => {
                         src={`${API_URL}/${productData.product.imageUrl}`}
                     />
                 )}
-
+                <div className={"product-information-container"}>
+                    <h1 className={"product-information-container-title"}></h1>
+                </div>
             </div>
         </div>
 

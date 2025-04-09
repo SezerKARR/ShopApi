@@ -1,6 +1,5 @@
 namespace ShopApi.Dtos.Category;
 
-using Models;
 
 public class CreateCategoryDto {
     public int Id { get; set; }

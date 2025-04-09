@@ -30,26 +30,11 @@ public class FilterService:IFilterService {
         {
             
             filter.Slug = SlugHelper.GenerateSlug(filter.Name);
-            if (filter.Values != null && await _filterRepository.AnyAsync(filter.Id)){
-                foreach (var filterValue in filter.Values)
-                {
-                    filterValue.Slug = SlugHelper.GenerateSlug(filterValue.Name);
-                    filterValue.FilterId =2;
-                    await _unitOfWork.FilterValueRepository.CreateAsync(filterValue);
-                    if (!await _unitOfWork.CommitAsync())
-                    {
-                        return new Response<Filter>($"An error occurred when creating filtervalue: {filterValue.Value}.");
-                    }
-                }}
-            if (!await _filterRepository.AnyAsync(filter.Id))
+          
+            await _filterRepository.CreateAsync(filter);
+            if (!await _unitOfWork.CommitAsync())
             {
-                await _filterRepository.CreateAsync(filter);
-                if (!await _unitOfWork.CommitAsync())
-                {
-                    return new Response<Filter>($"An error occurred when creating filter: {filter.Name}.");
-                }
-            
-              
+                return new Response<Filter>($"An error occurred when creating filter: {filter.Name}.");
             }
             _memoryCache.Remove(CacheKeys.CommentsList);
             return new Response<Filter>(filter);

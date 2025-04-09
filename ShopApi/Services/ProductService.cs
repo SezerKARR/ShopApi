@@ -137,6 +137,10 @@ public class ProductService : IProductService {
             return new Response<ReadProductDto>("Category does not exist");
         try
         {
+            Filter? filter = await _unitOfWork.FilterRepository.GetTByIdAsync(2);
+            var filterValues = new List<FilterValue>(filter.Values);
+            var filteredFilterValues =filterValues.Select((value )=>value.)
+            if()
             Product product = _mapper.Map<Product>(createProductDto);
             product.Slug = SlugHelper.GenerateSlug(product.Name);
             product.ImageUrl = FormManager.Save(createProductDto.ImageFile, "uploads/products", FormTypes.Image);
