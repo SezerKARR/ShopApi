@@ -13,7 +13,6 @@ export const GlobalProvider = ({ children, setLoading }) => {
         if (savedCategories) {
             const parsedData = JSON.parse(savedCategories);
             const currentTime = new Date().getTime();
-            console.log(parsedData);
             if (currentTime - parsedData.timestamp < 180000) {
                 return parsedData.categories;
             } else {
@@ -45,7 +44,6 @@ export const GlobalProvider = ({ children, setLoading }) => {
     };
 
     useEffect(() => {
-        // Eğer categories null ise ve localStorage'da da veri yoksa, API'dan çek
         if (categories === null && !localStorage.getItem('categories')) {
             console.log("API çağrısı yapılıyor");
             setLoading(true); // Yüklemeyi başlat

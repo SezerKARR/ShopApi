@@ -60,7 +60,7 @@ public class BrandService :IBrandService {
     {
         try
         {
-            var brand = await _brandRepository.GetTByIdAsync(id);
+            var brand = await _brandRepository.GetByIdAsync(id);
             if (brand == null) return new Response<ReadBrandDto?>("Brand not found");
 
             var dto = _mapper.Map<ReadBrandDto>(brand);
@@ -77,7 +77,7 @@ public class BrandService :IBrandService {
     {
         try
         {
-            var brand = await _brandRepository.GetTBySlugAsync(slug);
+            var brand = await _brandRepository.GetBySlugAsync(slug);
             if (brand == null) return new Response<ReadBrandDto>("Brand not found");
 
             var dto = _mapper.Map<ReadBrandDto>(brand);
@@ -116,7 +116,7 @@ public class BrandService :IBrandService {
     {
         try
         {
-            var brand = await _brandRepository.GetTByIdAsync(id);
+            var brand = await _brandRepository.GetByIdAsync(id);
             if (brand == null) return new Response<ReadBrandDto>("Brand not found");
 
             _mapper.Map(updateDto, brand);
@@ -143,7 +143,7 @@ public class BrandService :IBrandService {
     {
         try
         {
-            var brand = await _brandRepository.GetTByIdAsync(id);
+            var brand = await _brandRepository.GetByIdAsync(id);
             if (brand == null) return new Response<ReadBrandDto>("Brand not found");
 
             _brandRepository.Delete(brand);

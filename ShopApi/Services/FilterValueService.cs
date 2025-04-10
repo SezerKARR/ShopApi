@@ -56,7 +56,7 @@ public class FilterValueService:IFilterValueService {
         
         try
         {
-            var filter = await _unitOfWork.FilterRepository.GetTByIdAsync(newFilterValue.FilterId);
+            var filter = await _unitOfWork.FilterRepository.GetByIdAsync(newFilterValue.FilterId);
             if (filter == null)
                 return new Response<FilterValue>("Filter not found");
             if (filter.Type == FilterType.None)
@@ -84,7 +84,7 @@ public class FilterValueService:IFilterValueService {
     public async Task<Response<FilterValue>> GetFilterValueById(int filterValueId) {
         try
         {
-            var filterValue = await _filterValueRepository.GetTByIdAsync(filterValueId);
+            var filterValue = await _filterValueRepository.GetByIdAsync(filterValueId);
             if (filterValue == null) { return new Response<FilterValue>($"filterValue not found:{filterValueId}"); }
             _memoryCache.Remove(CacheKeys.FilterValueList);
             return new Response<FilterValue>(filterValue);

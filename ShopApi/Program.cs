@@ -77,6 +77,7 @@ builder.Services.AddSwaggerGen(option =>
 });
 builder.Services.AddMemoryCache();
 builder.Services.AddAutoMapper(typeof(MapperProfiles));
+builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IBasketItemService, BasketItemService>();
 builder.Services.AddScoped<IBasketItemRepository, BasketItemRepository>();

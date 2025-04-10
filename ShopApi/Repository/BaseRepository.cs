@@ -24,13 +24,13 @@ public abstract class BaseRepository<T> : IRepository<T> where T : BaseEntity
 
     public IQueryable<T> GetQuery() => Queryable;
 
-    public async Task<T?> GetTByIdAsync(int id)
+    public async Task<T?> GetByIdAsync(int id)
     {
         Console.WriteLine(_queryable);
         return await Queryable.FirstOrDefaultAsync(x => x.Id == id);
     }
 
-    public async Task<T?> GetTBySlugAsync(string slug)
+    public async Task<T?> GetBySlugAsync(string slug)
     {
         return await Queryable.FirstOrDefaultAsync(x => x.Slug == slug);
     }

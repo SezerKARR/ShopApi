@@ -62,7 +62,7 @@ public class FilterService:IFilterService {
     public async Task<Response<Filter>> GetFilterById(int id) {
         try
         {
-            var filter = await _filterRepository.GetTByIdAsync(id);
+            var filter = await _filterRepository.GetByIdAsync(id);
             if (filter == null)
             {
                 return new Response<Filter>($"doesnt find any filter by this id. id:{id}");

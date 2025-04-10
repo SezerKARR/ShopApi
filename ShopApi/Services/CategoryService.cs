@@ -100,7 +100,7 @@ public class CategoryService : ICategoryService {
     public async Task<Response<ReadCategoryDto?>> GetCategoryByIdAsync(int id) {
         try
         {
-            Category? category = await _categoryRepository.GetTByIdAsync(id);
+            Category? category = await _categoryRepository.GetByIdAsync(id);
 
             if (category == null) { return new Response<ReadCategoryDto?>($"Category with id: {id} not found."); }
             // var products = await _unitOfWork.ProductRepository.GetAllAsync();
@@ -123,7 +123,7 @@ public class CategoryService : ICategoryService {
     public async Task<Response<ReadCategoryDto>> GetCategoryBySlugAsync(string slug) {
         try
         {
-            var category = await _categoryRepository.GetTBySlugAsync(slug);
+            var category = await _categoryRepository.GetBySlugAsync(slug);
 
             if (category == null) { return new Response<ReadCategoryDto>($"Category with slug: {slug} not found."); }
             ReadCategoryDto readCategoryDto = _mapper.Map<ReadCategoryDto>(category);
@@ -233,7 +233,7 @@ public class CategoryService : ICategoryService {
     //         .ToListAsync();
     // }
     public async Task<Response<ReadCategoryDto>> UpdateCategoryAsync(int id, UpdateCategoryDto dto) {
-        var existingCategory = await _categoryRepository.GetTByIdAsync(id);
+        var existingCategory = await _categoryRepository.GetByIdAsync(id);
         if (existingCategory == null) { return new Response<ReadCategoryDto>($"Category with id: {id} not found."); }
 
         try
@@ -259,7 +259,7 @@ public class CategoryService : ICategoryService {
     }
     public async Task<Response<ReadCategoryDto>> DeleteCategoryAsync(int id) {
 
-        var existCategory = await _categoryRepository.GetTByIdAsync(id);
+        var existCategory = await _categoryRepository.GetByIdAsync(id);
         if (existCategory == null) return new Response<ReadCategoryDto>("Category not found.");
         try
         {

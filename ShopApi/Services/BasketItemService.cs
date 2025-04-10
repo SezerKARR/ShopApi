@@ -46,7 +46,7 @@ public class BasketItemService:IBasketItemService {
         }
     }
     public async Task<Response<ReadBasketItemDto>> DeleteBasketItemByIdAsync(int id) {
-        var existBasketItem = await _basketItemRepository.GetTByIdAsync(id);
+        var existBasketItem = await _basketItemRepository.GetByIdAsync(id);
         if(existBasketItem == null) return new Response<ReadBasketItemDto>("Basket Item Not Found");
         try
         {
@@ -64,7 +64,7 @@ public class BasketItemService:IBasketItemService {
     }
    
     public async Task<Response<ReadBasketItemDto>> UpdateBasketItemQuantityAsync(int id, int quantity) {
-        var existBasketItem = await _basketItemRepository.GetTByIdAsync(id);
+        var existBasketItem = await _basketItemRepository.GetByIdAsync(id);
         if(existBasketItem == null) return new Response<ReadBasketItemDto>("Basket Item Not Found");
         try
         {

@@ -4,9 +4,9 @@ public interface IRepository<T> where T : class,IEntity {
 
         IQueryable<T>? GetQuery();
 
-        Task<T?> GetTByIdAsync(int id);
+        Task<T?> GetByIdAsync(int id);
 
-        Task<T?> GetTBySlugAsync(string slug);
+        Task<T?> GetBySlugAsync(string slug);
 
         Task<List<T>> GetAllAsync();
 

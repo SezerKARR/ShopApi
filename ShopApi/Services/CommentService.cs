@@ -50,7 +50,7 @@ public class CommentService : ICommentService {
     public async Task<Response<ReadCommentDto>> GetCommentByIdAsync(int id) {
         try
         {
-            Comment? comment = await _commentRepository.GetTByIdAsync(id);
+            Comment? comment = await _commentRepository.GetByIdAsync(id);
             if (comment == null) { return new Response<ReadCommentDto>($"Comment with id: {id} not found."); }
             ReadCommentDto readCommentDto = _mapper.Map<ReadCommentDto>(comment);
             return new Response<ReadCommentDto>(readCommentDto);

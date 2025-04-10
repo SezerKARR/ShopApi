@@ -22,6 +22,7 @@ public interface IProductService {
     Task<Response<ReadProductDto>> UpdateProductAsync(int id, UpdateProductDto dto);
     Task<Response<ReadProductDto>> DeleteProductAsync(int id);
     Task<Response<bool>> ProductExistAsync(int id);
+    
 }
 
 public class ProductService : IProductService {
@@ -79,7 +80,7 @@ public class ProductService : IProductService {
     public async Task<Response<ReadProductDto>> GetProductByIdAsync(int id) {
         try
         {
-            var product = await _productRepository.GetTByIdAsync(id);
+            var product = await _productRepository.GetByIdAsync(id);
             if (product == null) { return new Response<ReadProductDto>($"Product with id: {id} not found."); }
             ReadProductDto productDto = _mapper.Map<ReadProductDto>(product);
             return new Response<ReadProductDto>(productDto);
@@ -95,7 +96,7 @@ public class ProductService : IProductService {
     public async Task<Response<ReadProductDto>> GetProductBySlugAsync(string slug) {
         try
         {
-            var product = await _productRepository.GetTBySlugAsync(slug);
+            var product = await _productRepository.GetBySlugAsync(slug);
 
 
             if (product == null) { return new Response<ReadProductDto>($"Product with slug: {slug} not found."); }
@@ -131,34 +132,62 @@ public class ProductService : IProductService {
 
 
 
-    public async Task<Response<ReadProductDto>> CreateProductAsync(CreateProductDto createProductDto) {
-        var isCategoryExist = await _unitOfWork.CategoryRepository.AnyAsync(createProductDto.CategoryId);
-        if (!isCategoryExist)
-            return new Response<ReadProductDto>("Category does not exist");
+    public async Task<Response<ReadProductDto>> CreateProductAsync(CreateProductDto dto)
+    {
+        await _unitOfWork.BeginTransactionAsync();
         try
         {
-            Filter? filter = await _unitOfWork.FilterRepository.GetTByIdAsync(2);
-            var filterValues = new List<FilterValue>(filter.Values);
-            var filteredFilterValues =filterValues.Select((value )=>value.)
-            if()
-            Product product = _mapper.Map<Product>(createProductDto);
-            product.Slug = SlugHelper.GenerateSlug(product.Name);
-            product.ImageUrl = FormManager.Save(createProductDto.ImageFile, "uploads/products", FormTypes.Image);
-            await AdjustEntity(product);
+            var user = await _unitOfWork.UserRepository.GetByIdAsync(dto.CreatedByUserId);
+            if(user == null) { return new Response<ReadProductDto>("User does not exist."); }
+            var category = await _unitOfWork.CategoryRepository.GetByIdAsync(dto.CategoryId);
+            if(category == null) { return new Response<ReadProductDto>("Category does not exist."); }
+            var product = new Product
+            {
+                Name = dto.Name,
+                CategoryId = dto.CategoryId,
+                Brand = dto.Brand,
+                Price = dto.Price,
+                CreatedByUserId = dto.CreatedByUserId,
+                Category = category,
+                CreatedByUser = user,
+            };
+
             await _productRepository.CreateAsync(product);
-            if (!await _unitOfWork.CommitAsync()) { return new Response<ReadProductDto>($"An error occurred when creating product: {product.Name}."); }
+            var productFilterValues = new List<ProductFilterValue>();
+
+            foreach (var filterValueId in dto.ProductFilterValues)
+            {
+                var filter=await _unitOfWork.FilterRepository.GetByIdAsync(filterValueId);
+                if(filter == null) {return new Response<ReadProductDto>($"filter does not exist. {filterValueId}");}
+                var productFilterValue = new ProductFilterValue
+                {
+                    ProductId = product.Id,
+                    Product = product,
+                    Filter = filter,
+                    FilterId = filterValueId
+                };
+
+                productFilterValues.Add(productFilterValue);
+                await _unitOfWork.ProductFilterValueRepository.CreateAsync(productFilterValue);
+            }
+
+            product.FilterValues = productFilterValues;
+            _productRepository.Update(product);
+            
+           
+
+            await _unitOfWork.CommitTransactionAsync();
             ReadProductDto productDto = _mapper.Map<ReadProductDto>(product);
-            _memoryCache.Remove(CacheKeys.ProductsList);
             return new Response<ReadProductDto>(productDto);
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Could not save product.");
-            return new Response<ReadProductDto>($"An error occurred when saving the product: {ex.Message}");
+            await _unitOfWork.RollbackAsync();
+
+            return new Response<ReadProductDto>($"Error: {ex.Message}");
         }
-
-
     }
+
     private Task AdjustEntity(Product entity) {
         try { }
         catch (Exception ex)
@@ -169,7 +198,7 @@ public class ProductService : IProductService {
         return Task.CompletedTask;
     }
     public async Task<Response<ReadProductDto>> UpdateProductAsync(int id, UpdateProductDto dto) {
-        var existingProduct = await _productRepository.GetTByIdAsync(id);
+        var existingProduct = await _productRepository.GetByIdAsync(id);
         if (existingProduct == null) return new Response<ReadProductDto>($"Product with id: {id} does not exist.");
         try
         {
@@ -187,7 +216,7 @@ public class ProductService : IProductService {
         }
     }
     public async Task<Response<ReadProductDto>> DeleteProductAsync(int id) {
-        var existProduct = await _productRepository.GetTByIdAsync(id);
+        var existProduct = await _productRepository.GetByIdAsync(id);
         if (existProduct == null) return new Response<ReadProductDto>("Product not found.");
         try
         {
@@ -206,7 +235,7 @@ public class ProductService : IProductService {
     public async Task<Response<bool>> ProductExistAsync(int id) {
         try
         {
-            var exists = await _productRepository.GetTByIdAsync(id);
+            var exists = await _productRepository.GetByIdAsync(id);
 
             if (exists != null) { return new Response<bool>(true); }
             else { return new Response<bool>(false); }

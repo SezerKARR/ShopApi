@@ -71,7 +71,7 @@ public class MainCategoryService:IMainCategoryService {
     public async Task<Response<ReadMainCategory>> GetMainCategoryById(int mainCategoryId) {
         try
         {
-            var mainCategory = await _mainCategoryRepository.GetTByIdAsync(mainCategoryId);
+            var mainCategory = await _mainCategoryRepository.GetByIdAsync(mainCategoryId);
             if (mainCategory == null) { return new Response<ReadMainCategory>($"MainCategory not found:{mainCategoryId}"); }
             ReadMainCategory mainCategoryDto = _mapper.Map<ReadMainCategory>(mainCategory);
             _memoryCache.Remove(CacheKeys.MainCategoryList);

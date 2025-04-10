@@ -49,11 +49,11 @@ public class ProductFilterValueService : IProductFilterValueService {
     {
         try
         {
-            var product = await _unitOfWork.ProductRepository.GetTByIdAsync(newFilterValue.ProductId);
+            var product = await _unitOfWork.ProductRepository.GetByIdAsync(newFilterValue.ProductId);
             if (product == null)
                 return new Response<ProductFilterValue>("Product not found");
 
-            var filter = await _unitOfWork.FilterRepository.GetTByIdAsync(newFilterValue.CategoryFilterId);
+            var filter = await _unitOfWork.FilterRepository.GetByIdAsync(newFilterValue.FilterId);
             if (filter == null)
                 return new Response<ProductFilterValue>("Filter not found");
 
@@ -79,7 +79,7 @@ public class ProductFilterValueService : IProductFilterValueService {
     public async Task<Response<ProductFilterValue>> GetProductFilterValueById(int productFilterValueId) {
         try
         {
-            var productFilterValue = await _productFilterValueRepository.GetTByIdAsync(productFilterValueId);
+            var productFilterValue = await _productFilterValueRepository.GetByIdAsync(productFilterValueId);
             if (productFilterValue == null) { return new Response<ProductFilterValue>($"productFilterValue not found:{productFilterValueId}"); }
             _memoryCache.Remove(CacheKeys.ProductFilterValueList);
             return new Response<ProductFilterValue>(productFilterValue);

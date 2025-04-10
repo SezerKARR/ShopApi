@@ -40,7 +40,7 @@ public class BasketService : IBasketService {
     public async Task<Response<ReadBasketDto?>> GetBasketByIdAsync(int id) {
         try
         {
-            Basket? basket = await _basketRepository.GetTByIdAsync(id);
+            Basket? basket = await _basketRepository.GetByIdAsync(id);
 
             if (basket == null) { return new Response<ReadBasketDto?>($"Basket with id: {id} not found."); }
             ReadBasketDto readCategoryDto = _mapper.Map<ReadBasketDto>(basket);

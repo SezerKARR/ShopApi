@@ -18,7 +18,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
     protected override void OnModelCreating(ModelBuilder builder) {
 
         base.OnModelCreating(builder);
-        builder.Entity<ProductFilterValue>().HasOne(pfv=>pfv.Filter).WithMany(filter)
+        builder.Entity<ProductFilterValue>().HasOne(pfv=>pfv.Filter).WithMany(f=>f.ProductFilterValues).HasForeignKey(pfv=>pfv.FilterId).OnDelete(DeleteBehavior.Restrict);
         builder.Entity<ProductFilterValue>().HasOne(pfv=>pfv.Product).WithMany(product => product.FilterValues).HasForeignKey(p => p.ProductId);
         builder.Entity<FilterValue>().HasOne(fv=>fv.Filter).WithMany(filter => filter.Values).HasForeignKey(f => f.FilterId);
         builder.Entity<Filter>().HasOne(f => f.Category).WithMany(category => category.Filters).HasForeignKey(c => c.CategoryId);
@@ -38,7 +38,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
             .HasOne<Category>()
             .WithMany(c => c.Products)
             .HasForeignKey(p => p.CategoryId);
-        builder.Entity<Product>().HasOne<User>().WithMany(u => u.Products).HasForeignKey(u => u.SellerId);
+        builder.Entity<Product>().HasOne<User>().WithMany(u => u.Products).HasForeignKey(u => u.CreatedByUserId);
     }
 
 }

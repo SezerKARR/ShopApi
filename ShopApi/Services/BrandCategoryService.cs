@@ -53,11 +53,11 @@ public class BrandCategoryService : IBrandCategoryService {
 
     public async Task<Response<ReadBrandCategoryDto>> CreateAsync(CreateBrandCategoryDto dto) {
         try {
-            var brand = await _unitOfWork.BrandRepository.GetTByIdAsync(dto.BrandId);
+            var brand = await _unitOfWork.BrandRepository.GetByIdAsync(dto.BrandId);
             if (brand == null)
                 return new Response<ReadBrandCategoryDto>("Brand not found.");
 
-            var category = await _unitOfWork.CategoryRepository.GetTByIdAsync(dto.CategoryId);
+            var category = await _unitOfWork.CategoryRepository.GetByIdAsync(dto.CategoryId);
             if (category == null)
                 return new Response<ReadBrandCategoryDto>("Category not found.");
             var entity = _mapper.Map<BrandCategory>(dto);
@@ -80,7 +80,7 @@ public class BrandCategoryService : IBrandCategoryService {
 
     public async Task<Response<ReadBrandCategoryDto>> GetByIdAsync(int id) {
         try {
-            var entity = await _brandCategoryRepository.GetTByIdAsync(id);
+            var entity = await _brandCategoryRepository.GetByIdAsync(id);
             if (entity == null)
                 return new Response<ReadBrandCategoryDto>("BrandCategory not found");
 
