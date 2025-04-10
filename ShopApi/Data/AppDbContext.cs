@@ -18,9 +18,10 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
     protected override void OnModelCreating(ModelBuilder builder) {
 
         base.OnModelCreating(builder);
-        builder.Entity<ProductFilterValue>().HasOne<Product>().WithMany(product => product.FilterValues).HasForeignKey(p => p.ProductId);
-        builder.Entity<FilterValue>().HasOne<Filter>().WithMany(filter => filter.Values).HasForeignKey(f => f.FilterId);
-        builder.Entity<Filter>().HasOne<Category>().WithMany(category => category.Filters).HasForeignKey(c => c.CategoryId);
+        builder.Entity<ProductFilterValue>().HasOne(pfv=>pfv.Filter).WithMany(filter)
+        builder.Entity<ProductFilterValue>().HasOne(pfv=>pfv.Product).WithMany(product => product.FilterValues).HasForeignKey(p => p.ProductId);
+        builder.Entity<FilterValue>().HasOne(fv=>fv.Filter).WithMany(filter => filter.Values).HasForeignKey(f => f.FilterId);
+        builder.Entity<Filter>().HasOne(f => f.Category).WithMany(category => category.Filters).HasForeignKey(c => c.CategoryId);
         builder.Entity<Category>()
             .HasOne(category => category.ParentCategory)// Üst kategori
             .WithMany(category => category.SubCategories)// Alt kategoriler

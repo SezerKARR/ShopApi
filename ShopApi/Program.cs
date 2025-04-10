@@ -1,3 +1,4 @@
+using System.Text.Json.Serialization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using ShopApi.Data;
@@ -22,7 +23,9 @@ var connectionString = $"Host={Env.GetString("DB_HOST")};" +
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
 
-
+builder.Services.AddControllers()
+    .AddJsonOptions(x =>
+        x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
 builder.Services.AddAuthentication(options => {
         options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
         options.DefaultChallengeScheme = GoogleDefaults.AuthenticationScheme;
@@ -94,6 +97,8 @@ builder.Services.AddScoped<IFilterValueRepository, FilterValueRepository>();
 builder.Services.AddScoped<IProductFilterValueRepository, ProductFilterValueRepository>();
 builder.Services.AddScoped<IProductFilterValueService, ProductFilterValueService>();
 builder.Services.AddScoped<IFilterValueService, FilterValueService>();
+builder.Services.AddScoped<IBrandCategoryRepository, BrandCategoryRepository>();
+
 
 var app = builder.Build();
 app.UseCors("configurePolicy");

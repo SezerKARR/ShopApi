@@ -3,6 +3,7 @@ namespace ShopApi.Helpers;
 using AutoMapper;
 using Dtos.Basket;
 using Dtos.Brand;
+using Dtos.BrandCategory;
 using Dtos.Category;
 using Dtos.FilterValue;
 using Dtos.MainCategory;
@@ -38,5 +39,8 @@ public class MapperProfiles : Profile{
         CreateMap<Brand, ReadBrandDto>();
         CreateMap<CreateBrandDto, Brand>();
         CreateMap<UpdateBrandDto, Brand>();
+        
+        CreateMap<CreateBrandCategoryDto, BrandCategory>();
+        CreateMap<BrandCategory, ReadBrandCategoryDto>();
     }
 }
