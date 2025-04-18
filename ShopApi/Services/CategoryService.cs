@@ -78,25 +78,25 @@ public class CategoryService : ICategoryService {
             return new Response<List<ReadCategoryDto>>($"An error occurred while fetching Categories: {ex.Message}");
         }
     }
-    private async Task<List<ReadCategoryDto>?> GetSubCategoriesRecursive(int id) {
-        if (id == 21) return null;
-        int b = 1;
-        Console.WriteLine(b);
-        var subCategories = await _categoryRepository.GetAllAsync();
-           
-        var a=  subCategories.Where(c => c.ParentId == id).ToList();
-        
-        List<ReadCategoryDto> subCategoryDtos = new List<ReadCategoryDto>();
-
-        foreach (var subCategory in a)
-        {
-            var subCategoryDto = _mapper.Map<ReadCategoryDto>(subCategory);
-            subCategoryDto.SubCategories = await GetSubCategoriesRecursive(subCategory.Id);// Alt kategorilerini al
-            subCategoryDtos.Add(subCategoryDto);
-        }
-
-        return subCategoryDtos;
-    }
+    // private async Task<List<ReadCategoryDto>?> GetSubCategoriesRecursive(int id) {
+    //     if (id == 21) return null;
+    //     int b = 1;
+    //     Console.WriteLine(b);
+    //     var subCategories = await _categoryRepository.GetAllAsync();
+    //        
+    //     var a=  subCategories.Where(c => c.ParentId == id).ToList();
+    //     
+    //     List<ReadCategoryDto> subCategoryDtos = new List<ReadCategoryDto>();
+    //
+    //     foreach (var subCategory in a)
+    //     {
+    //         var subCategoryDto = _mapper.Map<ReadCategoryDto>(subCategory);
+    //         subCategoryDto.SubCategories = await GetSubCategoriesRecursive(subCategory.Id);// Alt kategorilerini al
+    //         subCategoryDtos.Add(subCategoryDto);
+    //     }
+    //
+    //     return subCategoryDtos;
+    // }
     public async Task<Response<ReadCategoryDto?>> GetCategoryByIdAsync(int id) {
         try
         {
@@ -109,7 +109,7 @@ public class CategoryService : ICategoryService {
             //     if(product.CategoryId == category.Id) { category.Products.Add(product); }
             // }
             ReadCategoryDto readCategoryDto = _mapper.Map<ReadCategoryDto>(category);
-            readCategoryDto.SubCategories = await GetSubCategoriesRecursive(category.Id);
+            // readCategoryDto.SubCategories = await GetSubCategoriesRecursive(category.Id);
             
             return new Response<ReadCategoryDto?>(readCategoryDto);
         }
@@ -142,7 +142,7 @@ public class CategoryService : ICategoryService {
 
             // Filtreleme ve sıralama işlemleri
             query = QueryableExtensions.ApplyFilter(query, queryObject.SortBy, queryObject.FilterBy);
-            query = QueryableExtensions.ApplySorting(query, queryObject.SortBy, queryObject.IsDecSending);
+            query = QueryableExtensions.ApplySorting(query, queryObject.SortBy, queryObject.IsDescending);
             if (query == null)
             {
                 return new Response<List<ReadCategoryDto>>($"An error occurred while fetching categories");// Hata mesajı döndür

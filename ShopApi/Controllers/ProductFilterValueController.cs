@@ -1,5 +1,8 @@
 namespace ShopApi.Controllers;
 
+using Dtos.FilterValue;
+using Dtos.Product;
+using Dtos.ProductFilterValue;
 using Microsoft.AspNetCore.Mvc;
 using Models;
 using Services;
@@ -31,11 +34,11 @@ public class ProductFilterValueController:ControllerBase {
         return BadRequest(response.Message);
     }
     [HttpPost]
-    public async Task<IActionResult> AddFilterValue([FromBody] ProductFilterValue productFilterValue) {
+    public async Task<IActionResult> AddFilterValue([FromBody] CreateProductValueDto createProductValueDto) {
         if (!ModelState.IsValid) return BadRequest(ModelState);
         try
         {
-            var response=await _productFilterValueService.CreateProductFilterValueAsync(productFilterValue);
+            var response=await _productFilterValueService.CreateProductFilterValueAsync(createProductValueDto);
             if (response.Success)
             {
                 var productFilterValueResource = response.Resource;

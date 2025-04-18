@@ -2,7 +2,7 @@ import React, {useEffect, useState} from 'react';
 import axios from "axios";
 import './Home.css'
 import Login from "./Login.jsx";
-import { useGlobalContext} from "../../../GlobalProvider.jsx";
+import { useGlobalContext} from "../../Providers/GlobalProvider.jsx";
 
 const Home = () => {
     const{setBasketCount,API_URL,categories} =useGlobalContext();

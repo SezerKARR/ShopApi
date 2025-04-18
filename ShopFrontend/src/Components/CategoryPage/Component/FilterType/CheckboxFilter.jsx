@@ -1,26 +1,27 @@
-import React, { memo } from "react";
+import React, {memo} from "react";
 
-const CheckboxFilter = memo(({ filter, onFilterChange, selectedOptions = {} }) => {
+const CheckboxFilter = memo(({filter, onFilterChange, selectedOptions = {}}) => {
     const handleChange = (optionId, checked) => {
-        
-        const newSelectedOptions = {
-            
-            ...selectedOptions,
-            [optionId]: checked
-        };
-       
-        // Ana bileşene değişikliği bildiriyoruz
-        onFilterChange(filter.id, newSelectedOptions);
+
+
+    
+
+        onFilterChange(filter.id, optionId,checked);
+    };
+    const handleValue = (optionId) => {
+
+        return selectedOptions.includes(optionId);
     };
     return (
         <div className="checkbox-filter">
             <h4>{filter.name}</h4>
             {filter.values?.map(option => (
                 <div key={option.id} className="checkbox-option">
+                   
                     <input
                         type="checkbox"
                         id={`option-${option.id}`}
-                        checked={selectedOptions[option.id] || false}
+                        checked={ handleValue(option.id) }
                         onChange={(e) => handleChange(option.id, e.target.checked)}
                     />
                     <label htmlFor={`option-${option.id}`}>{option.name}</label>

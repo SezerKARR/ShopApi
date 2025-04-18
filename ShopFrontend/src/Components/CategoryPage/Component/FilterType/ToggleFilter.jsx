@@ -7,10 +7,10 @@ const ToggleFilter = memo(({ filter, onFilterChange, isActive = false }) => {
     const handleToggle = () => {
         const newChecked = !checked;
         setChecked(newChecked);
-
+        console.log(newChecked);
         setTimeout(() => {
             onFilterChange(filter.id, newChecked);
-        }, 250);
+        }, 150);
     };
 
     return (

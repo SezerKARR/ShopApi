@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import './Product.css';
 import axios from "axios";
-import {useGlobalContext} from "../../../GlobalProvider.jsx";
+import {useGlobalContext} from "../../Providers/GlobalProvider.jsx";
 import Products from "../../Components/Products.jsx";
 import {Navigate, useNavigate} from "react-router-dom";
 

@@ -2,76 +2,57 @@ import React, {useEffect, useRef, useState} from 'react';
 import {useNavigate} from "react-router-dom";
 import './MainCategory.css';
 import axios from "axios";
-import foto from "../../../../public/Foto.png"
-import {Link} from "react-router-dom";
-import {useGlobalContext} from "../../../../GlobalProvider.jsx";
+import {useGlobalContext} from "../../../Providers/GlobalProvider.jsx";
 
 const MainCategory = () => {
     const navigate = useNavigate();
+    const {categories}=useGlobalContext()
     const [mainCategories, setMainCategories] = useState(null)
     const [hoveredMainCategory, setHoveredMainCategory] = useState(null)
-    const [a, seta] = useState(0)
-    const {API_URL,categories}=useGlobalContext();
    
     useEffect(() => {
-        console.log(categories)
+        console.log(categories);
         const filteredCategories = categories.filter(category => category.parentId === -1);
         setMainCategories(filteredCategories);
        
-    }, [categories]);
-    const SelectedMainCategory = (mainCategory) => {
-
-        return (
-            <div className="selected-main-category-container">
-                {console.log(mainCategory)}
-                <div className="main-category-categories-container">
-                    {mainCategory?.subCategories?.map((subCategory) => (
-                        <div key={subCategory.id}>
-                            <p className="mainCategory__container-subCategory">{subCategory.name}</p>
-                            {
-                                subCategory.subCategories?.map((category) => (
-                                    <p key={category.id}
-                                       className="mainCategory__container-category">{category.name}</p>
-                                ))
-                            }
-                        </div>
-                    ))}
-                </div>
-                <div className="main-category-ad-container"></div>
-            </div>
-        );
-    };
+    }, []);
+    
+    
     const menuRef = useRef(null);
     const HandleCategoryClick = (category) => {
         console.log(category);
         navigate(`/category/${category.slug}-${category.id}`)
         setHoveredMainCategory(null);
     }
-    const SelectedMainCategorya = ({mainCategory}) => {
+    const SelectedMainCategory = ({mainCategoryId}) => {
         return (
             <div className="selected-main-category">
                 <div className="selected-main-category__categories">
-                    {mainCategory?.subCategories?.map((subCategory) => (
-                        <div key={subCategory.id} className="selected-main-category__subcategory">
+                    {GetChildCategories(mainCategoryId)?.map(childCategory => (
+                        <div key={childCategory.id} className="selected-main-category__subcategory">
                             <p className="selected-main-category__subcategory-name"
-                               onClick={() =>HandleCategoryClick(subCategory) }>
-                                {subCategory.name}
+                               onClick={() => HandleCategoryClick(childCategory)}>
+                                {childCategory.name}
                             </p>
-                            {subCategory.subCategories?.map((category) => (
-                                <p key={category.id}
-                                   onClick={() => HandleCategoryClick(category) }
+                            {GetChildCategories(childCategory.id)?.map(childChildCategory => (
+                                <p key={childChildCategory.id}
+                                   onClick={() => HandleCategoryClick(childChildCategory)}
                                    className="selected-main-category__category">
-                                    {category.name}
+                                    {childChildCategory.name}
                                 </p>
                             ))}
                         </div>
                     ))}
+                   
                 </div>
-              
+
             </div>
         );
 
     };
+    const GetChildCategories = (mainCategoryId) => {
+        return categories.filter(category => category.parentId === mainCategoryId);
+    }
     const handleMouseLeave = (e) => {
         if (!e.relatedTarget || !(e.relatedTarget instanceof Node)) {
             setHoveredMainCategory(null);
@@ -97,8 +78,9 @@ const MainCategory = () => {
                 ))}
             </div>
 
-            {hoveredMainCategory && mainCategories && (
-                <SelectedMainCategorya mainCategory={hoveredMainCategory} />
+            {hoveredMainCategory && mainCategories && (<>
+                {console.log(hoveredMainCategory)}
+                <SelectedMainCategory mainCategoryId={hoveredMainCategory.id} /></>
             )}
         </div>
     );

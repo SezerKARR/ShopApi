@@ -11,5 +11,7 @@ public enum CacheKeys : byte
     ProductFilterValueList,
     FilterValueList,
     BrandList,
-    BrandCategoryList
+    BrandCategoryList,
+    ProductSellerList,
+    StockList
 }

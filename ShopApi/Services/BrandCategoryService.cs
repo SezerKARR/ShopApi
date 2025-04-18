@@ -77,7 +77,7 @@ public class BrandCategoryService : IBrandCategoryService {
             return new Response<ReadBrandCategoryDto>($"An error occurred: {ex.Message}");
         }
     }
-
+    
     public async Task<Response<ReadBrandCategoryDto>> GetByIdAsync(int id) {
         try {
             var entity = await _brandCategoryRepository.GetByIdAsync(id);

@@ -99,7 +99,13 @@ builder.Services.AddScoped<IProductFilterValueRepository, ProductFilterValueRepo
 builder.Services.AddScoped<IProductFilterValueService, ProductFilterValueService>();
 builder.Services.AddScoped<IFilterValueService, FilterValueService>();
 builder.Services.AddScoped<IBrandCategoryRepository, BrandCategoryRepository>();
-
+builder.Services.AddScoped<IBrandCategoryService, BrandCategoryService>();
+builder.Services.AddScoped<IBrandRepository, BrandRepository>();
+builder.Services.AddScoped<IBrandService, BrandService>();
+builder.Services.AddScoped<IProductSellerRepository, ProductSellerRepository>();
+builder.Services.AddScoped<IProductSellerService, ProductSellerService>();
+builder.Services.AddScoped<IStockRepository, StockRepository>();
+builder.Services.AddScoped<IStockService, StockService>();
 
 var app = builder.Build();
 app.UseCors("configurePolicy");

@@ -3,7 +3,7 @@ import './Authorize.css';
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faChevronDown, faUser} from "@fortawesome/free-solid-svg-icons";
 import {Link} from "react-router-dom";
-import { useGlobalContext} from "../../../../GlobalProvider.jsx";
+import { useGlobalContext} from "../../../Providers/GlobalProvider.jsx";
 
 const Authorize = () => {
     const {user}=useGlobalContext();

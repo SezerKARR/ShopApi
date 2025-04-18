@@ -2,7 +2,7 @@ import React from 'react';
 import './Basket.css';
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faCartShopping} from "@fortawesome/free-solid-svg-icons";
-import { useGlobalContext} from "../../../../GlobalProvider.jsx";
+import { useGlobalContext} from "../../../Providers/GlobalProvider.jsx";
 
 const Basket = () => {
     const {basketCount}=useGlobalContext();

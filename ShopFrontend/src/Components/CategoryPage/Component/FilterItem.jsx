@@ -3,6 +3,7 @@ import CheckboxFilter from "./FilterType/CheckboxFilter.jsx";
 import ToggleFilter from "./FilterType/ToggleFilter.jsx";
 import './FilterItem.css';
 const FilterItem = memo(({filter, onFilterChange, selectedValue}) => {
+    
     const filterComponents = {
         1: <ToggleFilter
             filter={filter}

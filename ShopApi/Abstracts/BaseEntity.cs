@@ -2,7 +2,7 @@ namespace ShopApi.Abstracts;
 
 using Interface;
 
-public class BaseEntity:IEntityDate,IEntity {
+public abstract class BaseEntity:IEntityDate,IEntity {
    
     public int Id { get; set; }
     public string? Name { get; set; }

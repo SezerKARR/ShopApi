@@ -15,6 +15,8 @@ public interface IUnitOfWork {
     IFilterRepository FilterRepository { get; }
     IMainCategoryRepository MainCategoryRepository { get; }
     IFilterValueRepository FilterValueRepository { get; }
+    IProductSellerRepository ProductSellerRepository { get;}
+    IStockRepository StockRepository { get;  }
     Task BeginTransactionAsync();
     Task CommitTransactionAsync();
     Task RollbackAsync();
@@ -32,10 +34,13 @@ public class UnitOfWork : IUnitOfWork {
     public IFilterRepository FilterRepository { get; }
     public IMainCategoryRepository MainCategoryRepository { get; }
     public IFilterValueRepository FilterValueRepository { get; }
+    public IProductSellerRepository ProductSellerRepository { get;  }
+    public IStockRepository StockRepository { get; }
+
     private IDbContextTransaction? _transaction;
     public UnitOfWork(AppDbContext context, IProductRepository productRepository, ICommentRepository commentRepository,
         ICategoryRepository categoryRepository, IMainCategoryRepository mainCategoryRepository, IFilterRepository filterRepository,
-        IFilterValueRepository filterValueRepository, IBrandRepository brandRepository, IUserRepository userRepository, IProductFilterValueRepository productFilterValueRepository) {
+        IFilterValueRepository filterValueRepository, IBrandRepository brandRepository, IUserRepository userRepository, IProductFilterValueRepository productFilterValueRepository, IProductSellerRepository productSellerRepository, IStockRepository stockRepository) {
         _context = context;
         ProductRepository = productRepository;
         CategoryRepository = categoryRepository;
@@ -45,6 +50,8 @@ public class UnitOfWork : IUnitOfWork {
         BrandRepository = brandRepository;
         UserRepository = userRepository;
         ProductFilterValueRepository = productFilterValueRepository;
+        ProductSellerRepository = productSellerRepository;
+        StockRepository = stockRepository;
         CommentRepository = commentRepository;
     }
 

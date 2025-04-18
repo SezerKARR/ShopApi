@@ -9,6 +9,7 @@ public class Category:BaseEntity {
     public List<Category> SubCategories { get; set; } = new List<Category>(); // Alt kategoriler
     public List<Filter> Filters { get; set; }=new List<Filter>();
     public List<Product> Products { get; set; } = new List<Product>();
+    public ICollection<BrandCategory>? BrandCategories { get; set; } 
 }
 
 // public enum CategoryType {

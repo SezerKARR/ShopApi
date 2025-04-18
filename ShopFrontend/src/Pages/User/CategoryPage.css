@@ -1,11 +1,32 @@
 .CategoryPage {
-    width: 100%;        
+    width: 100%;
     padding: 20px;
     display: flex;
     flex-direction: row;
     justify-content: center;
     align-items: flex-start;
+    position: relative; /* İçeriğin üzerine overlay eklemek için */
 }
+
+.CategoryPage.loading {
+    color: rgba(0, 0, 0, 0.8); /* İçeriğin rengini değiştirir */
+    background-color: rgba(0, 0, 0, 0.4);
+
+}
+.CategoryPage.loading>* {
+    color: rgba(255, 255, 255, 0.1); /* İçeriğin rengini değiştirir */
+
+}
+.CategoryPage.loading::before {
+    content: ""; /* Pseudo-element ile boş içerik */
+    position: absolute; /* Sayfanın üst kısmından alt kısmına kadar karartmak için */
+    top: 0;
+    left: 0;
+    height: 100%; 
+    z-index: 9999; 
+    pointer-events: none;
+}
+
 .category-column-container {
     justify-content: center;
     display: flex;

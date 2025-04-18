@@ -2,7 +2,7 @@ import React, {useContext, useEffect, useState} from "react";
 import { GoogleLogin } from "@react-oauth/google";
 import axios from "axios";
 import {jwtDecode} from "jwt-decode"
-import {GlobalProvider, useGlobalContext} from "../../../GlobalProvider.jsx";
+import {GlobalProvider, useGlobalContext} from "../../Providers/GlobalProvider.jsx";
 const Login = () => {
     const {setUser}=useGlobalContext();
     const API_URL = import.meta.env.VITE_API_URL;

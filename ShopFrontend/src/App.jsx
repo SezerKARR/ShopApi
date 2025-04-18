@@ -7,14 +7,14 @@ import SellerHome from "./Pages//Seller/Home.jsx"
 import Login from "./Pages/User/Login.jsx";
 import CategoryPage from "./Pages/User/CategoryPage.jsx";
 import ProductAdd from "./Pages/Seller/ProductAdd.jsx";
-import axios from "axios";
-import {GlobalProvider, useGlobalContext} from "../GlobalProvider.jsx";
 import Product from "./Pages/User/Product.jsx";
+import {GlobalProvider} from "./Providers/GlobalProvider.jsx";
 
 
 const Layout = ({children}) => {
     const location = useLocation();
-    const hideHeaderRoutes = ["/admin"]; // Header'ın görünmemesi gereken sayfalar
+    const hideHeaderRoutes = ["/admin"]; 
+  
 
     return (
         <div className="page">
@@ -28,11 +28,7 @@ const Layout = ({children}) => {
     );
 };
 const App = () => {
-   const[loading, setLoading] = useState(true);
-   if(!loading){
-       console.log(loading);
-       
-   }
+    const [loading, setLoading] = useState(true);
     return (
         <GlobalProvider setLoading={setLoading}>
             {!loading &&(

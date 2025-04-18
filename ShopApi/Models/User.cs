@@ -15,6 +15,7 @@ public class User :BaseEntity{
     [MaxLength(100)]
     public required string Email { get; set; }
     public Role Role { get; set; }
-    public List<Product>? Products { get; set; }
-    public ICollection<Brand> ManagedBrands { get; set; } = new List<Brand>();
+    public ICollection<ProductSeller>? ProductSellers { get; set; } = new List<ProductSeller>();
+    public ICollection<Brand>? ManagedBrands { get; set; } = new List<Brand>();
+    public IEnumerable<Product>? CreatedProducts { get; set; }
 }

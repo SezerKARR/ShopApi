@@ -16,6 +16,5 @@ public class Filter:BaseEntity {
     public FilterType? Type { get; set; }
     // public Type? Type { get; set; }  
     public List<FilterValue> Values { get; set; } = new List<FilterValue>();
-    public List<ProductFilterValue> ProductFilterValues { get; set; } = new List<ProductFilterValue>();
     public bool IsRequired { get; set; }
 }

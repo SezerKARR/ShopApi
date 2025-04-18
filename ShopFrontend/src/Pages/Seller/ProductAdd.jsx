@@ -269,7 +269,7 @@ import * as Yup from "yup";
 import { useDispatch } from "react-redux";
 import TextInput from "../../components/common/Input/TextInput.jsx";
 import { useNotification } from "../hooks/useNotification";
-import { useGlobalContext } from "../../../GlobalProvider.jsx";
+import { useGlobalContext } from "../../Providers/GlobalProvider.jsx";
 import SelectInput from "../../Components/Common/Input/SelectInput.jsx";
 import FileInput from "../../Components/Common/Input/FileInput.jsx";
 import axios from "axios";

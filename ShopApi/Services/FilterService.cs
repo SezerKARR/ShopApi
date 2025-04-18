@@ -75,10 +75,27 @@ public class FilterService:IFilterService {
             return new Response<Filter>(e.Message);
         }
     }
+    public async Task<Response<List<Filter>>> GetFiltersByCategoryId(int categoryId) {
+        try
+        {
+            var filters = await _filterRepository.GetFiltersByCategoryId(categoryId);
+            if (!filters.Any())
+            {
+                return new Response<List<Filter>>($"No filters found for category with ID: {categoryId}");
+            }
+            return new Response<List<Filter>>(filters);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            return new Response<List<Filter>>(e.Message);
+        }
+    }
     
 }
 
 public interface IFilterService {
+    public  Task<Response<List<Filter>>> GetFiltersByCategoryId(int categoryId);
     public  Task<Response<Filter>> CreateFilter(Filter filter);
     public  Task<Response<List<Filter>>> GetFilters();
     public  Task<Response<Filter>> GetFilterById(int id);

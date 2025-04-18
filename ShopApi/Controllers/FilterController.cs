@@ -25,8 +25,8 @@ public class FilterController : ControllerBase {
 
     }
     [HttpGet("by-category/{categoryId}")]
-    public async Task<ActionResult<Filter>> GetFilterByCategoryId(int id) {
-        var response = await _filterService.GetFilterById(id);
+    public async Task<ActionResult<Filter>> GetFilterByCategoryId(int categoryId) {
+        var response = await _filterService.GetFiltersByCategoryId(categoryId);
         if (response.Success) { return Ok(response.Resource); }
         return BadRequest(response.Message);
 

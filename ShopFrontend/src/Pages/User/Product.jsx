@@ -1,44 +1,54 @@
 import React, {use, useEffect, useState} from 'react';
 import './Product.css';
 import {useParams} from "react-router-dom";
-import {useGlobalContext} from "../../../GlobalProvider.jsx";
+import {useGlobalContext} from "../../Providers/GlobalProvider.jsx";
 import axios from "axios";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faGreaterThan, faHouse} from "@fortawesome/free-solid-svg-icons";
 
 const Product = () => {
     const {productId} = useParams();
-    const {API_URL, categories} = useGlobalContext();
+    const {API_URL} = useGlobalContext();
     const [productData, setProductData] = useState({
         product: null,
-        mainCategories: [],
+        mainCategoriesNames: [],
     });
 
     useEffect(() => {
         axios.get(`${API_URL}/api/product/${productId}`).then((res) => {
             const tempProduct = res.data;
-            const mainCategories = findAllMainCategories(tempProduct);
-            console.log(tempProduct);
-            setProductData({
-                product: tempProduct,
-                mainCategories: mainCategories
+            findAllMainCategories(tempProduct).then(mainCategoriesName => {
+                console.log(tempProduct);
+                setProductData({
+                    product: tempProduct,
+                    mainCategoriesNames: mainCategoriesName
+                });
+            }).catch((err) => {
+                console.log("Error while fetching main categories:", err);
             });
         }).catch((err) => {
-            console.log(err);
-        })
+            console.log("Error while fetching product:", err);
+        });
     }, [productId]);
-    const findAllMainCategories = (product) => {
+
+    const findAllMainCategories = async (product) => {
         const result = [];
         let currentId = product.categoryId;
-        while (currentId > 0) {
-            const category = categories.find(c => c.id === currentId);
-            if (!category) break;
 
-            result.unshift(category);
-            currentId = category.parentId;
+        while (currentId > 0) {
+            try {
+                const res = await axios.get(`${API_URL}/api/category/${currentId}`);
+                console.log(res.data);
+                result.unshift(res.data.name); 
+                currentId = res.data.parentId;
+            } catch (err) {
+                console.log("Error fetching category:", err);
+                break;
+            }
         }
-        return result;
+        return result; 
     };
+
 
 
 
@@ -59,13 +69,13 @@ const Product = () => {
     //     )
     // }
     return (<div className="Product">
-        {productData.mainCategories && (
+        {productData.mainCategoriesNames && (
             <div className="main-categories-container">
                 <FontAwesomeIcon icon={faHouse}/>
-                {productData.mainCategories.map((category) => (
-                    <React.Fragment key={category.id}>
+                {productData.mainCategoriesNames.map((categoryName,index) => (
+                    <React.Fragment key={index}>
                         <FontAwesomeIcon icon={faGreaterThan} size="xs"/>
-                        <span className="main-categories-container__item">{category.name}</span>
+                        <span className="main-categories-container__item">{categoryName}</span>
                     </React.Fragment>
                 ))}
             </div>

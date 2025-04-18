@@ -55,7 +55,7 @@ public class BrandService :IBrandService {
             return new Response<List<ReadBrandDto>>($"Error fetching brands: {ex.Message}");
         }
     }
-
+   
     public async Task<Response<ReadBrandDto?>> GetBrandByIdAsync(int id)
     {
         try

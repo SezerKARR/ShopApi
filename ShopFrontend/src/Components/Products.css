@@ -26,7 +26,7 @@
 }
 .products-Container__product-photo {
     border: 1px solid #f61111;
-    width: 100%;
+    width: 150px;
     height: 220px;
 }
 

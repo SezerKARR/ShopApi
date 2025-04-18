@@ -6,7 +6,7 @@ using Services;
 
 [Route("api/[controller]")]
 [ApiController]
-public class BrandCategoryController : ControllerBase {
+public class BrandCategoryController:ControllerBase {
     private readonly IBrandCategoryService _brandCategoryService;
 
     public BrandCategoryController(IBrandCategoryService brandCategoryService) {
@@ -16,20 +16,14 @@ public class BrandCategoryController : ControllerBase {
     [HttpGet]
     public async Task<IActionResult> GetAllBrandCategories() {
         var response = await _brandCategoryService.GetAllAsync();
-        if (response.Success)
-        {
-            return Ok(response.Resource);
-        }
+        if (response.Success) { return Ok(response.Resource); }
         return BadRequest(response.Message);
     }
 
     [HttpGet("{id}")]
     public async Task<IActionResult> GetBrandCategoryById(int id) {
         var response = await _brandCategoryService.GetByIdAsync(id);
-        if (response.Success)
-        {
-            return Ok(response.Resource);
-        }
+        if (response.Success) { return Ok(response.Resource); }
         return BadRequest(response.Message);
     }
 

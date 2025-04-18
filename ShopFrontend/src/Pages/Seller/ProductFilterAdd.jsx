@@ -45,6 +45,7 @@ const ProductFilterAdd = () => {
             console.log(err);
         })
     }, [])
+    
     const CategorySelect = ({ category }) => {
         console.log(category)
         return (<>

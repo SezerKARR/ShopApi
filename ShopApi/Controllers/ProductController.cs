@@ -2,6 +2,7 @@ namespace ShopApi.Controllers;
 
 using Dtos.Product;
 using Microsoft.AspNetCore.Mvc;
+using Models.Request;
 using Services;
 
 [Route("api/[controller]")]
@@ -28,7 +29,7 @@ public class ProductController(IProductService productService) : Controller {
     }
    
     [HttpPost]
-    public async Task<ActionResult<ReadProductDto?>> CreateProduct(CreateProductDto createProductDto) {
+    public async Task<ActionResult<ReadProductDto?>> CreateProduct([FromBody]CreateProductDto createProductDto) {
         Console.WriteLine(createProductDto.CategoryId);
         Console.WriteLine("Create Product");
         if (!ModelState.IsValid) return BadRequest(ModelState);
@@ -55,6 +56,15 @@ public class ProductController(IProductService productService) : Controller {
             return StatusCode(500, ex + "Internal server error");
         }
         
+    }
+    [HttpGet("by-category/{categoryId}")]
+    public async Task<ActionResult<List<ReadProductDto>>> GetProductsByCategory([FromRoute] int categoryId) {
+        var products = await productService.GetProductByCategoryIdAsync(categoryId);
+        if (products.Success)
+        {
+            return Ok(products.Resource);
+        }
+        return BadRequest(products.Message);
     }
     [HttpPost("upload")]
     public async Task<ActionResult<ReadProductDto>> UploadFile(IFormFile? file)
@@ -85,6 +95,25 @@ public class ProductController(IProductService productService) : Controller {
 
 
     }
+    [HttpPost("by-filters")]
+    public async Task<ActionResult<List<ReadProductDto>>> GetProductsByFilterValues([FromBody] FilterRequest filterRequest) {
+        if (!ModelState.IsValid) return BadRequest(ModelState);
+        try
+        {
+            var response = await productService.GetFilteredProducts(filterRequest);
+            if (response.Success)
+            {
+                var products = response.Resource;
+                return Ok(products);
+            }
+            return BadRequest(new { message = response.Message });
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, new { message = "An error occurred while fetching products", details = ex.Message });
+        }
+    }
+
     
     
 }

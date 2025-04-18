@@ -12,8 +12,11 @@ public class BrandRepository:BaseRepository<Brand>,IBrandRepository {
     protected override IQueryable<Brand> Include() {
         return _dbSet.Include(brand => brand.Products);
     }
+
+  
 }
 
 public interface IBrandRepository:IRepository<Brand> {
+
     
 }

@@ -6,12 +6,12 @@ using ProductFilterValue;
 public class CreateProductDto {
 
   
-    public int Id { get; set; }
     public required string Name { get; set; }
-    public int CategoryId { get; set; }
-    public required string Brand { get; set; } 
-    public List<int> ProductFilterValues { get; set; }= new List<int>();
-    public IFormFile? ImageFile { get; set; }
-    public decimal Price { get; set; }
+    public required int CategoryId { get; set; }
+    public required int BrandId { get; set; } 
+    public List<CreateProductValueDto>? ProductFilterValues { get; set; }= new List<CreateProductValueDto>();
+    // public IFormFile? ImageFile { get; set; }
+    public required decimal Price { get; set; }
     public required int CreatedByUserId { get; set; }
+    public required int Quantity { get; set; }
 }
