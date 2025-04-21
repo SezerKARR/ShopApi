@@ -1,23 +1,26 @@
-import React from 'react';
+import React, {memo} from 'react';
 import './BrandFilter.css';
 
-const BrandFilter = ({ brands, selectedBrandIds, onBrandChange }) => {
+const BrandFilter = memo(({brands, selectedBrandIds, onBrandChange}) => {
     return (
-        <div>
-            <h4>Brands</h4>
+        <div className={"BrandFilter-container"}>
+            <h4 className="label">Brands</h4>
             {brands.map((brand) => (
-                <label key={brand.id}>
+                <div className={"brand-option"} key={brand.id}>
                     <input
                         type="checkbox"
-                        checked={selectedBrandIds.includes(brand.id)}
+                        checked={selectedBrandIds?.includes(brand.id) || false}
                         onChange={() => onBrandChange(brand.id)}
                     />
-                    {brand.name}
-                </label>
+                    <label  className={"brand-option-label"}>
+                        {brand.name}
+                    </label>
+                </div>
             ))}
+
         </div>
     );
-};
+});
 
 
 export default BrandFilter;

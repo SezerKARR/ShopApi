@@ -24,7 +24,7 @@ public interface IProductService {
 	Task<Response<ReadProductDto>> UpdateProductAsync(int id, UpdateProductDto dto);
 	Task<Response<ReadProductDto>> DeleteProductAsync(int id);
 	Task<Response<bool>> ProductExistAsync(int id);
-	Task<Response<List<ReadProductDto>>> GetFilteredProducts(FilterRequest filterRequest);
+	Task<Response<List<ReadProductDto>>> GetFilteredProducts(ProductFilterRequest productFilterRequest);
 
 	Task<Response<List<ReadProductDto>>>GetProductByCategoryIdAsync(int categoryId);
 }
@@ -150,6 +150,7 @@ public class ProductService : IProductService {
 			var isBrandExist = await _unitOfWork.BrandRepository.AnyAsync(dto.BrandId);
 			if (!isBrandExist)
 				return new Response<ReadProductDto>("Brand does not exist.");
+			
 
 			var product = new Product
 			{
@@ -272,27 +273,12 @@ public class ProductService : IProductService {
 			return new Response<bool>($"An error occurred while checking if product exists: {ex.Message}");
 		}
 	}
-	public async Task<Response<List<ReadProductDto>>> GetProductsByFilterValueIdsAsync(List<int> filterValueIds) {
-		try
-		{
-			var products = await _productRepository.GetProductsByFilterValueIdsAsync(filterValueIds);
-			if (products == null) return new Response<List<ReadProductDto>>("Product not found.");
-			if (!products.Any()) return new Response<List<ReadProductDto>>("Product not found."); 
-			List<ReadProductDto> productDtos = _mapper.Map<List<ReadProductDto>>(products);
-			return new Response<List<ReadProductDto>>(productDtos);
-			
-		}
-		catch (Exception e)
-		{
-			_logger.LogError(e, "An error occurred while getting product by filter value IDs.");
-			return new Response<List<ReadProductDto>>($"An error occurred while getting product by {filterValueIds} filter value IDs.");
-		}
-	}
-	public async Task<Response<List<ReadProductDto>>> GetFilteredProducts(FilterRequest filterRequest)
+	
+	public async Task<Response<List<ReadProductDto>>> GetFilteredProducts(ProductFilterRequest productFilterRequest)
 	{
 		try
 		{
-			var products = await _productRepository.GetFilteredProducts(filterRequest);
+			var products = await _productRepository.GetFilteredProducts(productFilterRequest);
 		
 			List<ReadProductDto> productDto = _mapper.Map<List<ReadProductDto>>(products);
 

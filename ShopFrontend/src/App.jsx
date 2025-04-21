@@ -9,12 +9,13 @@ import CategoryPage from "./Pages/User/CategoryPage.jsx";
 import ProductAdd from "./Pages/Seller/ProductAdd.jsx";
 import Product from "./Pages/User/Product.jsx";
 import {GlobalProvider} from "./Providers/GlobalProvider.jsx";
+import {BasketProvider} from "./Providers/BasketProvider.jsx";
 
 
 const Layout = ({children}) => {
     const location = useLocation();
-    const hideHeaderRoutes = ["/admin"]; 
-  
+    const hideHeaderRoutes = ["/admin"];
+
 
     return (
         <div className="page">
@@ -31,22 +32,24 @@ const App = () => {
     const [loading, setLoading] = useState(true);
     return (
         <GlobalProvider setLoading={setLoading}>
-            {!loading &&(
-                <BrowserRouter future={{v7_startTransition: true, v7_relativeSplatPath: true}}>
-                    <Layout>
-                        <Routes>
-                            <Route path="/" element={<Home/>}/>
-                            <Route path="/login" element={<Login/>}/>
-                            <Route path="/category/:slugAndId" element={<CategoryPage/>}/>
-                            <Route path="/product/:productId" element={<Product/>}/>
-                            
-                            
-                            {/* Seller Panel */}
-                            <Route path="/admin" element={<SellerHome/>}/>
-                            <Route path="/productAdd" element={<ProductAdd/>}/>
-                        </Routes>
-                    </Layout>
-                </BrowserRouter>)}
+            {!loading && (
+                <BasketProvider>
+                    <BrowserRouter future={{v7_startTransition: true, v7_relativeSplatPath: true}}>
+                        <Layout>
+                            <Routes>
+                                <Route path="/" element={<Home/>}/>
+                                <Route path="/login" element={<Login/>}/>
+                                <Route path="/category/:slugAndId" element={<CategoryPage/>}/>
+                                <Route path="/product/:productId" element={<Product/>}/>
+
+
+                                {/* Seller Panel */}
+                                <Route path="/admin" element={<SellerHome/>}/>
+                                <Route path="/productAdd" element={<ProductAdd/>}/>
+                            </Routes>
+                        </Layout>
+                    </BrowserRouter>
+                </BasketProvider>)}
         </GlobalProvider>
     );
 };

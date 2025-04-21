@@ -10,27 +10,26 @@ const Product = () => {
     const {productId} = useParams();
     const {API_URL} = useGlobalContext();
     const [productData, setProductData] = useState({
-        product: null,
-        mainCategoriesNames: [],
+        product: null, mainCategoriesNames: [],
     });
 
     useEffect(() => {
-        axios.get(`${API_URL}/api/product/${productId}`).then((res) => {
-            const tempProduct = res.data;
-            findAllMainCategories(tempProduct).then(mainCategoriesName => {
-                console.log(tempProduct);
+        const fetchProduct = async () => {
+            try {
+                const res = await axios.get(`${API_URL}/api/product/${productId}`);
+                const tempProduct = res.data;
+                const mainCategoriesName = await findAllMainCategories(tempProduct);
                 setProductData({
                     product: tempProduct,
                     mainCategoriesNames: mainCategoriesName
                 });
-            }).catch((err) => {
-                console.log("Error while fetching main categories:", err);
-            });
-        }).catch((err) => {
-            console.log("Error while fetching product:", err);
-        });
-    }, [productId]);
+            } catch (err) {
+                console.log("Error while fetching product or categories:", err);
+            }
+        };
 
+        fetchProduct();
+    }, [productId]);
     const findAllMainCategories = async (product) => {
         const result = [];
         let currentId = product.categoryId;
@@ -39,58 +38,35 @@ const Product = () => {
             try {
                 const res = await axios.get(`${API_URL}/api/category/${currentId}`);
                 console.log(res.data);
-                result.unshift(res.data.name); 
+                result.unshift(res.data.name);
                 currentId = res.data.parentId;
             } catch (err) {
                 console.log("Error fetching category:", err);
                 break;
             }
         }
-        return result; 
+        return result;
     };
 
 
-
-
-    // const CategoryLabel=()=>{
-    //     useEffect(()=>{
-    //         console.log("geldi")
-    //         if(mainCategories[mainCategories.length-1]?.parentId>0){
-    //            
-    //             console.log("geldi2")
-    //         }
-    //       
-    //     },[mainCategories])
-    //     return (
-    //        
-    //         <div>
-    //             sa
-    //         </div>
-    //     )
-    // }
+   
     return (<div className="Product">
-        {productData.mainCategoriesNames && (
-            <div className="main-categories-container">
+        {productData.mainCategoriesNames && (<div className="main-categories-container">
                 <FontAwesomeIcon icon={faHouse}/>
-                {productData.mainCategoriesNames.map((categoryName,index) => (
-                    <React.Fragment key={index}>
+                {productData.mainCategoriesNames.map((categoryName, index) => (<React.Fragment key={index}>
                         <FontAwesomeIcon icon={faGreaterThan} size="xs"/>
                         <span className="main-categories-container__item">{categoryName}</span>
-                    </React.Fragment>
-                ))}
-            </div>
-        )}
+                    </React.Fragment>))}
+            </div>)}
 
 
         <div className={"product__main"}>
             <div className={"image-container"}>
-                {productData.product?.imageUrl && (
-                    <img
+                {productData.product?.imageUrl && (<img
                         className="product--image"
                         alt={productData.product.id}
                         src={`${API_URL}/${productData.product.imageUrl}`}
-                    />
-                )}
+                    />)}
                 <div className={"product-information-container"}>
                     <h1 className={"product-information-container-title"}></h1>
                 </div>
@@ -98,10 +74,8 @@ const Product = () => {
         </div>
 
 
-        {/*<CategoryLabel/>*/
-        }
-    </div>)
-        ;
+        {/*<CategoryLabel/>*/}
+    </div>);
 };
 
 export default Product;

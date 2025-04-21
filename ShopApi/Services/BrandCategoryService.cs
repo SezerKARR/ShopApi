@@ -2,6 +2,7 @@ namespace ShopApi.Services;
 
 using AutoMapper;
 using Data;
+using Dtos.Brand;
 using Dtos.BrandCategory;
 using Microsoft.Extensions.Caching.Memory;
 using Models;
@@ -13,6 +14,7 @@ public interface IBrandCategoryService {
     Task<Response<List<ReadBrandCategoryDto>>> GetAllAsync();
     Task<Response<ReadBrandCategoryDto>> CreateAsync(CreateBrandCategoryDto dto);
     Task<Response<ReadBrandCategoryDto>> GetByIdAsync(int id);
+    Task<Response<List<ReadBrandDto>>> GetBrandsByCategoryIdAsync(int categoryId);
 }
 public class BrandCategoryService : IBrandCategoryService {
     private readonly IBrandCategoryRepository _brandCategoryRepository;
@@ -90,6 +92,18 @@ public class BrandCategoryService : IBrandCategoryService {
         catch (Exception ex) {
             _logger.LogError(ex, "Error fetching brand category.");
             return new Response<ReadBrandCategoryDto>($"An error occurred: {ex.Message}");
+        }
+    }
+    public async Task<Response<List<ReadBrandDto>>> GetBrandsByCategoryIdAsync(int categoryId) {
+        try {
+          var brandCategories = await _brandCategoryRepository.GetBrandsByCategoryIdAsync(categoryId);
+
+            var result = _mapper.Map<List<ReadBrandDto>>(brandCategories);
+            return new Response<List<ReadBrandDto>>(result);
+        }
+        catch (Exception ex) {
+            _logger.LogError(ex, "Error fetching brand categories.");
+            return new Response<List<ReadBrandDto>>($"An error occurred: {ex.Message}");
         }
     }
 }

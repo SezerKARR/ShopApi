@@ -1,0 +1,46 @@
+.PriceFilter-container {
+  /* Your CSS styles here */
+}
+
+.no-spinner {
+    -moz-appearance: textfield;
+    outline: rgba(92, 72, 72, 0.56);
+}
+.no-spinner.range {
+    width: 40px;
+}
+.row-range-field-container {
+    gap:10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+
+.row-range-field-container-ranges-container {
+    gap:20px;
+    display: flex;
+    flex-direction: row;
+}
+
+
+.input-range {
+    all:unset;
+    padding-left: 5px;
+    border-radius: 3px;
+    font-size: 10px;
+    height: 22px;
+    
+    outline: 2px solid rgba(72, 80, 90, 0.41);
+    margin: 2px;
+    width: 50px;
+}
+
+.priceFilter-Container-range-label {
+    padding-left: 5px
+}
+
+.priceFilter-Container-range {
+    display: flex;
+    flex-direction: row;
+}

@@ -16,7 +16,7 @@ const ToggleFilter = memo(({ filter, onFilterChange, isActive = false }) => {
     return (
         <div className="category-filter-container__Toggle">
             <div className="toggle-container">
-                <h5>{filter.name}</h5>
+                <h5 className={"label"}>{filter.name}</h5>
                 <label className="toggle">
                     <input
                         type="checkbox"

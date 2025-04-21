@@ -7,8 +7,9 @@ import {useGlobalContext} from "../../../Providers/GlobalProvider.jsx";
 const MainCategory = () => {
     const navigate = useNavigate();
     const {categories}=useGlobalContext()
-    const [mainCategories, setMainCategories] = useState(null)
     const [hoveredMainCategory, setHoveredMainCategory] = useState(null)
+    
+    const [mainCategories, setMainCategories] = useState(null)
    
     useEffect(() => {
         console.log(categories);

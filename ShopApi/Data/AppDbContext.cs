@@ -8,6 +8,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
     public DbSet<Comment> Comments { get; set; }
     public DbSet<Basket> Baskets { get; set; }
     public DbSet<BasketItem> BasketItems { get; set; }
+    public DbSet<BrandCategory> BrandCategories { get; set; }
     public DbSet<Category> Categories { get; set; }
 
     public DbSet<User> Users { get; set; }

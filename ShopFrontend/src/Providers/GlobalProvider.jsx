@@ -6,7 +6,6 @@ const GlobalContext = createContext();
 export const GlobalProvider = ({children, setLoading}) => {
     const [user, setUser] = useState(null);
     const API_URL = import.meta.env.VITE_API_URL;
-    const [basketCount, setBasketCount] = useState(0);
     const [categories, setCategories] = useState([]);
     const [products, setProducts] = useState([]);
 
@@ -32,7 +31,7 @@ export const GlobalProvider = ({children, setLoading}) => {
 
     return (
         <GlobalContext.Provider
-            value={{user, setUser, basketCount, setBasketCount, API_URL, categories, products}}>
+            value={{user, setUser,  API_URL, categories, products}}>
             {children}
         </GlobalContext.Provider>
     );

@@ -1,6 +1,6 @@
 import React, {memo} from "react";
-
-const CheckboxFilter = memo(({filter, onFilterChange, selectedOptions = {}}) => {
+import "./CheckBoxFilter.css";
+const CheckboxFilter = memo(({filter, onFilterChange, selectedOptions = []}) => {
     const handleChange = (optionId, checked) => {
 
 
@@ -14,7 +14,7 @@ const CheckboxFilter = memo(({filter, onFilterChange, selectedOptions = {}}) => 
     };
     return (
         <div className="checkbox-filter">
-            <h4>{filter.name}</h4>
+            <h4 className={"all-brand-label"}>{filter.name}</h4>
             {filter.values?.map(option => (
                 <div key={option.id} className="checkbox-option">
                    

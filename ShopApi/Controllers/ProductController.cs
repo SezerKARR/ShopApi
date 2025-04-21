@@ -96,11 +96,11 @@ public class ProductController(IProductService productService) : Controller {
 
     }
     [HttpPost("by-filters")]
-    public async Task<ActionResult<List<ReadProductDto>>> GetProductsByFilterValues([FromBody] FilterRequest filterRequest) {
+    public async Task<ActionResult<List<ReadProductDto>>> GetProductsByFilterValues([FromBody] ProductFilterRequest productFilterRequest) {
         if (!ModelState.IsValid) return BadRequest(ModelState);
         try
         {
-            var response = await productService.GetFilteredProducts(filterRequest);
+            var response = await productService.GetFilteredProducts(productFilterRequest);
             if (response.Success)
             {
                 var products = response.Resource;

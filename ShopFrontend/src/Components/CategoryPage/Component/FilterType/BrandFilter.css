@@ -1,3 +1,13 @@
 .BrandFilter-container {
+    display: flex;
+    flex-direction: column;
   /* Your CSS styles here */
+}
+
+.brand-option-label {
+}
+
+.label {
+    padding: 0;
+    margin:0 5px 5px 0;
 }

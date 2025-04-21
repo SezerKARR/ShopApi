@@ -45,27 +45,6 @@
     margin: 0 26px;
 }
 
-.category-filter-container {
-    border: 2px solid #ddd;
-    min-width: 175px;
-    margin-left: 20px;
-    padding: 0;
-    display: flex;
-    flex-direction: column;
-}
-
-
-.category-filter-container > * {
-    display: block;
-    width: 100%; 
-    box-sizing: border-box; 
-    margin: 0; 
-    padding: 10px; 
-}
-
-.category-filter-container > *:not(:last-child) {
-    border-bottom: 1px solid #ddd; 
-}
 
 
 .filters-sticky {

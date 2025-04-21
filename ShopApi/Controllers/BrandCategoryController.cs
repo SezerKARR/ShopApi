@@ -1,5 +1,6 @@
 namespace ShopApi.Controllers;
 
+using Dtos.Brand;
 using Dtos.BrandCategory;
 using Microsoft.AspNetCore.Mvc;
 using Services;
@@ -26,7 +27,12 @@ public class BrandCategoryController:ControllerBase {
         if (response.Success) { return Ok(response.Resource); }
         return BadRequest(response.Message);
     }
-
+    [HttpGet("brandsByCategoryId/{categoryId}")]
+    public async Task<ActionResult<List<ReadBrandDto>>> GetBrandsByCategoryId(int categoryId) {
+        var response = await _brandCategoryService.GetBrandsByCategoryIdAsync(categoryId);
+        if (response.Success) { return Ok(response.Resource); }
+        return BadRequest(response.Message);
+    }
     [HttpPost]
     public async Task<IActionResult> AddBrandCategory([FromBody] CreateBrandCategoryDto createBrandCategoryDto) {
         if (!ModelState.IsValid)

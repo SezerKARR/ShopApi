@@ -26,7 +26,6 @@ public abstract class BaseRepository<T> : IRepository<T> where T : BaseEntity
 
     public async Task<T?> GetByIdAsync(int id)
     {
-        Console.WriteLine(_queryable);
         return await Queryable.FirstOrDefaultAsync(x => x.Id == id);
     }
 

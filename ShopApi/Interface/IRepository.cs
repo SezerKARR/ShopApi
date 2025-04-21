@@ -12,7 +12,7 @@ public interface IRepository<T> where T : class,IEntity {
 
         Task CreateAsync(T entity);
         Task<bool> AnyAsync(int id);
-
+        
         void Update(T entity);
 
         void Delete(T entity);

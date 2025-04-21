@@ -1,0 +1,71 @@
+.ProductComponent-container {
+  /* Your CSS styles here */
+}
+.products-Container__product {
+    cursor: pointer;
+    display: flex;
+    max-width: 150px;
+    padding: 10px;
+    flex-direction: column;
+    height: 350px;
+    border: 1px solid #040000;
+    border-radius: 5px;
+}
+
+.products-Container__product:hover {
+    border: 1px solid rgba(0, 0, 0, 0.85);
+}
+
+.products-Container__product-photo {
+    border: 1px solid #f61111;
+    width: 150px;
+    height: 220px;
+}
+
+.products-Container__product-name {
+}
+
+
+.products-Container__product-price {
+    padding: 5px 10px;
+    color: black;
+    background-color: rgba(138, 141, 145, 0.59);
+    border-radius: 4px;
+    margin-top: auto;
+    display: flex;
+    align-items: end;
+}
+
+
+.products-Container__product-price:hover {
+
+    background-color: #787e85;
+
+}
+
+.products-Container__product-price-Tl {
+    color: rgba(0, 0, 0, 0.81);
+    font-size: 12px;
+}
+
+.addBasket {
+    margin-left: 30px;
+    width: 20px;
+    height: 20px;
+
+
+}
+
+.addToCart {
+    margin-left: auto;
+    cursor: pointer;
+    border: 2px ridge rgba(62, 58, 58, 0.56);
+    border-radius: 5px;
+    padding: 1px;
+}
+
+.addToCart:hover {
+    background-color: #646cff;
+
+    color: #787e85;
+}
