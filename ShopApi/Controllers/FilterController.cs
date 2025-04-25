@@ -12,21 +12,21 @@ public class FilterController : ControllerBase {
 
     }
     [HttpGet]
-    public async Task<ActionResult<List<Filter>>> GetAllFilters() {
-        var response = await _filterService.GetFilters();
+    public async Task<ActionResult<List<Filter>>> GetAllFilters(int includes=-1) {
+        var response = await _filterService.GetFilters(includes);
         if (response.Success) { return Ok(response.Resource); }
         return BadRequest(response.Message);
     }
     [HttpGet("{id}")]
-    public async Task<ActionResult<Filter>> GetFilterById(int id) {
-        var response = await _filterService.GetFilterById(id);
+    public async Task<ActionResult<Filter>> GetFilterById(int id,int includes=-1) {
+        var response = await _filterService.GetFilterById(id,includes);
         if (response.Success) { return Ok(response.Resource); }
         return BadRequest(response.Message);
 
     }
     [HttpGet("by-category/{categoryId}")]
-    public async Task<ActionResult<Filter>> GetFilterByCategoryId(int categoryId) {
-        var response = await _filterService.GetFiltersByCategoryId(categoryId);
+    public async Task<ActionResult<Filter>> GetFilterByCategoryId(int categoryId,int includes=-1) {
+        var response = await _filterService.GetFiltersByCategoryId(categoryId,includes);
         if (response.Success) { return Ok(response.Resource); }
         return BadRequest(response.Message);
 

@@ -106,6 +106,8 @@ builder.Services.AddScoped<IProductSellerRepository, ProductSellerRepository>();
 builder.Services.AddScoped<IProductSellerService, ProductSellerService>();
 builder.Services.AddScoped<IStockRepository, StockRepository>();
 builder.Services.AddScoped<IStockService, StockService>();
+builder.Services.AddScoped<ISellerService, SellerService>();
+builder.Services.AddScoped<ISellerRepository, SellerRepository>();
 
 var app = builder.Build();
 app.UseCors("configurePolicy");

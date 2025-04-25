@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ShopApi.Data;
 
@@ -11,9 +12,11 @@ using ShopApi.Data;
 namespace ShopApi.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250425062753_Seller")]
+    partial class Seller
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -370,7 +373,7 @@ namespace ShopApi.Migrations
 
                     b.HasIndex("SellerId");
 
-                    b.ToTable("ProductSellers");
+                    b.ToTable("ProductSeller");
                 });
 
             modelBuilder.Entity("ShopApi.Models.Stock", b =>
@@ -414,6 +417,11 @@ namespace ShopApi.Migrations
                     b.Property<int?>("BrandId")
                         .HasColumnType("int");
 
+                    b.Property<string>("Discriminator")
+                        .IsRequired()
+                        .HasMaxLength(8)
+                        .HasColumnType("varchar(8)");
+
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasMaxLength(100)
@@ -425,9 +433,6 @@ namespace ShopApi.Migrations
                     b.Property<int>("Role")
                         .HasColumnType("int");
 
-                    b.Property<int>("RoleInt")
-                        .HasColumnType("int");
-
                     b.Property<string>("Slug")
                         .HasColumnType("longtext");
 
@@ -437,7 +442,7 @@ namespace ShopApi.Migrations
 
                     b.ToTable("Users");
 
-                    b.HasDiscriminator<int>("RoleInt").HasValue(1);
+                    b.HasDiscriminator().HasValue("User");
 
                     b.UseTphMappingStrategy();
                 });
@@ -446,7 +451,7 @@ namespace ShopApi.Migrations
                 {
                     b.HasBaseType("ShopApi.Models.User");
 
-                    b.HasDiscriminator().HasValue(2);
+                    b.HasDiscriminator().HasValue("Seller");
                 });
 
             modelBuilder.Entity("ShopApi.Models.BasketItem", b =>

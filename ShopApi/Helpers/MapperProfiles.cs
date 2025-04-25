@@ -5,21 +5,25 @@ using Dtos.Basket;
 using Dtos.Brand;
 using Dtos.BrandCategory;
 using Dtos.Category;
+using Dtos.Comment;
 using Dtos.FilterValue;
 using Dtos.MainCategory;
 using Dtos.Product;
 using Dtos.ProductFilterValue;
 using Dtos.ProductSeller;
+using Dtos.Seller;
 using Dtos.Stock;
 using Dtos.User;
 using Models;
+using UpdateCategoryDto=Dtos.Category.UpdateCategoryDto;
 
 public class MapperProfiles : Profile{
     public MapperProfiles() {
         CreateMap<ReadProductDto, Product>();
         CreateMap<Product, ReadProductDto>()
             .ForMember(dest => dest.FilterValueIds, opt => opt.MapFrom(src => src.FilterValues.Select(pfv => pfv.Id).ToList()))
-            .ForMember(dest => dest.ProductSellerIds, opt => opt.MapFrom(src => src.ProductSellers.Select(ps => ps.Id).ToList()));
+            .ForMember(dest => dest.ProductSellerIds, opt => opt.MapFrom(src =>src.ProductSellers!=null? src.ProductSellers.Select(ps => ps.Id).ToList(): new List<int>()))
+            .ForMember(dest => dest.BrandName, opt => opt.MapFrom(src =>src.Brand!=null?src.Brand.Name:null));
         CreateMap<CreateProductDto, Product>();
 
         CreateMap<CreateFilterValueDto, FilterValue>();
@@ -43,7 +47,10 @@ public class MapperProfiles : Profile{
         CreateMap<UpdateBasketDto, Basket>();
         CreateMap<CreateBasketDto, Basket>();
         CreateMap<Basket, ReadBasketDto>();
-
+        
+        CreateMap<Comment, ReadCommentDto>();
+        CreateMap<CreateCommentDto,Comment>();
+        
         CreateMap<Brand, ReadBrandDto>();
         CreateMap<CreateBrandDto, Brand>();
         CreateMap<UpdateBrandDto, Brand>();
@@ -54,11 +61,12 @@ public class MapperProfiles : Profile{
         
         CreateMap<ProductSeller, ReadProductSellerDto>()
             .ForMember(dest => dest.StockIds, opt => opt.MapFrom(src => src.Stocks != null ? src.Stocks.Select(s => s.Id).ToList() : new List<int>()));
-        CreateMap<User, ReadUserDto>()
+        CreateMap<Seller, ReadSellerDto>()
             .ForMember(dest => dest.ProductSellerIds, opt => opt.MapFrom(src => src.ProductSellers != null ? src.ProductSellers.Select(ps => ps.Id).ToList() : new List<int>()))
             .ForMember(dest => dest.ManagedBrandIds, opt => opt.MapFrom(src => src.ManagedBrands != null ? src.ManagedBrands.Select(b => b.Id).ToList() : new List<int>()))
             .ForMember(dest => dest.CreatedProductIds, opt => opt.MapFrom(src => src.CreatedProducts != null ? src.CreatedProducts.Select(p => p.Id).ToList() : new List<int>())); 
         
         CreateMap<ProductFilterValue, ReadProductFilterValueDto>();
+        CreateMap<Seller, ReadSellerDto>();
     }
 }

@@ -5,11 +5,14 @@ import ProductComponent from "./CategoryPage/Component/ProductComponent.jsx";
 
 
 
-const Products = memo(({products, OnClickProduct}) => {
+const Products = memo(({products}) => {
     return (
-        <div className={"products-container"}>
+        <div className={"products" +
+            "-container"}>
             {products.map((product) => (
-                <ProductComponent key={product.id} product={product} OnClickProduct={OnClickProduct} />
+                <ProductComponent key={product.id} product={product} 
+                               
+                />
             ))}
         </div>
     );

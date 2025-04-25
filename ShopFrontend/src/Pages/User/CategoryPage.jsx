@@ -1,12 +1,9 @@
 import React, {useEffect, useMemo, useRef, useState} from 'react';
 import './CategoryPage.css';
-import {Await, useNavigate, useParams} from "react-router-dom";
+import { useNavigate, useParams} from "react-router-dom";
 import {useGlobalContext} from "../../Providers/GlobalProvider.jsx";
 import axios from "axios";
-import FilterItem from "../../Components/CategoryPage/Component/FilterItem.jsx";
 import Products from "../../Components/Products.jsx";
-import BrandFilter from "../../Components/CategoryPage/Component/FilterType/BrandFilter.jsx";
-import RangeFilter from "../../Components/CategoryPage/Component/FilterType/RangeFilter.jsx";
 import FiltersColumn from "../../Components/CategoryPage/FiltersColumn.jsx";
 
 
@@ -17,7 +14,7 @@ const CategoryPage = () => {
     const parts = slugAndId.split("-");
     const categoryId = parts.pop();
     const slug = parts.join("-");
-    const navigate = useNavigate();
+    
     // const [selectedFilterValueIds, setSelectedFilterValueIds] = useState([]);
     const [categoryState, setCategoryState] = useState({
         category: null,
@@ -73,12 +70,13 @@ const CategoryPage = () => {
         return response.data;
     }
     const fetchFilters = async () => {
-        const response = await axios.get(`${API_URL}/api/filter/by-category/${categoryId}`);
+        const response = await axios.get(`${API_URL}/api/filter/by-category/${categoryId}?includes=2`);
         return response.data;
     };
 
     const handleProducts = async () => {
-        const response = await axios.get(`${API_URL}/api/product/by-category/${categoryId}`);
+        const response = await axios.get(`${API_URL}/api/product/by-category/${categoryId}?includes=2`);
+        console.log(response.data);
         return response.data;
     };
 
@@ -210,11 +208,8 @@ const CategoryPage = () => {
     console.log(filterRequest);
 
 
-
-    const handleProductClick = (product) => {
-        console.log(product);
-        navigate(`/product/${product.id}`);
-    }
+   
+  
    
     console.log("asd");
     if (categoryState.loading) {
@@ -249,7 +244,9 @@ const CategoryPage = () => {
                         }
                     </div>
                     <div style={{flex: 1}}>
-                        <Products products={productsRef.current} OnClickProduct={handleProductClick}  />
+                        <Products products={productsRef.current} 
+                                  // OnClickProduct={handleProductClick}  
+                        />
 
                     </div>
                 </div>

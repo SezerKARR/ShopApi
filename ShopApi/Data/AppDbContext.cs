@@ -15,10 +15,19 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
     public DbSet<Filter> Filters { get; set; }
     public DbSet<FilterValue> FilterValues { get; set; }
     public DbSet<ProductFilterValue> ProductFilterValues { get; set; }
+    public DbSet<Seller> Sellers { get; set; }
+    public DbSet<ProductSeller> ProductSellers { get; set; }
 
     protected override void OnModelCreating(ModelBuilder builder) {
 
         base.OnModelCreating(builder);
+        builder.Entity<User>()
+            .HasDiscriminator<int>("RoleInt")  // "Role" kolonu discriminator olacak
+            .HasValue<User>(1)      // "User" tipi için Role.User
+            .HasValue<Seller>(2);
+
+      
+
         builder.Entity<BrandCategory>().HasOne(bc=>bc.Category).WithMany(c=>c.BrandCategories).HasForeignKey(bc=>bc.CategoryId);
         builder.Entity<BrandCategory>().HasOne(bc => bc.Brand).WithMany(c=>c.BrandCategories).HasForeignKey(bc=>bc.BrandId);
         builder.Entity<ProductFilterValue>().HasOne(pfv => pfv.Product).WithMany(product => product.FilterValues).HasForeignKey(p => p.ProductId);
@@ -41,11 +50,14 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
             .HasOne(p => p.Category)
             .WithMany(c => c.Products)
             .HasForeignKey(p => p.CategoryId);
-        builder.Entity<ProductSeller>().HasOne(ps=>ps.Seller).WithMany(user =>user.ProductSellers ).HasForeignKey(ps=>ps.SellerId);
+        builder.Entity<ProductSeller>().HasOne(ps=>ps.Seller).WithMany(seller =>seller.ProductSellers ).HasForeignKey(ps=>ps.SellerId);
         builder.Entity<ProductSeller>().HasOne(ps=>ps.Product).WithMany(product => product.ProductSellers).HasForeignKey(ps=>ps.ProductId);
         builder.Entity<Product>()
-            .HasOne(p => p.CreatedByUser)
+            .HasOne(p => p.CreatedBySeller)
             .WithMany(u => u.CreatedProducts)
-            .HasForeignKey(p => p.CreatedByUserId);
+            .HasForeignKey(p => p.CreatedBySellerId);
+        builder.Entity<Comment>().HasOne(c=>c.Product).WithMany(product => product.Comments).HasForeignKey(c=>c.ProductId);
+        
+        
     }
 }

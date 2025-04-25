@@ -11,3 +11,16 @@
 }.product__addProduct:hover {
     background-color: rgba(86, 111, 165, 1);
  }
+
+
+.product__information-container__comment {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 10px;
+    
+}
+
+.product__information-container__comment-count {
+    color: #fb5e00;
+}

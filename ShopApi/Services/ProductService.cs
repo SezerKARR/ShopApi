@@ -15,18 +15,20 @@ using Shared.Cache;
 using QueryableExtensions=Helpers.QueryableExtensions;
 
 public interface IProductService {
-	Task<Response<List<ReadProductDto>>> GetProductsAsync();
-	Task<Response<List<ReadProductDto>>> GetProductsAsync(QueryObject queryObject);
-	Response<IQueryable<ReadProductDto>> GetProductsQueryable();
-	Task<Response<ReadProductDto>> GetProductByIdAsync(int id);
-	Task<Response<ReadProductDto>> GetProductBySlugAsync(string slug);
-	Task<Response<ReadProductDto>> CreateProductAsync(CreateProductDto createProductDto);
-	Task<Response<ReadProductDto>> UpdateProductAsync(int id, UpdateProductDto dto);
-	Task<Response<ReadProductDto>> DeleteProductAsync(int id);
-	Task<Response<bool>> ProductExistAsync(int id);
-	Task<Response<List<ReadProductDto>>> GetFilteredProducts(ProductFilterRequest productFilterRequest);
+	Task<Response<List<ReadProductDto>>> GetProductsAsync(int includes=-1);
+	Task<Response<List<ReadProductDto>>> GetFilteredProducts(ProductFilterRequest productFilterRequest,int includes=-1);
 
-	Task<Response<List<ReadProductDto>>>GetProductByCategoryIdAsync(int categoryId);
+	Task<Response<List<ReadProductDto>>>GetProductByCategoryIdAsync(int categoryId,int includes=-1);
+	Task<Response<ReadProductDto>> GetProductByIdAsync(int id,int includes=-1);
+	Task<Response<ReadProductDto>> CreateProductAsync(CreateProductDto createProductDto);
+	Task<Response<ReadProductDto>> DeleteProductAsync(int id,int includes=-1);
+
+	// Task<Response<List<ReadProductDto>>> GetProductsAsync(QueryObject queryObject);
+	// Response<IQueryable<ReadProductDto>> GetProductsQueryable();
+	// Task<Response<ReadProductDto>> GetProductBySlugAsync(string slug);
+	// Task<Response<ReadProductDto>> UpdateProductAsync(int id, UpdateProductDto dto);
+	// Task<Response<bool>> ProductExistAsync(int id);
+	
 }
 
 public class ProductService : IProductService {
@@ -49,12 +51,12 @@ public class ProductService : IProductService {
 	}
 
 
-	public async Task<Response<List<ReadProductDto>>> GetProductsAsync() {
+	public async Task<Response<List<ReadProductDto>>> GetProductsAsync(int includes=-1) {
 		try
 		{
 			var products = await _memoryCache.GetOrCreateAsync(CacheKeys.ProductsList, entry => {
 				entry.AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(1);
-				return _productRepository.GetAllAsync();
+				return _productRepository.GetAllAsync(includes);
 			});
 			if (products == null) { return new Response<List<ReadProductDto>>("products not found"); }
 			List<ReadProductDto> productDto = products.Select(product => _mapper.Map<ReadProductDto>(product)).ToList();
@@ -68,24 +70,24 @@ public class ProductService : IProductService {
 		}
 	}
 
-	public Response<IQueryable<ReadProductDto>> GetProductsQueryable() {
+	// public Response<IQueryable<ReadProductDto>> GetProductsQueryable() {
+	// 	try
+	// 	{
+	// 		var queryProducts = _productRepository.GetQuery();
+	// 		if (queryProducts == null) { return new Response<IQueryable<ReadProductDto>>("products not found"); }
+	// 		IQueryable<ReadProductDto> readProductDtos = queryProducts.Select(product => _mapper.Map<ReadProductDto>(product));
+	// 		return new Response<IQueryable<ReadProductDto>>(readProductDtos);
+	// 	}
+	// 	catch (Exception ex)
+	// 	{
+	// 		_logger.LogError(ex, "An error occurred while fetching product query.");
+	// 		return new Response<IQueryable<ReadProductDto>>($"An error occurred while fetching product query: {ex.Message}");
+	// 	}
+	// }
+	public async Task<Response<ReadProductDto>> GetProductByIdAsync(int id,int includes=-1) {
 		try
 		{
-			var queryProducts = _productRepository.GetQuery();
-			if (queryProducts == null) { return new Response<IQueryable<ReadProductDto>>("products not found"); }
-			IQueryable<ReadProductDto> readProductDtos = queryProducts.Select(product => _mapper.Map<ReadProductDto>(product));
-			return new Response<IQueryable<ReadProductDto>>(readProductDtos);
-		}
-		catch (Exception ex)
-		{
-			_logger.LogError(ex, "An error occurred while fetching product query.");
-			return new Response<IQueryable<ReadProductDto>>($"An error occurred while fetching product query: {ex.Message}");
-		}
-	}
-	public async Task<Response<ReadProductDto>> GetProductByIdAsync(int id) {
-		try
-		{
-			var product = await _productRepository.GetByIdAsync(id);
+			var product = await _productRepository.GetByIdAsync(id,includes);
 			if (product == null) { return new Response<ReadProductDto>($"Product with id: {id} not found."); }
 			ReadProductDto productDto = _mapper.Map<ReadProductDto>(product);
 			return new Response<ReadProductDto>(productDto);
@@ -98,7 +100,7 @@ public class ProductService : IProductService {
 	}
 
 
-	public async Task<Response<ReadProductDto>> GetProductBySlugAsync(string slug) {
+	public async Task<Response<ReadProductDto>> GetProductBySlugAsync(string slug,int includes=-1) {
 		try
 		{
 			var product = await _productRepository.GetBySlugAsync(slug);
@@ -114,25 +116,25 @@ public class ProductService : IProductService {
 			return new Response<ReadProductDto>($"An error occurred: {ex.Message}");
 		}
 	}
-	public async Task<Response<List<ReadProductDto>>> GetProductsAsync(QueryObject queryObject) {
-		var query = _productRepository.GetQuery();
-
-		query = QueryableExtensions.ApplyFilter(query, queryObject.SortBy, queryObject.FilterBy);
-		query = QueryableExtensions.ApplySorting(query, queryObject.SortBy, queryObject.IsDescending);
-		if (query == null)
-			return new Response<List<ReadProductDto>>("No products found.");
-		var skipNumber = (queryObject.PageNumber - 1) * queryObject.PageSize;
-
-		var productDtos = await query
-			.Skip(skipNumber)
-			.Take(queryObject.PageSize)
-			.Select(product => _mapper.Map<ReadProductDto>(product))
-			.ToListAsync();
-
-		return productDtos.Any()
-			? new Response<List<ReadProductDto>>(productDtos)
-			: new Response<List<ReadProductDto>>("No products found.");
-	}
+	// public async Task<Response<List<ReadProductDto>>> GetProductsAsync(QueryObject queryObject) {
+	// 	var query = _productRepository.GetQuery();
+	//
+	// 	query = QueryableExtensions.ApplyFilter(query, queryObject.SortBy, queryObject.FilterBy);
+	// 	query = QueryableExtensions.ApplySorting(query, queryObject.SortBy, queryObject.IsDescending);
+	// 	if (query == null)
+	// 		return new Response<List<ReadProductDto>>("No products found.");
+	// 	var skipNumber = (queryObject.PageNumber - 1) * queryObject.PageSize;
+	//
+	// 	var productDtos = await query
+	// 		.Skip(skipNumber)
+	// 		.Take(queryObject.PageSize)
+	// 		.Select(product => _mapper.Map<ReadProductDto>(product))
+	// 		.ToListAsync();
+	//
+	// 	return productDtos.Any()
+	// 		? new Response<List<ReadProductDto>>(productDtos)
+	// 		: new Response<List<ReadProductDto>>("No products found.");
+	// }
 
 
 	public async Task<Response<ReadProductDto>> CreateProductAsync(CreateProductDto dto) {
@@ -158,8 +160,8 @@ public class ProductService : IProductService {
 				Slug = SlugHelper.GenerateSlug(dto.Name),
 				CategoryId = dto.CategoryId,
 				BrandId = dto.BrandId,
-				Price = dto.Price,
-				CreatedByUserId = dto.CreatedByUserId,
+				MinPrice = dto.Price,
+				CreatedBySellerId = dto.CreatedByUserId,
 			};
 
 			await _productRepository.CreateAsync(product);
@@ -186,7 +188,7 @@ public class ProductService : IProductService {
 
 			var createProductSellerDto = new CreateProductSellerDto()
 			{
-				ProductId = product.Id, SellerId = product.CreatedByUserId, Quantity = dto.Quantity,
+				ProductId = product.Id, SellerId = product.CreatedBySellerId, Quantity = dto.Quantity, Price = dto.Price
 			};
 			var productSellerResponse = await _productSellerService.CreateProductSellerAsync(createProductSellerDto, false);
 			if (!productSellerResponse.Success)
@@ -224,8 +226,8 @@ public class ProductService : IProductService {
 	// 	}
 	// 	return Task.CompletedTask;
 	// }
-	public async Task<Response<ReadProductDto>> UpdateProductAsync(int id, UpdateProductDto dto) {
-		var existingProduct = await _productRepository.GetByIdAsync(id);
+	public async Task<Response<ReadProductDto>> UpdateProductAsync(int id, UpdateProductDto dto,int includes=-1) {
+		var existingProduct = await _productRepository.GetByIdAsync(id,includes);
 		if (existingProduct == null) return new Response<ReadProductDto>($"Product with id: {id} does not exist.");
 		try
 		{
@@ -242,8 +244,8 @@ public class ProductService : IProductService {
 			return new Response<ReadProductDto>($"An error occurred when updating the Product: {ex.Message}");
 		}
 	}
-	public async Task<Response<ReadProductDto>> DeleteProductAsync(int id) {
-		var existProduct = await _productRepository.GetByIdAsync(id);
+	public async Task<Response<ReadProductDto>> DeleteProductAsync(int id,int includes=-1) {
+		var existProduct = await _productRepository.GetByIdAsync(id,includes);
 		if (existProduct == null) return new Response<ReadProductDto>("Product not found.");
 		try
 		{
@@ -259,10 +261,10 @@ public class ProductService : IProductService {
 			return new Response<ReadProductDto>($"An error occurred when deleting the Product: {e.Message}");
 		}
 	}
-	public async Task<Response<bool>> ProductExistAsync(int id) {
+	public async Task<Response<bool>> ProductExistAsync(int id,int includes=-1) {
 		try
 		{
-			var exists = await _productRepository.GetByIdAsync(id);
+			var exists = await _productRepository.GetByIdAsync(id,includes);
 
 			if (exists != null) { return new Response<bool>(true); }
 			else { return new Response<bool>(false); }
@@ -274,11 +276,11 @@ public class ProductService : IProductService {
 		}
 	}
 	
-	public async Task<Response<List<ReadProductDto>>> GetFilteredProducts(ProductFilterRequest productFilterRequest)
+	public async Task<Response<List<ReadProductDto>>> GetFilteredProducts(ProductFilterRequest productFilterRequest,int includes=-1)
 	{
 		try
 		{
-			var products = await _productRepository.GetFilteredProducts(productFilterRequest);
+			var products = await _productRepository.GetFilteredProducts(productFilterRequest,includes);
 		
 			List<ReadProductDto> productDto = _mapper.Map<List<ReadProductDto>>(products);
 
@@ -291,10 +293,10 @@ public class ProductService : IProductService {
 		
 	}
 
-	public async Task<Response<List<ReadProductDto>>> GetProductByCategoryIdAsync(int categoryId) {
+	public async Task<Response<List<ReadProductDto>>> GetProductByCategoryIdAsync(int categoryId,int includes=-1) {
 		try
 		{
-			var products = await _productRepository.GetProductsByCategoryIdAsync(categoryId);
+			var products = await _productRepository.GetProductsByCategoryIdAsync(categoryId,includes);
 			if (products == null|| !products.Any()) return new Response<List<ReadProductDto>>("Product not found.");
 			List<ReadProductDto> productDto = _mapper.Map<List<ReadProductDto>>(products);
 			return new Response<List<ReadProductDto>>(productDto);

@@ -11,9 +11,9 @@ using Repository;
 using Shared.Cache;
 
 public interface ICommentService {
-    Task<Response<List<ReadCommentDto>>> GetCommentsAsync();
-    Task<Response<ReadCommentDto>> GetCommentByIdAsync(int id);
-    Task<Response<ReadCommentDto>> CreateCommentAsync(CreateCommentDto createCommentDto);
+    Task<Response<List<ReadCommentDto>>> GetCommentsAsync(int includes=-1);
+    Task<Response<ReadCommentDto>> GetCommentByIdAsync(int id,int includes=-1);
+    Task<Response<ReadCommentDto>> CreateCommentAsync(CreateCommentDto createCommentDto,int includes=-1);
 }
 
 public class CommentService : ICommentService {
@@ -30,12 +30,12 @@ public class CommentService : ICommentService {
         _logger = logger;
     }
 
-    public async Task<Response<List<ReadCommentDto>>> GetCommentsAsync() {
+    public async Task<Response<List<ReadCommentDto>>> GetCommentsAsync(int includes=-1) {
         try
         {
             List<Comment>? comments = await _memoryCache.GetOrCreateAsync(CacheKeys.CategoriesList, entry => {
                 entry.AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(1);
-                return _commentRepository.GetAllAsync();
+                return _commentRepository.GetAllAsync(includes);
             });
             List<ReadCommentDto> readCommentDtos = _mapper.Map<List<ReadCommentDto>>(comments);
 
@@ -47,10 +47,10 @@ public class CommentService : ICommentService {
             return new Response<List<ReadCommentDto>>($"An error occurred while fetching Comments: {ex.Message}");
         }
     }
-    public async Task<Response<ReadCommentDto>> GetCommentByIdAsync(int id) {
+    public async Task<Response<ReadCommentDto>> GetCommentByIdAsync(int id,int includes=-1) {
         try
         {
-            Comment? comment = await _commentRepository.GetByIdAsync(id);
+            Comment? comment = await _commentRepository.GetByIdAsync(id,includes);
             if (comment == null) { return new Response<ReadCommentDto>($"Comment with id: {id} not found."); }
             ReadCommentDto readCommentDto = _mapper.Map<ReadCommentDto>(comment);
             return new Response<ReadCommentDto>(readCommentDto);
@@ -61,35 +61,48 @@ public class CommentService : ICommentService {
             return new Response<ReadCommentDto>($"An error occurred: {ex.Message}");
         }
     }
-    public async Task<Response<ReadCommentDto>> CreateCommentAsync(CreateCommentDto createCommentDto) {
-        bool isProductExist = await _unitOfWork.ProductRepository.AnyAsync( createCommentDto.ProductId);
-    
-        if (!isProductExist)
+    public async Task<Response<ReadCommentDto>> CreateCommentAsync(CreateCommentDto createCommentDto,int includes=-1) {
+        var product = await _unitOfWork.ProductRepository.GetByIdAsync(createCommentDto.ProductId,includes);
+        if (product == null)
             return new Response<ReadCommentDto>("Product does not exist");
+
         try
         {
-            Comment comment = _mapper.Map<Comment>(createCommentDto); 
+            Comment comment = _mapper.Map<Comment>(createCommentDto);
             comment.Slug = SlugHelper.GenerateSlug(createCommentDto.Name);
+
+            if (createCommentDto.Images != null)
+            {
+                comment.ImageUrls = FormManager.Save(createCommentDto.Images, "uploads/Comments", FormTypes.Image);
+            }
+
+            await _commentRepository.CreateAsync(comment);
+
+            // Yalnızca sum ve count alarak güncelle
+            var (sum, count) = await _commentRepository.GetSumAndCountByProductIdAsync(comment.ProductId);
+            product.AverageRating = ((double?)sum+createCommentDto.Rating) / (count+1);
+            product.CommentCount = count+1;
             if (createCommentDto.Images!=null)
             {
                 comment.ImageUrls=FormManager.Save(createCommentDto.Images,"uploads/Comments",FormTypes.Image);
 
             }
-            await _commentRepository.CreateAsync(comment);
             if (!await _unitOfWork.CommitAsync())
             {
-                return new Response<ReadCommentDto>($"An error occurred when creating product: {comment.Name}.");
+                return new Response<ReadCommentDto>($"An error occurred when creating comment: {comment.Name}.");
             }
+
             _memoryCache.Remove(CacheKeys.CommentsList);
+
             ReadCommentDto readCommentDto = _mapper.Map<ReadCommentDto>(comment);
             return new Response<ReadCommentDto>(readCommentDto);
-            
         }
         catch (Exception e)
         {
             Console.WriteLine(e);
             throw;
         }
+       
        
     }
 }

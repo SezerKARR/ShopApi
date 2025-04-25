@@ -11,13 +11,13 @@ using Repository;
 using Shared.Cache;
 
 public interface IBrandService {
-    Task<Response<List<ReadBrandDto>>> GetBrandsAsync();
-    Task<Response<ReadBrandDto?>> GetBrandByIdAsync(int id);
-    Task<Response<ReadBrandDto>> GetBrandBySlugAsync(string slug);
-    Task<Response<ReadBrandDto>> CreateBrandAsync(CreateBrandDto createDto);
-    Task<Response<ReadBrandDto>> UpdateBrandAsync(int id, UpdateBrandDto updateDto);
-    Task<Response<ReadBrandDto>> DeleteBrandAsync(int id);
-    Task<Response<bool>> BrandExistsAsync(int id);
+    Task<Response<List<ReadBrandDto>>> GetBrandsAsync(int includes=-1);
+    Task<Response<ReadBrandDto?>> GetBrandByIdAsync(int id,int includes=-1);
+    // Task<Response<ReadBrandDto>> GetBrandBySlugAsync(string slug);
+    // Task<Response<ReadBrandDto>> CreateBrandAsync(CreateBrandDto createDto);
+    // Task<Response<ReadBrandDto>> UpdateBrandAsync(int id, UpdateBrandDto updateDto);
+    // Task<Response<ReadBrandDto>> DeleteBrandAsync(int id);
+    // Task<Response<bool>> BrandExistsAsync(int id);
 }
 
 public class BrandService :IBrandService {
@@ -36,14 +36,14 @@ public class BrandService :IBrandService {
         _brandRepository = unitOfWork.BrandRepository;
     }
 
-    public async Task<Response<List<ReadBrandDto>>> GetBrandsAsync()
+    public async Task<Response<List<ReadBrandDto>>> GetBrandsAsync(int includes=-1)
     {
         try
         {
             var brands = await _memoryCache.GetOrCreateAsync(CacheKeys.BrandList, async entry =>
             {
                 entry.AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(5);
-                return await _brandRepository.GetAllAsync();
+                return await _brandRepository.GetAllAsync(includes);
             });
 
             var dto = _mapper.Map<List<ReadBrandDto>>(brands);
@@ -56,11 +56,11 @@ public class BrandService :IBrandService {
         }
     }
    
-    public async Task<Response<ReadBrandDto?>> GetBrandByIdAsync(int id)
+    public async Task<Response<ReadBrandDto?>> GetBrandByIdAsync(int id,int includes=-1)
     {
         try
         {
-            var brand = await _brandRepository.GetByIdAsync(id);
+            var brand = await _brandRepository.GetByIdAsync(id,includes);
             if (brand == null) return new Response<ReadBrandDto?>("Brand not found");
 
             var dto = _mapper.Map<ReadBrandDto>(brand);

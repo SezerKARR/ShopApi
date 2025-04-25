@@ -19,8 +19,9 @@ public class ProductController(IProductService productService) : Controller {
        return BadRequest(products.Message);
     }
     [HttpGet("{id:int}")]
-    public async Task<ActionResult<ReadProductDto>> GetProductById([FromRoute] int id) {
-        var product = await productService.GetProductByIdAsync(id);
+    public async Task<ActionResult<ReadProductDto>> GetProductById(int id,int includes=-1) {
+        Console.WriteLine("product fetch by id");
+        var product = await productService.GetProductByIdAsync(id,includes);
         if (product.Success)
         {
             return Ok(product.Resource);
@@ -58,8 +59,8 @@ public class ProductController(IProductService productService) : Controller {
         
     }
     [HttpGet("by-category/{categoryId}")]
-    public async Task<ActionResult<List<ReadProductDto>>> GetProductsByCategory([FromRoute] int categoryId) {
-        var products = await productService.GetProductByCategoryIdAsync(categoryId);
+    public async Task<ActionResult<List<ReadProductDto>>> GetProductsByCategory([FromRoute] int categoryId,int includes) {
+        var products = await productService.GetProductByCategoryIdAsync(categoryId,includes);
         if (products.Success)
         {
             return Ok(products.Resource);

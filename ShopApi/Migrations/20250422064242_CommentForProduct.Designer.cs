@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ShopApi.Data;
 
@@ -11,9 +12,11 @@ using ShopApi.Data;
 namespace ShopApi.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250422064242_CommentForProduct")]
+    partial class CommentForProduct
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -21,6 +24,21 @@ namespace ShopApi.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 64);
 
             MySqlModelBuilderExtensions.AutoIncrementColumns(modelBuilder);
+
+            modelBuilder.Entity("BrandUser", b =>
+                {
+                    b.Property<int>("BrandAdminsId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ManagedBrandsId")
+                        .HasColumnType("int");
+
+                    b.HasKey("BrandAdminsId", "ManagedBrandsId");
+
+                    b.HasIndex("ManagedBrandsId");
+
+                    b.ToTable("BrandUser");
+                });
 
             modelBuilder.Entity("ShopApi.Models.Basket", b =>
                 {
@@ -64,7 +82,7 @@ namespace ShopApi.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("longtext");
 
-                    b.Property<int>("ProductSellerId")
+                    b.Property<int>("ProductId")
                         .HasColumnType("int");
 
                     b.Property<int>("Quantity")
@@ -77,7 +95,7 @@ namespace ShopApi.Migrations
 
                     b.HasIndex("BasketId");
 
-                    b.HasIndex("ProductSellerId");
+                    b.HasIndex("ProductId");
 
                     b.ToTable("BasketItems");
                 });
@@ -100,15 +118,10 @@ namespace ShopApi.Migrations
                         .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.Property<int?>("SellerId")
-                        .HasColumnType("int");
-
                     b.Property<string>("Slug")
                         .HasColumnType("longtext");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("SellerId");
 
                     b.ToTable("Brand");
                 });
@@ -274,7 +287,7 @@ namespace ShopApi.Migrations
                     b.Property<int>("CommentCount")
                         .HasColumnType("int");
 
-                    b.Property<int>("CreatedBySellerId")
+                    b.Property<int>("CreatedByUserId")
                         .HasColumnType("int");
 
                     b.Property<string>("Description")
@@ -285,14 +298,11 @@ namespace ShopApi.Migrations
                         .HasMaxLength(120)
                         .HasColumnType("varchar(120)");
 
-                    b.Property<decimal?>("MinPrice")
-                        .HasColumnType("decimal(65,30)");
-
-                    b.Property<int?>("MinPriceSellerId")
-                        .HasColumnType("int");
-
                     b.Property<string>("Name")
                         .HasColumnType("longtext");
+
+                    b.Property<decimal>("Price")
+                        .HasColumnType("decimal(65,30)");
 
                     b.Property<string>("Slug")
                         .HasColumnType("longtext");
@@ -303,7 +313,7 @@ namespace ShopApi.Migrations
 
                     b.HasIndex("CategoryId");
 
-                    b.HasIndex("CreatedBySellerId");
+                    b.HasIndex("CreatedByUserId");
 
                     b.ToTable("Products");
                 });
@@ -352,9 +362,6 @@ namespace ShopApi.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("longtext");
 
-                    b.Property<decimal>("Price")
-                        .HasColumnType("decimal(65,30)");
-
                     b.Property<int>("ProductId")
                         .HasColumnType("int");
 
@@ -370,7 +377,7 @@ namespace ShopApi.Migrations
 
                     b.HasIndex("SellerId");
 
-                    b.ToTable("ProductSellers");
+                    b.ToTable("ProductSeller");
                 });
 
             modelBuilder.Entity("ShopApi.Models.Stock", b =>
@@ -411,9 +418,6 @@ namespace ShopApi.Migrations
 
                     MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int?>("BrandId")
-                        .HasColumnType("int");
-
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasMaxLength(100)
@@ -425,28 +429,27 @@ namespace ShopApi.Migrations
                     b.Property<int>("Role")
                         .HasColumnType("int");
 
-                    b.Property<int>("RoleInt")
-                        .HasColumnType("int");
-
                     b.Property<string>("Slug")
                         .HasColumnType("longtext");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("BrandId");
-
                     b.ToTable("Users");
-
-                    b.HasDiscriminator<int>("RoleInt").HasValue(1);
-
-                    b.UseTphMappingStrategy();
                 });
 
-            modelBuilder.Entity("ShopApi.Models.Seller", b =>
+            modelBuilder.Entity("BrandUser", b =>
                 {
-                    b.HasBaseType("ShopApi.Models.User");
+                    b.HasOne("ShopApi.Models.User", null)
+                        .WithMany()
+                        .HasForeignKey("BrandAdminsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-                    b.HasDiscriminator().HasValue(2);
+                    b.HasOne("ShopApi.Models.Brand", null)
+                        .WithMany()
+                        .HasForeignKey("ManagedBrandsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("ShopApi.Models.BasketItem", b =>
@@ -457,22 +460,15 @@ namespace ShopApi.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("ShopApi.Models.ProductSeller", "ProductSeller")
+                    b.HasOne("ShopApi.Models.Product", "Product")
                         .WithMany()
-                        .HasForeignKey("ProductSellerId")
+                        .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Basket");
 
-                    b.Navigation("ProductSeller");
-                });
-
-            modelBuilder.Entity("ShopApi.Models.Brand", b =>
-                {
-                    b.HasOne("ShopApi.Models.Seller", null)
-                        .WithMany("ManagedBrands")
-                        .HasForeignKey("SellerId");
+                    b.Navigation("Product");
                 });
 
             modelBuilder.Entity("ShopApi.Models.BrandCategory", b =>
@@ -551,9 +547,9 @@ namespace ShopApi.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("ShopApi.Models.Seller", "CreatedBySeller")
+                    b.HasOne("ShopApi.Models.User", "CreatedByUser")
                         .WithMany("CreatedProducts")
-                        .HasForeignKey("CreatedBySellerId")
+                        .HasForeignKey("CreatedByUserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -561,7 +557,7 @@ namespace ShopApi.Migrations
 
                     b.Navigation("Category");
 
-                    b.Navigation("CreatedBySeller");
+                    b.Navigation("CreatedByUser");
                 });
 
             modelBuilder.Entity("ShopApi.Models.ProductFilterValue", b =>
@@ -591,7 +587,7 @@ namespace ShopApi.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("ShopApi.Models.Seller", "Seller")
+                    b.HasOne("ShopApi.Models.User", "Seller")
                         .WithMany("ProductSellers")
                         .HasForeignKey("SellerId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -613,13 +609,6 @@ namespace ShopApi.Migrations
                     b.Navigation("ProductSeller");
                 });
 
-            modelBuilder.Entity("ShopApi.Models.User", b =>
-                {
-                    b.HasOne("ShopApi.Models.Brand", null)
-                        .WithMany("BrandAdmins")
-                        .HasForeignKey("BrandId");
-                });
-
             modelBuilder.Entity("ShopApi.Models.Basket", b =>
                 {
                     b.Navigation("BasketItems");
@@ -627,8 +616,6 @@ namespace ShopApi.Migrations
 
             modelBuilder.Entity("ShopApi.Models.Brand", b =>
                 {
-                    b.Navigation("BrandAdmins");
-
                     b.Navigation("BrandCategories");
 
                     b.Navigation("Products");
@@ -664,11 +651,9 @@ namespace ShopApi.Migrations
                     b.Navigation("Stocks");
                 });
 
-            modelBuilder.Entity("ShopApi.Models.Seller", b =>
+            modelBuilder.Entity("ShopApi.Models.User", b =>
                 {
                     b.Navigation("CreatedProducts");
-
-                    b.Navigation("ManagedBrands");
 
                     b.Navigation("ProductSellers");
                 });

@@ -8,17 +8,55 @@ using Models.Request;
 
 public interface IProductRepository:IRepository<Product> {
 
-    Task<List<Product>?> GetProductsByCategoryIdAsync(int categoryId);
-    Task<List<Product>?> GetFilteredProducts(ProductFilterRequest productFilterRequest);
+    Task<List<Product>?> GetProductsByCategoryIdAsync(int categoryId, int includes = -1);
+    Task<List<Product>?> GetFilteredProducts(ProductFilterRequest productFilterRequest, int includes = -1);
+}
+
+[Flags]
+public enum ProductIncludes {
+    None = 0,
+    
+    Category = 1,
+    Brand = 2,
+    CreatedByUser = 4,
+    Comment = 8,
+    ProductSeller = 16,
+    ProductFilterValue = 32,
+
+    All = Brand | Category | ProductFilterValue
 }
 
 public class ProductRepository:BaseRepository<Product>, IProductRepository {
     public ProductRepository(AppDbContext context):base(context) {
     }
 
-    protected override IQueryable<Product> Include() {
-        Console.WriteLine("CategoryRepository");
-        return _dbSet.Include(p => p.FilterValues).AsQueryable();
+    protected override IQueryable<Product> IncludeQuery(int includes = -1, IQueryable<Product>? queryable = null) {
+
+
+        var query =queryable ?? _dbSet.AsQueryable();
+        if (includes != -1)
+        {
+            var productIncludes = (ProductIncludes)includes;
+
+            if (productIncludes.HasFlag(ProductIncludes.Category))
+                query = query.Include(p => p.Category);
+            if (productIncludes.HasFlag(ProductIncludes.Brand))
+                query = query.Include(p => p.Brand);
+            if (productIncludes.HasFlag(ProductIncludes.CreatedByUser))
+                query = query.Include(p => p.CreatedBySeller);
+            if (productIncludes.HasFlag(ProductIncludes.Comment))
+                query = query.Include(p => p.Comments);
+            if (productIncludes.HasFlag(ProductIncludes.ProductSeller))
+                query = query.Include(p => p.ProductSellers);
+            if (productIncludes.HasFlag(ProductIncludes.ProductFilterValue))
+                query = query.Include(p => p.FilterValues);
+        }
+
+
+
+
+        return query;
+
     }
     // public async Task<List<Product>?> GetFilteredProducts(ProductFilterRequest filterRequest) {
     // 	try {
@@ -53,10 +91,10 @@ public class ProductRepository:BaseRepository<Product>, IProductRepository {
     // 	}
     // 	
     // }
-    public async Task<List<Product>?> GetFilteredProducts(ProductFilterRequest productFilterRequest) {
+    public async Task<List<Product>?> GetFilteredProducts(ProductFilterRequest productFilterRequest, int includes = -1) {
         try
         {
-            var query = Queryable;
+            var query = IncludeQuery(includes);
             if (productFilterRequest.CategoryId.HasValue)
             {
                 query = query.Where(p => p.CategoryId == productFilterRequest.CategoryId.Value);
@@ -73,15 +111,15 @@ public class ProductRepository:BaseRepository<Product>, IProductRepository {
                 }
 
 
-           
-            if (productFilterRequest.MinPrice!=-1)
+
+            if (productFilterRequest.MinPrice != -1)
             {
-                query = query.Where(p => p.Price >= productFilterRequest.MinPrice);
+                query = query.Where(p => p.MinPrice >= productFilterRequest.MinPrice);
             }
 
-            if (productFilterRequest.MaxPrice!=-1)
+            if (productFilterRequest.MaxPrice != -1)
             {
-                query = query.Where(p => p.Price <= productFilterRequest.MaxPrice);
+                query = query.Where(p => p.MinPrice <= productFilterRequest.MaxPrice);
             }
             if (productFilterRequest.BrandIds?.Length > 0)
             {
@@ -111,7 +149,7 @@ public class ProductRepository:BaseRepository<Product>, IProductRepository {
     }
 
 
-    public async Task<List<Product>?> GetProductsByCategoryIdAsync(int categoryId) {
-        return await Queryable.Where(p => p.CategoryId == categoryId).ToListAsync();
+    public async Task<List<Product>?> GetProductsByCategoryIdAsync(int categoryId, int includes = -1) {
+        return await IncludeQuery(includes).Where(p => p.CategoryId == categoryId).ToListAsync();
     }
 }

@@ -4,10 +4,10 @@
 .products-Container__product {
     cursor: pointer;
     display: flex;
-    max-width: 150px;
+    max-width: 226px;
     padding: 10px;
     flex-direction: column;
-    height: 350px;
+    height: 440px;
     border: 1px solid #040000;
     border-radius: 5px;
 }
@@ -19,19 +19,28 @@
 .products-Container__product-photo {
     border: 1px solid #f61111;
     width: 150px;
-    height: 220px;
+    height: 290px;
+    min-width: 220px;
+    min-height: 290px;
 }
 
 .products-Container__product-name {
+    color: #444444;
+    font-size:14px;
 }
 
+.products-Container__product-name-brand {
+   
+    color: #050505;
+    font-size: 24px;
+    font-style:inherit;
+}
 
 .products-Container__product-price {
     padding: 5px 10px;
     color: black;
     background-color: rgba(138, 141, 145, 0.59);
     border-radius: 4px;
-    margin-top: auto;
     display: flex;
     align-items: end;
 }
@@ -59,7 +68,6 @@
 .addToCart {
     margin-left: auto;
     cursor: pointer;
-    border: 2px ridge rgba(62, 58, 58, 0.56);
     border-radius: 5px;
     padding: 1px;
 }
@@ -68,4 +76,57 @@
     background-color: #646cff;
 
     color: #787e85;
+}
+
+
+
+.product-component__star-back {
+    color: #dbdbdb;
+}
+
+.product-component__star-front {
+    position: absolute;
+    top: 0;
+    left: 0;
+    color: #f49e29;
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+.product-component__details{
+    margin-top: auto;
+}
+
+.product-component__stars{
+    font-size: 30px;
+    color: #dbdbdb;
+    display: inline-block;
+    position: relative;
+}
+.product-component__rating-wrapper{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.product-component__rating-int {
+    all: unset;
+    font-size: 15px;
+    color: #1e1c1c;
+}
+
+.product-component__comment-count {
+    color: #8f8f86;
+    padding-left: 6px;
+    margin-top: 2px;
+}
+
+.products-Container__product-held {
+    position: absolute;
+    max-width:200px ;
+    background-color: #9c9494;
+    font-size: 12px;
+    max-height: 25px;
+    padding: 8px;
+    border-radius: 4px;
 }

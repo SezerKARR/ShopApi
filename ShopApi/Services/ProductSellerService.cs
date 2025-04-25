@@ -12,7 +12,7 @@ namespace ShopApi.Services {
 	public interface IProductSellerService {
 		Task<Response<List<ReadProductSellerDto>>> GetProductSellersAsync();
 		Task<Response<ReadProductSellerDto>> CreateProductSellerAsync(CreateProductSellerDto createProductSellerDto,bool useTransaction=true);
-		Task<Response<ReadProductSellerDto>> GetProductSellerByIdAsync(int productSellerId);
+		Task<Response<ReadProductSellerDto>> GetProductSellerByIdAsync(int productSellerId,int includes=-1);
 	}
 
 	public class ProductSellerService : IProductSellerService {
@@ -64,12 +64,17 @@ namespace ShopApi.Services {
 
 				var isUserExist = await _unitOfWork.UserRepository.AnyAsync(createProductSellerDto.SellerId);
 				if (!isUserExist)
-					return new Response<ReadProductSellerDto>("User not found.");
-
+					return new Response<ReadProductSellerDto>("User not found.");	
+				var product=await _unitOfWork.ProductRepository.GetByIdAsync(createProductSellerDto.ProductId);
+				if(product == null)
+					return new Response<ReadProductSellerDto>("Product not found.");
 				ProductSeller productSeller = new ProductSeller()
 				{
 					ProductId = createProductSellerDto.ProductId, SellerId = createProductSellerDto.SellerId,
+					Price = createProductSellerDto.Price,
 				};
+				
+				
 				await _productSellerRepository.CreateAsync(productSeller);
 				if (!await _unitOfWork.CommitAsync())
 				{
@@ -92,7 +97,11 @@ namespace ShopApi.Services {
 					if (stockResponse.Message != null)
 						return new Response<ReadProductSellerDto>(stockResponse.Message);
 				}
-
+				if (product.MinPrice>createProductSellerDto.Price|| product.MinPrice==null  )//todo product ilk create edildiğinde min price 0 değeri kaldırılıcak
+				{
+					product.MinPrice = createProductSellerDto.Price;
+					product.MinPriceSellerId = productSeller.Id;
+				}
 
 
 				if (useTransaction)
@@ -101,7 +110,14 @@ namespace ShopApi.Services {
 
 				}
 				_memoryCache.Remove(CacheKeys.ProductSellerList);
-				var productSellerDto = _mapper.Map<ReadProductSellerDto>(productSeller);
+				ReadProductSellerDto productSellerDto = new ReadProductSellerDto
+				{
+					
+					Id = productSeller.Id,
+					ProductId = productSeller.ProductId,
+					SellerId = productSeller.SellerId,
+					Price = productSeller.Price,
+				};
 				return new Response<ReadProductSellerDto>(productSellerDto);
 			}
 			catch (Exception ex)
@@ -113,10 +129,10 @@ namespace ShopApi.Services {
 		}
 
 
-		public async Task<Response<ReadProductSellerDto>> GetProductSellerByIdAsync(int productSellerId) {
+		public async Task<Response<ReadProductSellerDto>> GetProductSellerByIdAsync(int productSellerId,int includes=-1) {
 			try
 			{
-				var productSeller = await _productSellerRepository.GetByIdAsync(productSellerId);
+				var productSeller = await _productSellerRepository.GetByIdAsync(productSellerId,includes);
 				if (productSeller == null) { return new Response<ReadProductSellerDto>($"Product seller not found: {productSellerId}"); }
 
 				_memoryCache.Remove(CacheKeys.ProductSellerList);

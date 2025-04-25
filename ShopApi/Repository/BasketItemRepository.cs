@@ -13,7 +13,7 @@ public class BasketItemRepository:BaseRepository<BasketItem>,IBasketItemReposito
     }
     
     public async Task<List<BasketItem>> GetBasketItemsByBasketId(int basketId) {
-        List<BasketItem> basketItems = await Queryable.Where(basketItem => basketItem.BasketId == basketId).ToListAsync();
+        List<BasketItem> basketItems = await IncludeQuery(-1).Where(basketItem => basketItem.BasketId == basketId).ToListAsync();
         return basketItems;
     }
 }

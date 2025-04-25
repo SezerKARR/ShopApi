@@ -1,6 +1,7 @@
 import React, {memo} from "react";
 import "./CheckBoxFilter.css";
 const CheckboxFilter = memo(({filter, onFilterChange, selectedOptions = []}) => {
+    console.log(filter)
     const handleChange = (optionId, checked) => {
 
 
