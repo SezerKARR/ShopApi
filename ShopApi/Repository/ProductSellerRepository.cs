@@ -12,6 +12,7 @@ enum ProductSellerInclude {
     Seller = 1,
     Product = 2,
     Stocks=4,
+   
     
     All= Seller | Product | Stocks
 }
@@ -30,6 +31,7 @@ public class ProductSellerRepository:BaseRepository<ProductSeller>,IProductSelle
                 query=query.Include(ps=>ps.Product);
             if(productSellerInclude.HasFlag(ProductSellerInclude.Stocks))
                 query=query.Include(ps=>ps.Stocks);
+          
         }
         return query;
     }

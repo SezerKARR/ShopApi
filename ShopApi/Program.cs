@@ -108,7 +108,8 @@ builder.Services.AddScoped<IStockRepository, StockRepository>();
 builder.Services.AddScoped<IStockService, StockService>();
 builder.Services.AddScoped<ISellerService, SellerService>();
 builder.Services.AddScoped<ISellerRepository, SellerRepository>();
-
+builder.Services.AddScoped<ICouponRepository, CouponRepository>();
+builder.Services.AddScoped<ICouponService, CouponService>();
 var app = builder.Build();
 app.UseCors("configurePolicy");
 app.Use(async (context, next) =>

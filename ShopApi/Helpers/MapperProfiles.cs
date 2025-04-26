@@ -6,6 +6,7 @@ using Dtos.Brand;
 using Dtos.BrandCategory;
 using Dtos.Category;
 using Dtos.Comment;
+using Dtos.Coupon;
 using Dtos.FilterValue;
 using Dtos.MainCategory;
 using Dtos.Product;
@@ -68,5 +69,8 @@ public class MapperProfiles : Profile{
         
         CreateMap<ProductFilterValue, ReadProductFilterValueDto>();
         CreateMap<Seller, ReadSellerDto>();
+
+        CreateMap<Coupon, ReadCouponDto>();
+        CreateMap<CreateCouponDto, Coupon>();
     }
 }

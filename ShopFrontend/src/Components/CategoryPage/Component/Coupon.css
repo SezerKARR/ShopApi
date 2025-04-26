@@ -1,0 +1,88 @@
+.coupon-card {
+    position: relative;
+    width: 240px;
+    height: 101px;
+    border: 1px solid transparent;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 0 0 1px #ffa500; 
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 10px;
+    box-sizing: border-box;
+}
+
+.coupon-card::before,
+.coupon-card::after {
+    content: "";
+    position: absolute;
+    top: 65%;
+    transform: translateY(-50%);
+    border: 1px solid #ffa500;
+    overflow: hidden;
+    width: 20px;
+    height: 40px;
+    background: white;
+    border-radius: 50%;
+    z-index: 1;
+}
+
+.coupon-card::before {
+    left: -11px;
+}
+
+.coupon-card::after {
+    right: -11px;
+}
+
+/* İçerikler */
+.coupon-content {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.coupon-amount {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-weight: bold;
+    font-size: 18px;
+}
+
+.coupon-status {
+    background: #e6f7e6;
+    color: green;
+    padding: 2px 8px;
+    border-radius: 16px;
+    font-size: 12px;
+}
+
+.coupon-limit {
+    font-size: 12px;
+    color: gray;
+}
+
+/* Kesik çizgi */
+.coupon-divider {
+    border-top: 1px dashed #ffa500;
+    margin: 5px 0;
+}
+
+/* Alt kısım */
+.coupon-footer {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    align-items: center;
+}
+
+.coupon-validity {
+    color: gray;
+}
+
+.coupon-details {
+    color: orange;
+    cursor: pointer;
+}

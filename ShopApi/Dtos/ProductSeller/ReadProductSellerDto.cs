@@ -1,5 +1,6 @@
 namespace ShopApi.Dtos.ProductSeller;
 
+using Coupon;
 using Models;
 using Product;
 using Seller;

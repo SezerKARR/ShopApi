@@ -1,0 +1,17 @@
+
+.delivery-option-container {
+    padding-left:8px;
+    border: 1px solid rgba(208, 213, 187, 0.52);
+    border-radius: 4px;
+    width:262px;
+    height: 140px;
+}
+
+.delivery-option-title {
+    margin: 0;
+    font-size: 16px;
+}
+
+.delivery-options-description {
+    padding-top: 10px;
+}

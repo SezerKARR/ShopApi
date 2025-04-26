@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ShopApi.Data;
 
@@ -11,9 +12,11 @@ using ShopApi.Data;
 namespace ShopApi.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250426064445_Coupon")]
+    partial class Coupon
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -29,9 +32,6 @@ namespace ShopApi.Migrations
                         .HasColumnType("int");
 
                     MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("tinyint(1)");
 
                     b.Property<string>("Name")
                         .HasColumnType("longtext");
@@ -64,9 +64,6 @@ namespace ShopApi.Migrations
                     b.Property<int>("BasketId")
                         .HasColumnType("int");
 
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("tinyint(1)");
-
                     b.Property<string>("Name")
                         .HasColumnType("longtext");
 
@@ -98,9 +95,6 @@ namespace ShopApi.Migrations
 
                     b.Property<string>("Description")
                         .HasColumnType("longtext");
-
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("tinyint(1)");
 
                     b.Property<string>("LogoUrl")
                         .HasColumnType("longtext");
@@ -136,9 +130,6 @@ namespace ShopApi.Migrations
                     b.Property<int>("CategoryId")
                         .HasColumnType("int");
 
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("tinyint(1)");
-
                     b.Property<string>("Name")
                         .HasColumnType("longtext");
 
@@ -161,9 +152,6 @@ namespace ShopApi.Migrations
                         .HasColumnType("int");
 
                     MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("tinyint(1)");
 
                     b.Property<string>("Name")
                         .HasColumnType("longtext");
@@ -196,9 +184,6 @@ namespace ShopApi.Migrations
                     b.PrimitiveCollection<string>("ImageUrls")
                         .HasColumnType("longtext");
 
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("tinyint(1)");
-
                     b.Property<string>("Name")
                         .HasColumnType("longtext");
 
@@ -226,36 +211,24 @@ namespace ShopApi.Migrations
 
                     MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("tinyint(1)");
-
-                    b.Property<int?>("MaxUsageCount")
-                        .HasColumnType("int");
-
                     b.Property<int?>("MinLimit")
                         .HasColumnType("int");
 
                     b.Property<string>("Name")
                         .HasColumnType("longtext");
 
-                    b.Property<int?>("Reduction")
+                    b.Property<int>("ProductSellerId")
                         .HasColumnType("int");
 
-                    b.Property<int>("SellerId")
+                    b.Property<int?>("Reduction")
                         .HasColumnType("int");
 
                     b.Property<string>("Slug")
                         .HasColumnType("longtext");
 
-                    b.Property<int>("UsageCount")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("ValidUntil")
-                        .HasColumnType("datetime(6)");
-
                     b.HasKey("Id");
 
-                    b.HasIndex("SellerId");
+                    b.HasIndex("ProductSellerId");
 
                     b.ToTable("Coupon");
                 });
@@ -270,9 +243,6 @@ namespace ShopApi.Migrations
 
                     b.Property<int>("CategoryId")
                         .HasColumnType("int");
-
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("tinyint(1)");
 
                     b.Property<bool>("IsRequired")
                         .HasColumnType("tinyint(1)");
@@ -303,9 +273,6 @@ namespace ShopApi.Migrations
 
                     b.Property<int>("FilterId")
                         .HasColumnType("int");
-
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("tinyint(1)");
 
                     b.Property<string>("Name")
                         .HasColumnType("longtext");
@@ -351,9 +318,6 @@ namespace ShopApi.Migrations
                         .HasMaxLength(120)
                         .HasColumnType("varchar(120)");
 
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("tinyint(1)");
-
                     b.Property<decimal?>("MinPrice")
                         .HasColumnType("decimal(65,30)");
 
@@ -395,9 +359,6 @@ namespace ShopApi.Migrations
                     b.Property<int>("FilterValueId")
                         .HasColumnType("int");
 
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("tinyint(1)");
-
                     b.Property<string>("Name")
                         .HasColumnType("longtext");
 
@@ -425,9 +386,6 @@ namespace ShopApi.Migrations
                         .HasColumnType("int");
 
                     MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("tinyint(1)");
 
                     b.Property<string>("Name")
                         .HasColumnType("longtext");
@@ -464,9 +422,6 @@ namespace ShopApi.Migrations
                     b.Property<DateTime>("DateTime")
                         .HasColumnType("datetime(6)");
 
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("tinyint(1)");
-
                     b.Property<string>("Name")
                         .HasColumnType("longtext");
 
@@ -501,9 +456,6 @@ namespace ShopApi.Migrations
                         .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("varchar(100)");
-
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("tinyint(1)");
 
                     b.Property<string>("Name")
                         .HasColumnType("longtext");
@@ -603,13 +555,13 @@ namespace ShopApi.Migrations
 
             modelBuilder.Entity("ShopApi.Models.Coupon", b =>
                 {
-                    b.HasOne("ShopApi.Models.Seller", "Seller")
+                    b.HasOne("ShopApi.Models.ProductSeller", "ProductSeller")
                         .WithMany("Coupons")
-                        .HasForeignKey("SellerId")
+                        .HasForeignKey("ProductSellerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Seller");
+                    b.Navigation("ProductSeller");
                 });
 
             modelBuilder.Entity("ShopApi.Models.Filter", b =>
@@ -766,13 +718,13 @@ namespace ShopApi.Migrations
 
             modelBuilder.Entity("ShopApi.Models.ProductSeller", b =>
                 {
+                    b.Navigation("Coupons");
+
                     b.Navigation("Stocks");
                 });
 
             modelBuilder.Entity("ShopApi.Models.Seller", b =>
                 {
-                    b.Navigation("Coupons");
-
                     b.Navigation("CreatedProducts");
 
                     b.Navigation("ManagedBrands");

@@ -1,0 +1,82 @@
+
+
+.seller-info > * {
+    padding: 0;
+    margin: 0;
+}
+
+.seller-container {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+    height: 28px;
+
+}
+.seller-container >*{
+    height: 100%;
+}
+.seller-info {
+    cursor:pointer;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    border: 1px solid rgba(208, 213, 187, 0.52);
+    border-radius: 3px;
+    padding-inline: 10px;
+}
+
+.seller-info__seller-name {
+
+    color: #fd5f00;
+}
+
+.seller-info__check {
+    position: absolute;
+    top: -2px;
+    left: 0;
+    border-radius: 50%;
+    background-color: #646cff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2px;
+    width: 20px;
+    height: 20px;
+}
+
+.seller-info__check-label-container {
+    background-color: rgba(100, 108, 255, 0.3);
+    color: #3d3dff;
+    border-radius: 7px;
+    margin-left: 15px;
+    padding-left: 10px;
+    padding-right: 10px;
+    height: 20px;
+
+}
+
+.seller-info__check-container {
+    position: relative;
+    margin-left: 2px;
+
+
+    align-items: center;
+}
+
+.seller-container__follow-label {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    border-radius:4px ;
+    border: 1px solid rgba(208, 213, 187, 0.52);
+    padding-inline: 10px;
+}
+
+.seller-container__ask-seller-label {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    border-radius:4px ;
+    border: 1px solid rgba(208, 213, 187, 0.52);
+    padding-inline: 10px;
+}

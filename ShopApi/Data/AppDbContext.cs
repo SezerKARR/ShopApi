@@ -26,7 +26,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
             .HasValue<User>(1)      // "User" tipi için Role.User
             .HasValue<Seller>(2);
 
-      
+        builder.Entity<Coupon>().HasOne(coupon => coupon.Seller).WithMany(s=>s.Coupons).HasForeignKey(coupon => coupon.SellerId);
 
         builder.Entity<BrandCategory>().HasOne(bc=>bc.Category).WithMany(c=>c.BrandCategories).HasForeignKey(bc=>bc.CategoryId);
         builder.Entity<BrandCategory>().HasOne(bc => bc.Brand).WithMany(c=>c.BrandCategories).HasForeignKey(bc=>bc.BrandId);

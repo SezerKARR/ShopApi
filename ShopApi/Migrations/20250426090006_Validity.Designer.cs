@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ShopApi.Data;
 
@@ -11,9 +12,11 @@ using ShopApi.Data;
 namespace ShopApi.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250426090006_Validity")]
+    partial class Validity
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -229,33 +232,27 @@ namespace ShopApi.Migrations
                     b.Property<bool>("IsActive")
                         .HasColumnType("tinyint(1)");
 
-                    b.Property<int?>("MaxUsageCount")
-                        .HasColumnType("int");
-
                     b.Property<int?>("MinLimit")
                         .HasColumnType("int");
 
                     b.Property<string>("Name")
                         .HasColumnType("longtext");
 
-                    b.Property<int?>("Reduction")
+                    b.Property<int>("ProductSellerId")
                         .HasColumnType("int");
 
-                    b.Property<int>("SellerId")
+                    b.Property<int?>("Reduction")
                         .HasColumnType("int");
 
                     b.Property<string>("Slug")
                         .HasColumnType("longtext");
-
-                    b.Property<int>("UsageCount")
-                        .HasColumnType("int");
 
                     b.Property<DateTime>("ValidUntil")
                         .HasColumnType("datetime(6)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("SellerId");
+                    b.HasIndex("ProductSellerId");
 
                     b.ToTable("Coupon");
                 });
@@ -603,13 +600,13 @@ namespace ShopApi.Migrations
 
             modelBuilder.Entity("ShopApi.Models.Coupon", b =>
                 {
-                    b.HasOne("ShopApi.Models.Seller", "Seller")
+                    b.HasOne("ShopApi.Models.ProductSeller", "ProductSeller")
                         .WithMany("Coupons")
-                        .HasForeignKey("SellerId")
+                        .HasForeignKey("ProductSellerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Seller");
+                    b.Navigation("ProductSeller");
                 });
 
             modelBuilder.Entity("ShopApi.Models.Filter", b =>
@@ -766,13 +763,13 @@ namespace ShopApi.Migrations
 
             modelBuilder.Entity("ShopApi.Models.ProductSeller", b =>
                 {
+                    b.Navigation("Coupons");
+
                     b.Navigation("Stocks");
                 });
 
             modelBuilder.Entity("ShopApi.Models.Seller", b =>
                 {
-                    b.Navigation("Coupons");
-
                     b.Navigation("CreatedProducts");
 
                     b.Navigation("ManagedBrands");
