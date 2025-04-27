@@ -11,6 +11,7 @@ public interface IUnitOfWork {
     IBrandRepository BrandRepository { get; }
     IProductRepository ProductRepository { get; }
     ICategoryRepository CategoryRepository { get; }
+    ISellerRepository SellerRepository { get; }
     ICommentRepository CommentRepository { get; }
     IFilterRepository FilterRepository { get; }
     IMainCategoryRepository MainCategoryRepository { get; }
@@ -30,6 +31,7 @@ public class UnitOfWork : IUnitOfWork {
     public IBrandRepository BrandRepository { get; }
     public IProductRepository ProductRepository { get; }
     public ICategoryRepository CategoryRepository { get; }
+    public ISellerRepository SellerRepository { get; }
     public ICommentRepository CommentRepository { get; }
     public IFilterRepository FilterRepository { get; }
     public IMainCategoryRepository MainCategoryRepository { get; }
@@ -40,7 +42,7 @@ public class UnitOfWork : IUnitOfWork {
     private IDbContextTransaction? _transaction;
     public UnitOfWork(AppDbContext context, IProductRepository productRepository, ICommentRepository commentRepository,
         ICategoryRepository categoryRepository, IMainCategoryRepository mainCategoryRepository, IFilterRepository filterRepository,
-        IFilterValueRepository filterValueRepository, IBrandRepository brandRepository, IUserRepository userRepository, IProductFilterValueRepository productFilterValueRepository, IProductSellerRepository productSellerRepository, IStockRepository stockRepository) {
+        IFilterValueRepository filterValueRepository, IBrandRepository brandRepository, IUserRepository userRepository, IProductFilterValueRepository productFilterValueRepository, IProductSellerRepository productSellerRepository, IStockRepository stockRepository, ISellerRepository sellerRepository) {
         _context = context;
         ProductRepository = productRepository;
         CategoryRepository = categoryRepository;
@@ -52,6 +54,7 @@ public class UnitOfWork : IUnitOfWork {
         ProductFilterValueRepository = productFilterValueRepository;
         ProductSellerRepository = productSellerRepository;
         StockRepository = stockRepository;
+        SellerRepository = sellerRepository;
         CommentRepository = commentRepository;
     }
 

@@ -26,7 +26,7 @@ public class Product : BaseEntity {
     public int CommentCount { get; set; }
 
     public double? AverageRating { get; set; }
-    public List<ProductSeller>? ProductSellers { get; set; } = new List<ProductSeller>();
+    public List<ProductSeller> ProductSellers { get; set; } = new List<ProductSeller>();
     public List<ProductFilterValue> FilterValues { get; set; } = new List<ProductFilterValue>();
 
     

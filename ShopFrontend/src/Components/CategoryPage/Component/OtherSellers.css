@@ -1,0 +1,71 @@
+.OtherSellers-container {
+    border:1px solid rgba(88, 92, 101, 0.29);
+    margin-left: auto;
+    width:150px;
+    height: max-content;
+    border-radius: 20px;
+    
+  /* Your CSS styles here */
+}
+.other-sellers__other-sellers-label {
+    
+    gap:2px;
+    padding: 14px 4px 4px 14px;
+    display: flex;
+    font-size: 12px;
+}
+.other-sellers__other-sellers-label__see-all-label {
+    user-select: none;
+    color:darkorange;
+    margin-left: auto;
+    cursor: pointer;
+}
+
+
+.other-sellers__other-sellers-container{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    
+}
+.other-sellers__other-sellers-container > div {
+   
+    width: 100%;
+    
+}
+.other-sellers__other-sellers-container > *:not(:last-child) {
+    border-bottom: 1px solid #ddd;
+    
+}
+
+.other-seller__all-seller-container {
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 400px;
+    height: 100vh; 
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    background-color:white;
+    z-index: 999; 
+}
+
+.other-seller__overlay {
+    top: 0;
+    left: 0;
+    position: fixed;
+    z-index: 998;
+    background-color: rgba(0, 0, 0, 0.5);
+    width: 100vw;
+    height: 100vh;
+}
+.other-seller__all-seller__sellers-container{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.other-seller__all-seller__sellers-container>*:not(:last-child) {
+    border-bottom: 1px solid #ddd;
+}

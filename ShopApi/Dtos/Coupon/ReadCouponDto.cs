@@ -1,5 +1,6 @@
 namespace ShopApi.Dtos.Coupon;
 
+using System.Runtime.InteropServices.JavaScript;
 using ProductSeller;
 using Seller;
 
@@ -13,5 +14,9 @@ public class ReadCouponDto {
     public int UsageCount { get; set; }
     public DateTime ValidUntil  { get; set; }
     public bool IsExpired => DateTime.UtcNow > ValidUntil;
-    
+    public DateOnly OnlyDate => DateOnly.FromDateTime(ValidUntil);
+
+    public string Time => ValidUntil.TimeOfDay.ToString(@"hh\:mm\:ss");
+
+
 }

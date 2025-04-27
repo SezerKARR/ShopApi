@@ -62,6 +62,7 @@ public class MapperProfiles : Profile{
         
         CreateMap<ProductSeller, ReadProductSellerDto>()
             .ForMember(dest => dest.StockIds, opt => opt.MapFrom(src => src.Stocks != null ? src.Stocks.Select(s => s.Id).ToList() : new List<int>()));
+        
         CreateMap<Seller, ReadSellerDto>()
             .ForMember(dest => dest.ProductSellerIds, opt => opt.MapFrom(src => src.ProductSellers != null ? src.ProductSellers.Select(ps => ps.Id).ToList() : new List<int>()))
             .ForMember(dest => dest.ManagedBrandIds, opt => opt.MapFrom(src => src.ManagedBrands != null ? src.ManagedBrands.Select(b => b.Id).ToList() : new List<int>()))

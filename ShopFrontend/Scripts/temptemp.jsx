@@ -17,52 +17,47 @@ import OtherSellers from "../../Components/CategoryPage/Component/OtherSellers.j
 const Product = () => {
     const {productId} = useParams();
     const [searchParams] = useSearchParams();
-    const productSellerParam = searchParams.get("productSeller");
-
-    const productSellerId = productSellerParam ? productSellerParam.split("-").pop() : "";
-    const productSellerName = productSellerParam ? productSellerParam.split("-").slice(0, -1).join("-") : "";
-    console.log(productSellerParam, "sellerId:", productSellerId, "sellerName:", productSellerName);
+    const sellerParam = searchParams.get("seller");
+    const [sellerName, setSellerName] = useState("");
+    const [sellerId, setSellerId] = useState("");
     const {API_URL} = useGlobalContext();
     const [productData, setProductData] = useState({
-        product: null, mainCategoriesNames: [], currentProductSeller: null
+        product: null, mainCategoriesNames: [], currentSeller: null
     });
     const {addToBasket} = useBasketContext();
 
     useEffect(() => {
-        const fetchProduct = async () => {
+        const fetchProduct = async (sellerId) => {
             try {
+
                 const res = await axios.get(`${API_URL}/api/product/${productId}?includes=58`);
                 const tempProduct = res.data;
-                tempProduct.productSellers = tempProduct.productSellers.sort((a, b) => a.price - b.price);
+                const tempCurrentSeller=tempProduct.productSellers.filter(s=>s.sellerId==sellerId);
+                console.log(tempCurrentSeller);
                 console.log(tempProduct);
                 const mainCategoriesName = await findAllMainCategories(tempProduct);
-                setProductData({
-                    product: tempProduct,
-                    mainCategoriesNames: mainCategoriesName,
-                    currentProductSeller: tempProduct.productSellers[0]
-                });
 
+                // const brandRes = await axios.get(`${API_URL}/api/brand/${tempProduct.brandId}`);
+                setProductData({
+                    product: tempProduct, mainCategoriesNames: mainCategoriesName
+                });
             } catch (err) {
                 console.log("Error while fetching product or categories:", err);
             }
         };
+        if (sellerParam) {
+            const parts = sellerParam.split("-");
+            const name = parts.slice(0, -1).join("-"); // isimde "-" olabilir diye
+            const id = parts[parts.length - 1];
+            console.log(id);
+            console.log(name);
+            setSellerName(decodeURIComponent(name));
+            setSellerId(id);
+            fetchProduct(id);
+        }
+        setSellerName(sellerName);
 
-        fetchProduct();
     }, [productId]);
-
-    useEffect(() => {
-        if (productData.product==null || productSellerId == "") return; // Eğer productSellers verisi yoksa çalışmasın
-        console.log(productData.product);
-        const tempCurrentProductSeller = productSellerId === ""
-            ? productData.product.productSellers[0]
-            : productData.product.productSellers.find(ps => ps.id == productSellerId); 
-        console.log(tempCurrentProductSeller);
-        setProductData(prevData => ({
-            ...prevData,
-            currentProductSeller: tempCurrentProductSeller
-        }));
-    }, [productSellerId]);
-
     const findAllMainCategories = async (product) => {
         const result = [];
         let currentId = product.categoryId;
@@ -88,11 +83,11 @@ const Product = () => {
     const handleAddToCartClick = () => {
         addToBasket(productData.product)
     }
-    if (!productData.product && !productData.currentProductSeller) {
+    if (!productData.product ) {
         return;
     }
     return (<div className="Product">
-        {console.log(productData.currentProductSeller)}
+        {console.log(productData.product)}
         {productData.mainCategoriesNames && (<div className="main-categories-container">
             <FontAwesomeIcon icon={faHouse}/>
             {productData.mainCategoriesNames.map((categoryName, index) => (<React.Fragment key={index}>
@@ -122,7 +117,7 @@ const Product = () => {
                 />
 
                 <SellerInformation
-                    seller={productData.currentProductSeller?.seller}
+                    seller={productData.product.productSellers[0]?.seller}
                     onFollowClick={handleFollowClick}
                     onAskSellerClick={handleAskSellerClick}
                 />
@@ -132,9 +127,9 @@ const Product = () => {
                 <ActionButtons onAddToCartClick={handleAddToCartClick}/>
 
                 <DeliveryOptions/>
-                <Coupon productSeller={productData.currentProductSeller}/>
+                <Coupon productSeller={productData.product.productSellers[0]}/>
             </div>
-            <OtherSellers productSellers={productData.product.productSellers} currentSellerId={productData.currentProductSeller.id}/>
+            <OtherSellers productSellers={productData.product.productSellers}/>
 
             {/*{productData.product?.averageRating.map((averageRating, index) => {*/}
 

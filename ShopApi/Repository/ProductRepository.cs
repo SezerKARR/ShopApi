@@ -47,7 +47,7 @@ public class ProductRepository:BaseRepository<Product>, IProductRepository {
             if (productIncludes.HasFlag(ProductIncludes.Comment))
                 query = query.Include(p => p.Comments);
             if (productIncludes.HasFlag(ProductIncludes.ProductSeller))
-                query = query.Include(p => p.ProductSellers);
+                query = query.Include(p => p.ProductSellers).ThenInclude(ps => ps.Seller).ThenInclude(s=>s.Coupons);
             if (productIncludes.HasFlag(ProductIncludes.ProductFilterValue))
                 query = query.Include(p => p.FilterValues);
         }

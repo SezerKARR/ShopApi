@@ -55,9 +55,9 @@ public class CouponService:ICouponService {
         return new Response<ReadCouponDto>(readCouponDto);
     }
     public async Task<Response<ReadCouponDto>> CreateCouponAsync(CreateCouponDto createCouponDto) {
-        var productSeller=await _unitOfWork.ProductSellerRepository.GetByIdAsync(createCouponDto.ProductSellerId);
+        var seller=await _unitOfWork.SellerRepository.GetByIdAsync(createCouponDto.SellerId);
         
-        if (productSeller == null)
+        if (seller == null)
             return new Response<ReadCouponDto>("Product seller not found");
         try
         {

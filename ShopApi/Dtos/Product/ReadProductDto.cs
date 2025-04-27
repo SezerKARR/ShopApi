@@ -3,6 +3,7 @@ namespace ShopApi.Dtos.Product;
 using Brand;
 using Models;
 using ProductFilterValue;
+using ProductSeller;
 using User;
 
 public class ReadProductDto {
@@ -22,5 +23,7 @@ public class ReadProductDto {
     public int CommentCount { get; set; }
     public List<int>? FilterValueIds { get; set; } = new List<int>();
     public List<int>? ProductSellerIds { get; set; } = new List<int>();
+    
+    public List<ReadProductSellerDto> ProductSellers { get; set; } = new List<ReadProductSellerDto>();
     public string? BrandName { get; set; }
 }
