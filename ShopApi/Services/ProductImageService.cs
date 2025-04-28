@@ -4,6 +4,7 @@ using AutoMapper;
 using Data;
 using Dtos.Product;
 using Dtos.ProductImage;
+using Helpers;
 using Models;
 using Models.Common;
 using Repository;
@@ -45,7 +46,13 @@ public class ProductImageService {
             return new Response<ReadProductImageDto>("product does not exist.");
         try
         {
-
+            var productImage = _mapper.Map<ProductImage>(createProductImageDto);
+            productImage.Slug= SlugHelper.GenerateSlug(productImage.Name);
+            productImage.Url=FormManager.Save(createProductImageDto.Image, "uploads/productImage", FormTypes.Image);
+            await _productImageRepository.CreateAsync(productImage);
+            await _unitOfWork.CommitAsync();
+            ReadProductImageDto readProductImageDto = _mapper.Map<ReadProductImageDto>(productImage);
+            return new Response<ReadProductImageDto>(readProductImageDto);
         }
         catch (Exception e)
         {
