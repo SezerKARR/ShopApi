@@ -47,7 +47,7 @@ public abstract class BaseRepository<T> : IRepository<T> where T : BaseEntity
         return await query.FirstOrDefaultAsync();
     }
 
-    public async Task<List<T>> GetAllAsync(int includes = -1)
+    public async Task<List<T>?> GetAllAsync(int includes = -1)
     {
         return await IncludeQuery(includes:includes).ToListAsync();
     }

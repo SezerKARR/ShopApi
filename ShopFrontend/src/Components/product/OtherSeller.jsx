@@ -1,9 +1,11 @@
 import React from 'react';
 import './OtherSeller.css';
 import {useNavigate} from "react-router-dom";
+import {useBasketContext} from "../../Providers/BasketProvider.jsx";
 
 const OtherSeller = ({productSeller, isAllOtherSeller = false}) => {
     const navigate = useNavigate();
+    const {addToBasketById} = useBasketContext();
     if (!isAllOtherSeller) {
         const handleSeeAllClick = () => {
 
@@ -44,7 +46,7 @@ const OtherSeller = ({productSeller, isAllOtherSeller = false}) => {
                     </div>
                 </div>
                 <div className="other-seller__all-seller__button-container">
-                    <button className="other-seller__all-seller__add-basket">
+                    <button className="other-seller__all-seller__add-basket" onClick={()=>addToBasketById(productSeller.productId)}>
                         Add Basket
                     </button>
                     <button className={"other-seller__all-seller__see-product"}>

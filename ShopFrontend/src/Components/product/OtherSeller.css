@@ -47,16 +47,23 @@
 }
 
 .other-seller__all-seller__add-basket {
-    
+    cursor: pointer;
     padding: 2px;
     border-radius: 4px;
     background-color: orange;
 }
+.other-seller__all-seller__add-basket:hover {
+    background-color: #bd8611;
+}
 
 .other-seller__all-seller__see-product {
+    cursor: pointer;
     padding: 2px;
     border-radius: 4px;
     border: 1px solid #41454e;
+}
+.other-seller__all-seller__see-product:hover {
+    background-color: #75695b;
 }
 
 .other-seller__all-seller__button-container {

@@ -8,7 +8,6 @@ const OtherSellers = ({productSellers, currentSellerId}) => {
     const [twoOtherSellers, setTwoOtherSellers] = useState([]);
     const [isWantSeeAll, setIsWantSeeAll] = useState(false);
     useEffect(() => {
-        console.log(productSellers, currentSellerId)
         setTwoOtherSellers(productSellers.filter(productSeller => productSeller.id != currentSellerId).slice(0, 2));
     }, [productSellers]);
     useEffect(() => {
@@ -23,7 +22,6 @@ const OtherSellers = ({productSellers, currentSellerId}) => {
         return;
     }
 
-    console.log(productSellers);
     return (
         <>
             <div className="OtherSellers-container">
@@ -31,7 +29,6 @@ const OtherSellers = ({productSellers, currentSellerId}) => {
                     onClick={() => setIsWantSeeAll(!isWantSeeAll)}
                     className={"other-sellers__other-sellers-label__see-all-label"}>See All<FontAwesomeIcon
                     icon={faGreaterThan} size={"m"}/></span></div>
-                {console.log(twoOtherSellers)}
                 <div className={"other-sellers__other-sellers-container"}>
                     {twoOtherSellers.map(seller => (
                         <OtherSeller key={seller.id} productSeller={seller}/>
@@ -41,15 +38,20 @@ const OtherSellers = ({productSellers, currentSellerId}) => {
             </div>
             {isWantSeeAll &&
                 <>
-                <div className={"other-seller__overlay"}/>
+                <div className={"other-seller__overlay"} onClick={()=>setIsWantSeeAll(false)}/>
                 
                 <div className={"other-seller__all-seller-container"}>
                     <div className={"other-seller__all-seller-header"}>
-                        <FontAwesomeIcon icon={faXmark} size="xl"/>
+                        <div className={"other-seller__all-seller__close-button"} onClick={()=>setIsWantSeeAll(false)}>
+                            <FontAwesomeIcon icon={faXmark} size="2xl"/>
+                        </div>
+                        <div className={"other-seller__all-seller-title"}>
+                            Other Sellers 
+                        </div>
                     </div>
                     <div className="other-seller__all-seller__sellers-container">
                         {productSellers.map(seller => (
-                            <OtherSeller key={seller.id} productSeller={seller} isAllOtherSeller={true}/>
+                            <OtherSeller key={seller.id} productSeller={seller} isAllOtherSeller={true} />
                         ))}
                        
                     </div>

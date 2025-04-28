@@ -1,14 +1,13 @@
 import React, {memo} from 'react';
-import {useGlobalContext} from '../../../Providers/GlobalProvider.jsx';
-import {useBasketContext} from '../../../Providers/BasketProvider.jsx';
-import foto from '../../../../public/Foto.png';
+import {useGlobalContext} from '../../Providers/GlobalProvider.jsx';
+import {useBasketContext} from '../../Providers/BasketProvider.jsx';
+import foto from '../../../public/Foto.png';
 import './ProductComponent.css';
 import {faCamera} from '@fortawesome/free-solid-svg-icons';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {useNavigate} from "react-router-dom";
 
-const 
-    ProductComponent = memo(({product}) => {
+const ProductComponent = memo(({product}) => {
     const {API_URL} = useGlobalContext();
     const {addToBasket} = useBasketContext();
     const navigate = useNavigate();

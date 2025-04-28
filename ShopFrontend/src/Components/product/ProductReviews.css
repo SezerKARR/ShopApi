@@ -1,0 +1,7 @@
+.ProductReviews-container { display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 800px;
+    min-width: 800px;
+    background-color: black;
+}

@@ -29,7 +29,7 @@ const BasketAdded = memo(() => {
 
         setTimeout(() => {
             setAddedProducts(prev => prev.filter(p => p.uid !== newProduct.uid));
-        }, 5000000);
+        }, 500);
     }, [basketItems]);
 
     return (

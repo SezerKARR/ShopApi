@@ -1,13 +1,12 @@
 import React, {useEffect, useState} from 'react';
 import './Coupon.css';
-import axios from "axios";
-import {useGlobalContext} from "../../../Providers/GlobalProvider.jsx";
-import {Await} from "react-router-dom";
+// import axios from "axios";
+// import {useGlobalContext} from "../../Providers/GlobalProvider.jsx";
+// import {Await} from "react-router-dom";
 
 const Coupon = ({productSeller}) => {
     const [sortedCoupons, setSortedCoupons] = useState([]);
     useEffect(() => {
-        console.log(productSeller)
         setSortedCoupons(
             productSeller.seller.coupons.sort((a, b) => b.reduction - a.reduction)
         )
@@ -19,7 +18,6 @@ const Coupon = ({productSeller}) => {
 
     return (
         <div style={{overflow: "hidden", padding: "1px", cursor: "pointer"}}>
-            {console.log(sortedCoupons)}
             coupon
             <div className="coupon-card">
                 <div className="coupon-content">

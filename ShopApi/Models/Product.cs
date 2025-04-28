@@ -6,13 +6,12 @@ using Abstracts;
 public class Product : BaseEntity {
 
 
-    [MaxLength(180)]
     public string? Description { get; set; }
 
     public required int CategoryId { get; set; }
     public  Category? Category { get; set; }
 
-    [MaxLength(120)]
+    [MaxLength(180)]
     public string? ImageUrl { get; set; }
     
     public decimal? MinPrice { get; set; }

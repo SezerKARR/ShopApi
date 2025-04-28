@@ -1,42 +1,46 @@
 .OtherSellers-container {
-    border:1px solid rgba(88, 92, 101, 0.29);
+    border: 1px solid rgba(88, 92, 101, 0.29);
     margin-left: auto;
-    width:150px;
+    width: 150px;
     height: max-content;
     border-radius: 20px;
-    
-  /* Your CSS styles here */
+
+    /* Your CSS styles here */
 }
+
 .other-sellers__other-sellers-label {
-    
-    gap:2px;
+
+    gap: 2px;
     padding: 14px 4px 4px 14px;
     display: flex;
     font-size: 12px;
 }
+
 .other-sellers__other-sellers-label__see-all-label {
     user-select: none;
-    color:darkorange;
+    color: darkorange;
     margin-left: auto;
     cursor: pointer;
 }
 
 
-.other-sellers__other-sellers-container{
+.other-sellers__other-sellers-container {
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    
+
 }
+
 .other-sellers__other-sellers-container > div {
-   
+
     width: 100%;
-    
+
 }
+
 .other-sellers__other-sellers-container > *:not(:last-child) {
     border-bottom: 1px solid #ddd;
-    
+
 }
 
 .other-seller__all-seller-container {
@@ -44,12 +48,12 @@
     top: 0;
     right: 0;
     width: 400px;
-    height: 100vh; 
+    height: 100vh;
     display: flex;
     flex-direction: column;
     overflow-y: auto;
-    background-color:white;
-    z-index: 999; 
+    background-color: white;
+    z-index: 999;
 }
 
 .other-seller__overlay {
@@ -61,11 +65,43 @@
     width: 100vw;
     height: 100vh;
 }
-.other-seller__all-seller__sellers-container{
+
+.other-seller__all-seller__sellers-container {
     display: flex;
     flex-direction: column;
     align-items: center;
 }
-.other-seller__all-seller__sellers-container>*:not(:last-child) {
+
+.other-seller__all-seller__sellers-container > *:not(:last-child) {
     border-bottom: 1px solid #ddd;
+}
+
+.other-seller__all-seller__close-button {
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    padding: 4px;
+    border: 1px solid rgba(88, 92, 101, 0.29);
+    background-color: rgb(157, 163, 165);
+}
+
+
+.other-seller__all-seller-header {
+    position: relative;
+
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    width: 80%;
+    left: 20px;
+    padding-top: 20px;
+
+}
+
+.other-seller__all-seller-title {
+    font-size: 34px;
 }
