@@ -17,7 +17,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
     public DbSet<ProductFilterValue> ProductFilterValues { get; set; }
     public DbSet<Seller> Sellers { get; set; }
     public DbSet<ProductSeller> ProductSellers { get; set; }
-
+    public DbSet<ProductImage> ProductImages { get; set; }
     protected override void OnModelCreating(ModelBuilder builder) {
 
         base.OnModelCreating(builder);
@@ -56,8 +56,10 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
             .HasOne(p => p.CreatedBySeller)
             .WithMany(u => u.CreatedProducts)
             .HasForeignKey(p => p.CreatedBySellerId);
-        builder.Entity<Comment>().HasOne(c=>c.Product).WithMany(product => product.Comments).HasForeignKey(c=>c.ProductId);
-        
-        
+        builder.Entity<Comment>().HasOne(c=>c.ProductSeller).WithMany(ps => ps.Comments).HasForeignKey(c=>c.ProductSellerId);
+
+        builder.Entity<ProductImage>().HasOne(pi => pi.Product).WithMany(p => p.ProductImages).HasForeignKey(pi => pi.ProductId);
+
+
     }
 }

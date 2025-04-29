@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ShopApi.Data;
 
@@ -11,9 +12,11 @@ using ShopApi.Data;
 namespace ShopApi.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250428122521_ProductImage")]
+    partial class ProductImage
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -202,7 +205,7 @@ namespace ShopApi.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("longtext");
 
-                    b.Property<int>("ProductSellerId")
+                    b.Property<int>("ProductId")
                         .HasColumnType("int");
 
                     b.Property<int>("Rating")
@@ -211,14 +214,9 @@ namespace ShopApi.Migrations
                     b.Property<string>("Slug")
                         .HasColumnType("longtext");
 
-                    b.Property<int?>("UserId")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
 
-                    b.HasIndex("ProductSellerId");
-
-                    b.HasIndex("UserId");
+                    b.HasIndex("ProductId");
 
                     b.ToTable("Comments");
                 });
@@ -629,19 +627,13 @@ namespace ShopApi.Migrations
 
             modelBuilder.Entity("ShopApi.Models.Comment", b =>
                 {
-                    b.HasOne("ShopApi.Models.ProductSeller", "ProductSeller")
+                    b.HasOne("ShopApi.Models.Product", "Product")
                         .WithMany("Comments")
-                        .HasForeignKey("ProductSellerId")
+                        .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("ShopApi.Models.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId");
-
-                    b.Navigation("ProductSeller");
-
-                    b.Navigation("User");
+                    b.Navigation("Product");
                 });
 
             modelBuilder.Entity("ShopApi.Models.Coupon", b =>
@@ -811,6 +803,8 @@ namespace ShopApi.Migrations
 
             modelBuilder.Entity("ShopApi.Models.Product", b =>
                 {
+                    b.Navigation("Comments");
+
                     b.Navigation("FilterValues");
 
                     b.Navigation("ProductImages");
@@ -820,8 +814,6 @@ namespace ShopApi.Migrations
 
             modelBuilder.Entity("ShopApi.Models.ProductSeller", b =>
                 {
-                    b.Navigation("Comments");
-
                     b.Navigation("Stocks");
                 });
 

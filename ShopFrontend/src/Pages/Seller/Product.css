@@ -34,14 +34,8 @@
 }
 
 
-.product-container__product-info-container {
-    min-width: 800px;
-    padding: 10px 40px 10px 40px;
-    height: max-content;
-    border-radius: 10px;
-    border: 1px solid gray;
 
-}
+
 
 .product-container__product-info-container__title-label {
     display: flex;
@@ -53,4 +47,14 @@
 .product-container__product-info-container__title-label > div {
     cursor: pointer;
     font-size: 24px;
+}
+
+.product-container__product-tab-content >*{
+    padding: 10px;
+    
+}
+.activeTab {
+    border-bottom: 2px solid #007bff;
+    font-weight: bold;
+    color: #007bff;
 }

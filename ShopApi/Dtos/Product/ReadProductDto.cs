@@ -1,8 +1,10 @@
 namespace ShopApi.Dtos.Product;
 
 using Brand;
+using Comment;
 using Models;
 using ProductFilterValue;
+using ProductImage;
 using ProductSeller;
 using User;
 
@@ -12,7 +14,7 @@ public class ReadProductDto {
     public string? Name { get; set; }
     public decimal Price { get; set; }
     public string? Slug { get; set; }
-    public string? ImageUrl { get; set; }
+    public List<ReadProductImageDto> ProductImages { get; set; } = new List<ReadProductImageDto>();
     public decimal? MinPrice { get; set; }
     public int? MinPriceSellerId { get; set; }
     public string? Description { get; set; }
@@ -23,6 +25,7 @@ public class ReadProductDto {
     public int CommentCount { get; set; }
     public List<int>? FilterValueIds { get; set; } = new List<int>();
     public List<int>? ProductSellerIds { get; set; } = new List<int>();
+    public List<ReadProductFilterValueDto> FilterValues { get; set; } = new List<ReadProductFilterValueDto>();
     
     public List<ReadProductSellerDto> ProductSellers { get; set; } = new List<ReadProductSellerDto>();
     public string? BrandName { get; set; }

@@ -1,7 +1,34 @@
 .ProductDescription-container {
     display: flex;
     flex-direction: column;
-    align-items: center;
-    min-height: 800px;
+    align-items: start;
     background-color: rgba(0, 0, 0, 0);
+}
+
+.ProductDescription__product-name {
+    text-indent: 2rem;
+    width: 100%;
+}
+
+.ProductDescription__product-description {
+    text-indent: 2rem;
+    width: 1000px;
+}
+
+.product-description__product-feature {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    width: 250px;
+    background-color: rgba(161, 144, 144, 0.51);
+    padding: 10px;
+    border-radius: 10px;
+    height: 20px;
+}
+
+.product-description__product-features-container {
+    display: flex;
+    flex-direction: column;
+    gap:10px;
 }

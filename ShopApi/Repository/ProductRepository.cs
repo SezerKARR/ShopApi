@@ -15,14 +15,13 @@ public interface IProductRepository:IRepository<Product> {
 [Flags]
 public enum ProductIncludes {
     None = 0,
-    
+
     Category = 1,
     Brand = 2,
     CreatedByUser = 4,
-    Comment = 8,
     ProductSeller = 16,
     ProductFilterValue = 32,
-
+    ProductImages = 64,
     All = Brand | Category | ProductFilterValue
 }
 
@@ -33,7 +32,7 @@ public class ProductRepository:BaseRepository<Product>, IProductRepository {
     protected override IQueryable<Product> IncludeQuery(int includes = -1, IQueryable<Product>? queryable = null) {
 
 
-        var query =queryable ?? _dbSet.AsQueryable();
+        var query = queryable ?? _dbSet.AsQueryable();
         if (includes != -1)
         {
             var productIncludes = (ProductIncludes)includes;
@@ -44,12 +43,17 @@ public class ProductRepository:BaseRepository<Product>, IProductRepository {
                 query = query.Include(p => p.Brand);
             if (productIncludes.HasFlag(ProductIncludes.CreatedByUser))
                 query = query.Include(p => p.CreatedBySeller);
-            if (productIncludes.HasFlag(ProductIncludes.Comment))
-                query = query.Include(p => p.Comments);
             if (productIncludes.HasFlag(ProductIncludes.ProductSeller))
-                query = query.Include(p => p.ProductSellers).ThenInclude(ps => ps.Seller).ThenInclude(s=>s.Coupons);
+                query = query.Include(p => p.ProductSellers).ThenInclude(ps => ps.Seller).ThenInclude(s => s.Coupons).Include(p=>p.ProductSellers).ThenInclude(ps=>ps.Comments);
             if (productIncludes.HasFlag(ProductIncludes.ProductFilterValue))
-                query = query.Include(p => p.FilterValues);
+                query = query
+                    .Include(p => p.FilterValues)
+                    .ThenInclude(pv => pv.Filter)
+                    .Include(p => p.FilterValues)
+                    .ThenInclude(pv => pv.FilterValue);
+
+            if (productIncludes.HasFlag(ProductIncludes.ProductImages))
+                query = query.Include(p => p.ProductImages);
         }
 
 

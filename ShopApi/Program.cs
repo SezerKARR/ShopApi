@@ -110,6 +110,8 @@ builder.Services.AddScoped<ISellerService, SellerService>();
 builder.Services.AddScoped<ISellerRepository, SellerRepository>();
 builder.Services.AddScoped<ICouponRepository, CouponRepository>();
 builder.Services.AddScoped<ICouponService, CouponService>();
+builder.Services.AddScoped<IProductImageRepository, ProductImageRepository>();
+builder.Services.AddScoped<IProductImageService, ProductImageService>();
 var app = builder.Build();
 app.UseCors("configurePolicy");
 app.Use(async (context, next) =>

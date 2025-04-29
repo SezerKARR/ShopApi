@@ -11,8 +11,7 @@ public class Product : BaseEntity {
     public required int CategoryId { get; set; }
     public  Category? Category { get; set; }
 
-    [MaxLength(180)]
-    public string? ImageUrl { get; set; }
+    public List<ProductImage> ProductImages { get; set; } = new List<ProductImage>();
     
     public decimal? MinPrice { get; set; }
     public int? MinPriceSellerId { get; set; }
@@ -21,7 +20,6 @@ public class Product : BaseEntity {
     public  Brand? Brand { get; set; }
     public required int CreatedBySellerId { get; set; }
     public  Seller? CreatedBySeller { get; set; }
-    public ICollection<Comment>? Comments { get; set; }
     public int CommentCount { get; set; }
 
     public double? AverageRating { get; set; }

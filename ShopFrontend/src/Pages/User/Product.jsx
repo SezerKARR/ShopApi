@@ -6,15 +6,9 @@ import axios from "axios";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faGreaterThan, faHouse} from "@fortawesome/free-solid-svg-icons";
 import {useBasketContext} from "../../Providers/BasketProvider.jsx";
-import ProductRating from "../../Components/product/ProductRating.jsx";
-import SellerInformation from "../../Components/product/SellerInformation.jsx";
-import ActionButtons from "../../Components/product/ActionButtons.jsx";
-import DeliveryOptions from "../../Components/product/DeliveryOptions.jsx";
-import Coupon from "../../Components/product/Coupon.jsx";
 import OtherSellers from "../../Components/product/OtherSellers.jsx";
-import ProductQA from "../../Components/product/ProductQA.jsx";
-import ProductReviews from "../../Components/product/ProductReviews.jsx";
-import ProductDescription from "../../Components/product/ProductDescription.jsx";
+import ProductTabs from "../../Components/product/ProductTabs.jsx";
+import ProductInfo from "../../Components/product/ProductInfo.jsx";
 
 
 
@@ -36,10 +30,10 @@ const Product = () => {
     useEffect(() => {
         const fetchProduct = async () => {
             try {
-                const res = await axios.get(`${API_URL}/api/product/${productId}?includes=58`);
+                const res = await axios.get(`${API_URL}/api/product/${productId}?includes=120`);
                 const tempProduct = res.data;
                 tempProduct.productSellers = tempProduct.productSellers.sort((a, b) => a.price - b.price);
-                console.log(tempProduct);
+                tempProduct.productImages=tempProduct.productImages.sort((a, b) => a.order - b.order);
                 const mainCategoriesName = await findAllMainCategories(tempProduct);
                 setProductData({
                     product: tempProduct,
@@ -95,7 +89,6 @@ const Product = () => {
     }
     return (<div className={"product-container"}>
         <div className="Product">
-            {console.log(productData.currentProductSeller)}
             {productData.mainCategoriesNames && (<div className="main-categories-container">
                 <FontAwesomeIcon icon={faHouse}/>
                 {productData.mainCategoriesNames.map((categoryName, index) => (<React.Fragment key={index}>
@@ -107,71 +100,18 @@ const Product = () => {
 
             <div className={"product__main"}>
                 <div className={"image-container"}>
-                    {productData.product?.imageUrl && (<img
+                    {productData.product?.productImages[0]?.url && (<img
                         className="product--image"
                         alt={productData.product.id}
-                        src={`${API_URL}/${productData.product.imageUrl}`}
+                        src={`${API_URL}/${productData.product?.productImages[0]?.url}`}
                     />)}
-
                 </div>
-                <div className={"product__information-container"}>
-                    <div className={"product__information-container__name-container"}><h1
-                        className={"Product__information-container__title"}>{productData?.product?.brandName}</h1>
-                        <h1 className={"Product__information-container__title-product-name"}>{productData.product?.name}</h1>
-                    </div>
-                    <ProductRating
-                        rating={productData.product.averageRating}
-                        commentCount={productData.product.commentCount}
-                    />
-
-                    <SellerInformation
-                        seller={productData.currentProductSeller?.seller}
-                        onFollowClick={handleFollowClick}
-                        onAskSellerClick={handleAskSellerClick}
-                    />
-
-                    <div className={"product__price-container"}>{productData.product.minPrice} Tl</div>
-
-                    <ActionButtons onAddToCartClick={handleAddToCartClick}/>
-
-                    <DeliveryOptions/>
-                    <Coupon productSeller={productData.currentProductSeller}/>
-                </div>
+                <ProductInfo productData={productData} />
                 <OtherSellers productSellers={productData.product.productSellers}
                               currentSellerId={productData.currentProductSeller.id}/>
-
-                {/*{productData.product?.averageRating.map((averageRating, index) => {*/}
-
-                {/*    const rating = (averageRating * (5 - index)) * 100;*/}
-                {/*    return (*/}
-                {/*        <StarRating rating={rating}/>*/}
-
-                {/*    )*/}
-
-                {/*})}*/}
-
             </div>
         </div>
-        <div className={"product-container__product-info-container"}>
-            <div className={"product-container__product-info-container__title-label"}>
-                <div onClick={() => setActiveTab("description")}>
-                    Product Description
-                </div>
-                <div onClick={() => setActiveTab("reviews")}>
-                    Reviews
-                </div>
-                <div onClick={() => setActiveTab("qa")}>
-                    Question Answer
-                </div>
-
-            </div>
-            {console.log(activeTab === "description")}
-            <div>
-                {activeTab === "description" && <ProductDescription product={productData.product} />}
-                {activeTab === "reviews" && <ProductReviews/>}
-                {activeTab === "qa" && <ProductQA/>}
-            </div>
-        </div>
+        <ProductTabs product={productData.product}/>
     </div>);
 };
 

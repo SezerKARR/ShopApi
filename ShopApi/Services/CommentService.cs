@@ -62,9 +62,11 @@ public class CommentService : ICommentService {
         }
     }
     public async Task<Response<ReadCommentDto>> CreateCommentAsync(CreateCommentDto createCommentDto,int includes=-1) {
-        var product = await _unitOfWork.ProductRepository.GetByIdAsync(createCommentDto.ProductId,includes);
+        var productSeller = await _unitOfWork.ProductSellerRepository.GetByIdAsync(createCommentDto.ProductSellerId, 3);
+        if(productSeller==null) return new Response<ReadCommentDto>("Product Seller Not Found.");
+        var product = await _unitOfWork.ProductRepository.GetByIdAsync(productSeller.ProductId);
         if (product == null)
-            return new Response<ReadCommentDto>("Product does not exist");
+            return new Response<ReadCommentDto>("product does not exist");
 
         try
         {
@@ -78,8 +80,7 @@ public class CommentService : ICommentService {
 
             await _commentRepository.CreateAsync(comment);
 
-            // Yalnızca sum ve count alarak güncelle
-            var (sum, count) = await _commentRepository.GetSumAndCountByProductIdAsync(comment.ProductId);
+            var (sum, count) = await _commentRepository.GetSumAndCountByProductIdAsync(comment.ProductSeller.ProductId);
             product.AverageRating = ((double?)sum+createCommentDto.Rating) / (count+1);
             product.CommentCount = count+1;
             if (createCommentDto.Images!=null)

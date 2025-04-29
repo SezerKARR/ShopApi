@@ -1,5 +1,6 @@
 namespace ShopApi.Dtos.ProductSeller;
 
+using Comment;
 using Coupon;
 using Models;
 using Product;
@@ -15,6 +16,8 @@ public class ReadProductSellerDto
     public required int SellerId { get; set; }
     public  string? SellerName => Seller?.Name;
     public decimal Price { get; set; }
+    public List<ReadCommentDto> Comments { get; set; } = new List<ReadCommentDto>();
+
 
     public ReadProductDto? Product { get; set; } 
     public ReadSellerDto? Seller { get; set; }

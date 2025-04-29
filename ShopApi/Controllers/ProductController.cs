@@ -10,7 +10,6 @@ using Services;
 public class ProductController(IProductService productService) : Controller {
     [HttpGet]
     public async Task<ActionResult<List<ReadProductDto>>> GetAllProductsAsync() {
-        Console.WriteLine("asd");
        var products = await productService.GetProductsAsync();
        if (products.Success)
        {

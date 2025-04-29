@@ -61,7 +61,7 @@ public class ProductFilterValueService : IProductFilterValueService {
             var productFilterValue = new ProductFilterValue()
             {
                 ProductId = product.Id,
-               
+                FilterId = createProductValueDto.FilterId,
                 CustomValue = createProductValueDto.CustomValue,
             };
             if (createProductValueDto.FilterValueId !=-1)

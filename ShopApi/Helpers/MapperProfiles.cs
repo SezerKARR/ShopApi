@@ -11,6 +11,7 @@ using Dtos.FilterValue;
 using Dtos.MainCategory;
 using Dtos.Product;
 using Dtos.ProductFilterValue;
+using Dtos.ProductImage;
 using Dtos.ProductSeller;
 using Dtos.Seller;
 using Dtos.Stock;
@@ -73,5 +74,8 @@ public class MapperProfiles : Profile{
 
         CreateMap<Coupon, ReadCouponDto>();
         CreateMap<CreateCouponDto, Coupon>();
+
+        CreateMap<CreateProductImageDto, ProductImage>();
+        CreateMap<ProductImage, ReadProductImageDto>();
     }
 }

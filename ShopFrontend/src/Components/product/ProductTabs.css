@@ -1,0 +1,26 @@
+
+
+.product-tabs {
+    padding: 40px;
+
+    min-width: 800px;
+    height: max-content;
+    border-radius: 10px;
+    border: 1px solid gray;
+}
+.product-tabs__header {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+.product-tabs__tab {
+    all: unset;
+    cursor: pointer;
+    font-size: 24px;
+}
+
+.product-tabs__tab--active {
+    border-bottom: 2px solid #007bff;
+    font-weight: bold;
+    color: #007bff;
+}

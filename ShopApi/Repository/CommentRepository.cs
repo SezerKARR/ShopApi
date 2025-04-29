@@ -14,7 +14,7 @@ public class CommentRepository:BaseRepository<Comment>,ICommentRepository {
     public async Task<(int Sum, int Count)> GetSumAndCountByProductIdAsync(int productId)
     {
         var result = await _context.Comments
-            .Where(c => c.ProductId == productId)  
+            .Where(c => c.ProductSeller != null && c.ProductSeller.ProductId == productId)  
             .Select(c => new {
                 Sum = c.Rating,
                 Count = 1
