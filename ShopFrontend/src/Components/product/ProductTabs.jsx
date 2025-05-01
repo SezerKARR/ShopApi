@@ -11,13 +11,17 @@ const ProductTabs = ({ product }) => {
     };
     const tabs = [
         { id: "description", label: "Product Description", component: <ProductDescription product={product} /> },
-        { id: "reviews", label: "Reviews", component: <ProductReviews comments={product.comments} /> },
+        { id: "reviews", label: "Reviews", component: <ProductReviews productSellers={product.productSellers} /> },
         { id: "qa", label: "Question Answer", component: <ProductQA /> }
     ];
+    const handleComments=()=>{
+       
 
+    }
+    
     return (
         <div className="product-tabs">
-            {console.log(product)}
+            
             <div className="product-tabs__header">
                 {tabs.map(tab => (
                     <button

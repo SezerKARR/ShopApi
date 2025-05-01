@@ -57,6 +57,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
             .WithMany(u => u.CreatedProducts)
             .HasForeignKey(p => p.CreatedBySellerId);
         builder.Entity<Comment>().HasOne(c=>c.ProductSeller).WithMany(ps => ps.Comments).HasForeignKey(c=>c.ProductSellerId);
+        builder.Entity<Comment>().HasOne(c=>c.User).WithMany(u=>u.Comments).HasForeignKey(c=>c.UserId);
 
         builder.Entity<ProductImage>().HasOne(pi => pi.Product).WithMany(p => p.ProductImages).HasForeignKey(pi => pi.ProductId);
 

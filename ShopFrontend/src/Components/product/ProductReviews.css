@@ -1,7 +1,12 @@
-.ProductReviews-container { display: flex;
-    flex-direction: column;
+
+
+.product-reviews__user-profile {
+    display: flex;
+    justify-content: center;
     align-items: center;
-    width: 800px;
-    min-width: 800px;
-    background-color: black;
+    font-size: 40px;
+    border-radius: 50%;
+    height: 80px;
+    width: 80px;
+    background-color: gray;
 }

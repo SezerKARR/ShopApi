@@ -103,22 +103,22 @@ public class ProductService:IProductService {
     }
 
 
-    public async Task<Response<ReadProductDto>> GetProductBySlugAsync(string slug, int includes = -1) {
-        try
-        {
-            var product = await _productRepository.GetBySlugAsync(slug);
-
-
-            if (product == null) { return new Response<ReadProductDto>($"Product with slug: {slug} not found."); }
-            ReadProductDto productDto = _mapper.Map<ReadProductDto>(product);
-            return new Response<ReadProductDto>(productDto);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "An error occurred while fetching product by slug.");
-            return new Response<ReadProductDto>($"An error occurred: {ex.Message}");
-        }
-    }
+    // public async Task<Response<ReadProductDto>> GetProductBySlugAsync(string slug, int includes = -1) {
+    //     try
+    //     {
+    //         var product = await _productRepository.GetBySlugAsync(slug);
+    //
+    //
+    //         if (product == null) { return new Response<ReadProductDto>($"Product with slug: {slug} not found."); }
+    //         ReadProductDto productDto = _mapper.Map<ReadProductDto>(product);
+    //         return new Response<ReadProductDto>(productDto);
+    //     }
+    //     catch (Exception ex)
+    //     {
+    //         _logger.LogError(ex, "An error occurred while fetching product by slug.");
+    //         return new Response<ReadProductDto>($"An error occurred: {ex.Message}");
+    //     }
+    // }
     // public async Task<Response<List<ReadProductDto>>> GetProductsAsync(QueryObject queryObject) {
     // 	var query = _productRepository.GetQuery();
     //

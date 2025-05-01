@@ -16,6 +16,7 @@ public class User :BaseEntity{
     [MaxLength(100)]
     public required string Email { get; set; }
     public virtual Role Role { get; set; } = Role.User;
+    public List<Comment>? Comments { get; set; }
     public int RoleInt
     {
         get => (int)Role;  

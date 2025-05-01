@@ -21,6 +21,8 @@ using UpdateCategoryDto=Dtos.Category.UpdateCategoryDto;
 
 public class MapperProfiles : Profile{
     public MapperProfiles() {
+
+        CreateMap<User, ReadUserDto>();
         CreateMap<ReadProductDto, Product>();
         CreateMap<Product, ReadProductDto>()
             .ForMember(dest => dest.FilterValueIds, opt => opt.MapFrom(src => src.FilterValues.Select(pfv => pfv.Id).ToList()))
