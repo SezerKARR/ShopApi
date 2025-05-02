@@ -22,5 +22,7 @@ public class User :BaseEntity{
         set => Role = (Role)value;  
     }
 
+    public IEnumerable<Address>? Addresses { get; }
+
 
 }

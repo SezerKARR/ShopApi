@@ -5,7 +5,7 @@ import ProductReviews from "./ProductReviews.jsx";
 import ProductDescription from "./ProductDescription.jsx";
 
 const ProductTabs = ({ product }) => {
-    const [activeTab, setActiveTab] = useState("reviews");
+    const [activeTab, setActiveTab] = useState("description");
     const TabPanel = ({ children, value, index }) => {
         return value === index ? <div className="tab-panel">{children}</div> : null;
     };

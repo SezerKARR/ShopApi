@@ -82,8 +82,7 @@ public class CommentService : ICommentService {
 
             await _commentRepository.CreateAsync(comment);
 
-            Debug.Assert(comment.ProductSeller != null, "comment.ProductSeller != null");
-            var (sum, count) = await _commentRepository.GetSumAndCountByProductIdAsync(comment.ProductSeller.ProductId);
+            var (sum, count) = await _commentRepository.GetSumAndCountByProductIdAsync(comment.ProductId);
             product.AverageRating = ((double?)sum+createCommentDto.Rating) / (count+1);
             product.CommentCount = count+1;
             if (createCommentDto.Images!=null)

@@ -76,8 +76,11 @@ public class ProductImageService:IProductImageService {
         {
             var productImage = _mapper.Map<ProductImage>(createProductImageDto);
             productImage.Slug= SlugHelper.GenerateSlug(productImage.Name);
-            productImage.Url=FormManager.Save(createProductImageDto.Image, "uploads/productImage", FormTypes.Image);
-            productImage.CreatedAt = DateTime.Now;
+            if (productImage.Image != null)
+            {
+                productImage.Image.Url = FormManager.Save(createProductImageDto.Image, "uploads/productImage", FormTypes.Image);
+                productImage.Image.CreatedAt = DateTime.Now;
+            }
             await _productImageRepository.CreateAsync(productImage);
             if (!await _unitOfWork.CommitAsync())
             {

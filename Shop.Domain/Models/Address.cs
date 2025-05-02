@@ -8,10 +8,6 @@ public  class Address : BaseEntity
 {
     public int? UserId { get; set; }
     public virtual User? User { get; set; }
-    
-    public int? SellerId { get; set; }
-    public virtual Seller? Seller { get; set; }
-    
     [Required]
     public required string Title { get; set; }
 

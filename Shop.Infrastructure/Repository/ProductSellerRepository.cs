@@ -31,8 +31,7 @@ public class ProductSellerRepository:BaseRepository<ProductSeller>, IProductSell
                 query = query.Include(ps => ps.Product);
             if (productSellerInclude.HasFlag(ProductSellerInclude.Stocks))
                 query = query.Include(ps => ps.Stocks);
-            if(productSellerInclude.HasFlag(ProductSellerInclude.Comments))
-                query = query.Include(ps => ps.Comments);
+           
 
         }
         return query;

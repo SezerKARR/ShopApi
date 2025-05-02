@@ -19,6 +19,10 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
     public DbSet<Seller> Sellers { get; set; }
     public DbSet<ProductSeller> ProductSellers { get; set; }
     public DbSet<ProductImage> ProductImages { get; set; }
+    public DbSet<Address> Addresses { get; set; }
+    public DbSet<Order> Orders { get; set; }
+    public DbSet<OrderItem> OrderItems { get; set; }
+    public DbSet<Image> Images { get; set; }
     protected override void OnModelCreating(ModelBuilder builder) {
 
         base.OnModelCreating(builder);
@@ -27,6 +31,15 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
             .HasValue<User>(1)      // "User" tipi için Role.User
             .HasValue<Seller>(2);
 
+        builder.Entity<User>()
+            .HasMany(u => u.Addresses)      // Bir User'ın çok Address'i olabilir
+            .WithOne(a => a.User)           // Her Address bir User'a bağlı olabilir (veya olmayabilir)
+            .HasForeignKey(a => a.UserId)   // Address'teki Foreign Key UserId'dir
+            .IsRequired(false)              // Bu ForeignKey zorunlu DEĞİLDİR (Address.UserId null olabilir)
+            .OnDelete(DeleteBehavior.ClientSetNull); // User silinirse Address'deki UserId null olsun (veya Restrict/Cascade)
+      
+
+        
         builder.Entity<Coupon>().HasOne(coupon => coupon.Seller).WithMany(s=>s.Coupons).HasForeignKey(coupon => coupon.SellerId);
 
         builder.Entity<BrandCategory>().HasOne(bc=>bc.Category).WithMany(c=>c.BrandCategories).HasForeignKey(bc=>bc.CategoryId);
@@ -57,10 +70,14 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
             .HasOne(p => p.CreatedBySeller)
             .WithMany(u => u.CreatedProducts)
             .HasForeignKey(p => p.CreatedBySellerId);
-        builder.Entity<Comment>().HasOne(c=>c.Product).WithMany(ps => ps.Comments).HasForeignKey(c=>c.ProductSellerId);
+        builder.Entity<Comment>().HasOne(c=>c.Product).WithMany(ps => ps.Comments).HasForeignKey(c=>c.ProductId);
         builder.Entity<Comment>().HasOne(c=>c.User).WithMany(u=>u.Comments).HasForeignKey(c=>c.UserId);
 
         builder.Entity<ProductImage>().HasOne(pi => pi.Product).WithMany(p => p.ProductImages).HasForeignKey(pi => pi.ProductId);
+        builder.Entity<ProductImage>()
+            .HasOne(pi => pi.Image)
+            .WithMany() 
+            .HasForeignKey(pi => pi.ImageId);
 
 
     }

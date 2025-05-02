@@ -1,9 +1,4 @@
-.product-reviews-container {
-    display: flex;
-    flex-direction: column;
-    
-    gap:20px
-}
+
 
 .product-reviews__user-profile {
     display: flex;
@@ -15,28 +10,3 @@
     width: 80px;
     background-color: gray;
 }
-
-.product-reviews__review-card {
-    display: flex;
-    flex-direction:row;
-    align-items: center;
-    
-}
-.product-reviews__comment-info__content {
-    background-color: rgba(128, 128, 128, 0.74);
-    border-radius: 10px;
-    padding: 10px;
-
-}
-.product-reviews__comment-info-container {
-    display: flex;
-    flex-direction: column;
-    min-width: 400px;
-    
-    padding-inline: 20px;
-}
-
-.product-reviews__comment-info__seller {
-    border-top: 1px solid gray;
-}
-

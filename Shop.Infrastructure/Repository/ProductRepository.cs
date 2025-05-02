@@ -21,6 +21,7 @@ public enum ProductIncludes {
     ProductSeller = 16,
     ProductFilterValue = 32,
     ProductImages = 64,
+    Comments = 128,
     All = Brand | Category | ProductFilterValue
 }
 
@@ -43,7 +44,7 @@ public class ProductRepository:BaseRepository<Product>, IProductRepository {
             if (productIncludes.HasFlag(ProductIncludes.CreatedByUser))
                 query = query.Include(p => p.CreatedBySeller);
             if (productIncludes.HasFlag(ProductIncludes.ProductSeller))
-                query = query.Include(p => p.ProductSellers).ThenInclude(ps => ps.Seller).ThenInclude(s => s.Coupons).Include(p=>p.ProductSellers).ThenInclude(ps=>ps.Comments).ThenInclude(c=>c.User);
+                query = query.Include(p => p.ProductSellers).ThenInclude(ps => ps.Seller).ThenInclude(s => s.Coupons);
             if (productIncludes.HasFlag(ProductIncludes.ProductFilterValue))
                 query = query
                     .Include(p => p.FilterValues)
@@ -53,6 +54,8 @@ public class ProductRepository:BaseRepository<Product>, IProductRepository {
 
             if (productIncludes.HasFlag(ProductIncludes.ProductImages))
                 query = query.Include(p => p.ProductImages);
+            if(productIncludes.HasFlag(ProductIncludes.Comments))
+                query = query.Include(p => p.Comments);
         }
 
 
