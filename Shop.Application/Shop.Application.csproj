@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net8.0</TargetFramework>
+        <Nullable>enable</Nullable>
+        <ImplicitUsings>enable</ImplicitUsings>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="AutoMapper" Version="14.0.0" />
+        <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="8.0.12"/>
+        <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.4" />
+        <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2"/>
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\Shop.Domain\Shop.Domain.csproj" />
+      <ProjectReference Include="..\Shop.Infrastructure\Shop.Infrastructure.csproj" />
+    </ItemGroup>
+
+</Project>
