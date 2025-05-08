@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 namespace Shop.Infrastructure.Data;
 
 using Domain.Models;
+using Domain.Models.AddressEntities;
 
 public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(options) {
     public DbSet<Product> Products { get; set; }
@@ -23,6 +24,9 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
     public DbSet<Order> Orders { get; set; }
     public DbSet<OrderItem> OrderItems { get; set; }
     public DbSet<Image> Images { get; set; }
+    public DbSet<City> Cities { get; set; }
+    public DbSet<District> Districts { get; set; }
+    public DbSet<Neighbourhood> Neighbourhoods { get; set; }
     protected override void OnModelCreating(ModelBuilder builder) {
 
         base.OnModelCreating(builder);
@@ -72,12 +76,14 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
             .HasForeignKey(p => p.CreatedBySellerId);
         builder.Entity<Comment>().HasOne(c=>c.Product).WithMany(ps => ps.Comments).HasForeignKey(c=>c.ProductId);
         builder.Entity<Comment>().HasOne(c=>c.User).WithMany(u=>u.Comments).HasForeignKey(c=>c.UserId);
-
         builder.Entity<ProductImage>().HasOne(pi => pi.Product).WithMany(p => p.ProductImages).HasForeignKey(pi => pi.ProductId);
         builder.Entity<ProductImage>()
             .HasOne(pi => pi.Image)
             .WithMany() 
             .HasForeignKey(pi => pi.ImageId);
+        
+        builder.Entity<District>().HasOne(d=>d.City).WithMany(c=>c.Districts).HasForeignKey(d=>d.CityId);
+        builder.Entity<Neighbourhood>().HasOne(n=>n.District).WithMany(n=>n.Neighbourhoods).HasForeignKey(n=>n.DistrictId);
 
 
     }

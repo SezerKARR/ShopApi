@@ -21,17 +21,8 @@
     color:black;
 }
 
-.product--image {
-    width: 100%;
-    border: 1px solid rgba(130, 131, 118, 0.6);
-    border-radius: 10px;
-}
 
-.image-container {
-    width: 422px;
-    max-height: 600px;
-    min-height: 590px;
-}
+
 
 .product__main {
     display: flex;

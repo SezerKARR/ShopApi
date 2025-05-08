@@ -11,7 +11,7 @@ const ProductTabs = ({ product }) => {
     };
     const tabs = [
         { id: "description", label: "Product Description", component: <ProductDescription product={product} /> },
-        { id: "reviews", label: "Reviews", component: <ProductReviews productSellers={product.productSellers} /> },
+        { id: "reviews", label: "Reviews", component: <ProductReviews comments={product.comments} /> },
         { id: "qa", label: "Question Answer", component: <ProductQA /> }
     ];
     const handleComments=()=>{

@@ -28,6 +28,7 @@ public interface IProductService {
     // Task<Response<ReadProductDto>> UpdateProductAsync(int id, UpdateProductDto dto);
     // Task<Response<bool>> ProductExistAsync(int id);
 
+    Task<Response<ReadProductDto>> GetProductByIdIncAsync(int id, ProductIncludes includes);
 }
 
 public class ProductService:IProductService {
@@ -39,8 +40,10 @@ public class ProductService:IProductService {
     readonly IProductFilterValueService _productFilterValueService;
     readonly IProductSellerService _productSellerService;
     readonly IProductImageService _productImageService;
+    readonly ITransactionScopeService _transactionScopeService;
 
-    public ProductService(IMapper mapper, IMemoryCache memoryCache, IUnitOfWork unitOfWork, ILogger<ProductService> logger, IProductFilterValueService productFilterValueService, IProductSellerService productSellerService, IProductImageService productImageService) {
+    public ProductService(IMapper mapper, IMemoryCache memoryCache, IUnitOfWork unitOfWork, ILogger<ProductService> logger, IProductFilterValueService productFilterValueService, IProductSellerService productSellerService, IProductImageService productImageService,
+        ITransactionScopeService transactionScopeService) {
         _mapper = mapper;
 
         _memoryCache = memoryCache;
@@ -50,6 +53,7 @@ public class ProductService:IProductService {
         _productFilterValueService = productFilterValueService;
         _productSellerService = productSellerService;
         _productImageService = productImageService;
+        _transactionScopeService = transactionScopeService;
     }
 
 
@@ -140,95 +144,95 @@ public class ProductService:IProductService {
 
 
     public async Task<Response<ReadProductDto>> CreateProductAsync(CreateProductDto dto) {
-        await _unitOfWork.BeginTransactionAsync();
-        try
-        {
-            var isUserExist = await _unitOfWork.UserRepository.AnyAsync(dto.CreatedByUserId);
-            if (!isUserExist)
-                return new Response<ReadProductDto>("User does not exist.");
-
-            var isCategoryExist = await _unitOfWork.CategoryRepository.AnyAsync(dto.CategoryId);
-            if (!isCategoryExist)
-                return new Response<ReadProductDto>("Category does not exist.");
-
-            var isBrandExist = await _unitOfWork.BrandRepository.AnyAsync(dto.BrandId);
-            if (!isBrandExist)
-                return new Response<ReadProductDto>("Brand does not exist.");
-
-
-            var product = new Product
+        return await _transactionScopeService.ExecuteAsync(async () => {
+            try
             {
-                Name = dto.Name,
-                Slug = SlugHelper.GenerateSlug(dto.Name),
-                CategoryId = dto.CategoryId,
-                BrandId = dto.BrandId,
-                MinPrice = dto.Price,
-                CreatedBySellerId = dto.CreatedByUserId,
-            };
+                var isUserExist = await _unitOfWork.UserRepository.AnyAsync(dto.CreatedByUserId);
+                if (!isUserExist)
+                    return new Response<ReadProductDto>("User does not exist.");
 
-            await _productRepository.CreateAsync(product);
-            if (!await _unitOfWork.CommitAsync())
-            {
-                await _unitOfWork.RollbackAsync();
-                return new Response<ReadProductDto>("An error occurred when creating a new product.");
-            }
-            if (dto.ProductFilterValues != null)
-            {
-                foreach (var productFilterValue in dto.ProductFilterValues)
+                var isCategoryExist = await _unitOfWork.CategoryRepository.AnyAsync(dto.CategoryId);
+                if (!isCategoryExist)
+                    return new Response<ReadProductDto>("Category does not exist.");
+
+                var isBrandExist = await _unitOfWork.BrandRepository.AnyAsync(dto.BrandId);
+                if (!isBrandExist)
+                    return new Response<ReadProductDto>("Brand does not exist.");
+
+
+                var product = new Product
                 {
-                    productFilterValue.ProductId = product.Id;
-                    var response = await _productFilterValueService.CreateProductFilterValueAsync(productFilterValue);
-                    if (!response.Success)
-                    {
-                        await _unitOfWork.RollbackAsync();
-                        if (response.Message != null) return new Response<ReadProductDto>(response.Message);
-                    }
-                    // productFilterValues.Add(newProductFilterValue);
-                    // await _unitOfWork.ProductFilterValueRepository.CreateAsync(newProductFilterValue);
+                    Name = dto.Name,
+                    Slug = SlugHelper.GenerateSlug(dto.Name),
+                    CategoryId = dto.CategoryId,
+                    BrandId = dto.BrandId,
+                    MinPrice = dto.Price,
+                    CreatedBySellerId = dto.CreatedByUserId,
+                };
+
+                await _productRepository.CreateAsync(product);
+                if (!await _unitOfWork.CommitAsync())
+                {
+                    return new Response<ReadProductDto>("An error occurred when creating a new product.");
                 }
-            }
-
-            var createProductSellerDto = new CreateProductSellerDto()
-            {
-                ProductId = product.Id, SellerId = product.CreatedBySellerId, Quantity = dto.Quantity, Price = dto.Price
-            };
-            if (dto.ProductImages != null)
-            {
-                foreach (var productImage in dto.ProductImages)
+                if (dto.ProductFilterValues != null)
                 {
-                    productImage.ProductId = product.Id;
-                    var productImageResponse = await _productImageService.CreateProductImageAsync(productImage,false);
-                    if (!productImageResponse.Success)
+                    foreach (var productFilterValue in dto.ProductFilterValues)
                     {
-                        await _unitOfWork.RollbackAsync();
-                        if (productImageResponse.Message != null) return new Response<ReadProductDto>(productImageResponse.Message);
+                        productFilterValue.ProductId = product.Id;
+                        var response = await _productFilterValueService.CreateProductFilterValueAsync(productFilterValue);
+                        if (!response.Success)
+                        {
+                            await _unitOfWork.RollbackAsync();
+                            if (response.Message != null) return new Response<ReadProductDto>(response.Message);
+                        }
+                        // productFilterValues.Add(newProductFilterValue);
+                        // await _unitOfWork.ProductFilterValueRepository.CreateAsync(newProductFilterValue);
                     }
                 }
+
+                var createProductSellerDto = new CreateProductSellerDto()
+                {
+                    ProductId = product.Id, SellerId = product.CreatedBySellerId, Quantity = dto.Quantity, Price = dto.Price
+                };
+                if (dto.ProductImages != null)
+                {
+                    foreach (var productImage in dto.ProductImages)
+                    {
+                        productImage.ProductId = product.Id;
+                        var productImageResponse = await _productImageService.CreateProductImageAsync(productImage, false);
+                        if (!productImageResponse.Success)
+                        {
+                            await _unitOfWork.RollbackAsync();
+                            if (productImageResponse.Message != null) return new Response<ReadProductDto>(productImageResponse.Message);
+                        }
+                    }
+                }
+                var productSellerResponse = await _productSellerService.CreateProductSellerAsync(createProductSellerDto, false);
+                if (!productSellerResponse.Success)
+                {
+                    await _unitOfWork.RollbackAsync();
+                    if (productSellerResponse.Message != null) return new Response<ReadProductDto>(productSellerResponse.Message);
+                }
+                await _unitOfWork.CommitTransactionAsync();
+                Console.WriteLine($"Successfully created a new product seller: {productSellerResponse.Message}");
+                var productDto = _mapper.Map<ReadProductDto>(product);
+                return new Response<ReadProductDto>(productDto);
             }
-            var productSellerResponse = await _productSellerService.CreateProductSellerAsync(createProductSellerDto, false);
-            if (!productSellerResponse.Success)
+            catch (Exception ex)
             {
-                await _unitOfWork.RollbackAsync();
-                if (productSellerResponse.Message != null) return new Response<ReadProductDto>(productSellerResponse.Message);
+
+                try { await _unitOfWork.RollbackAsync(); }
+                catch (Exception rollbackEx) { Console.WriteLine($"Rollback failed: {rollbackEx.Message}"); }
+
+                Console.WriteLine($"Main Error: {ex.Message}");
+                if (ex.InnerException != null)
+                    Console.WriteLine($"Inner: {ex.InnerException.Message}");
+
+                return new Response<ReadProductDto>($"Error: {ex.Message}");
+
             }
-            await _unitOfWork.CommitTransactionAsync();
-            Console.WriteLine($"Successfully created a new product seller: {productSellerResponse.Message}");
-            var productDto = _mapper.Map<ReadProductDto>(product);
-            return new Response<ReadProductDto>(productDto);
-        }
-        catch (Exception ex)
-        {
-
-            try { await _unitOfWork.RollbackAsync(); }
-            catch (Exception rollbackEx) { Console.WriteLine($"Rollback failed: {rollbackEx.Message}"); }
-
-            Console.WriteLine($"Main Error: {ex.Message}");
-            if (ex.InnerException != null)
-                Console.WriteLine($"Inner: {ex.InnerException.Message}");
-
-            return new Response<ReadProductDto>($"Error: {ex.Message}");
-
-        }
+        });
     }
 
 
@@ -275,6 +279,12 @@ public class ProductService:IProductService {
             _logger.LogError(e, "Could not delete Product with ID {id}.", id);
             return new Response<ReadProductDto>($"An error occurred when deleting the Product: {e.Message}");
         }
+    }
+    public async Task<Response<ReadProductDto>> GetProductByIdIncAsync(int id, ProductIncludes includes) {
+        var existingpro = await _productRepository.GetByIdWithIncludesAsync(id, includes);
+        if (existingpro == null) return new Response<ReadProductDto>("Product not found.");
+        var productDto = _mapper.Map<ReadProductDto>(existingpro);
+        return new Response<ReadProductDto>(productDto);
     }
     public async Task<Response<bool>> ProductExistAsync(int id, int includes = -1) {
         try

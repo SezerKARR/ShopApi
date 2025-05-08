@@ -64,9 +64,7 @@ public class CommentService : ICommentService {
         }
     }
     public async Task<Response<ReadCommentDto>> CreateCommentAsync(CreateCommentDto createCommentDto,int includes=-1) {
-        var productSeller = await _unitOfWork.ProductSellerRepository.GetByIdAsync(createCommentDto.ProductSellerId, 3);
-        if(productSeller==null) return new Response<ReadCommentDto>("Product Seller Not Found.");
-        var product = await _unitOfWork.ProductRepository.GetByIdAsync(productSeller.ProductId);
+        var product = await _unitOfWork.ProductRepository.GetByIdAsync(createCommentDto.ProductId, 3);
         if (product == null)
             return new Response<ReadCommentDto>("product does not exist");
 

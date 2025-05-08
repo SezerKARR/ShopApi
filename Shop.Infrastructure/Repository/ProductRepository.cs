@@ -6,7 +6,10 @@ using Microsoft.EntityFrameworkCore;
 using Shop.Infrastructure.Data;
 
 public interface IProductRepository:IRepository<Product> {
-
+    /// <summary>
+    /// Belirtilen ID'ye sahip ürünü, belirtilen ilişkili verilerle birlikte getirir.
+    /// </summary>
+    Task<Product?> GetByIdWithIncludesAsync(int id, ProductIncludes includes);
     Task<List<Product>?> GetProductsByCategoryIdAsync(int categoryId, int includes = -1);
     Task<List<Product>?> GetFilteredProducts(ProductFilterRequest productFilterRequest, int includes = -1);
 }
@@ -53,7 +56,7 @@ public class ProductRepository:BaseRepository<Product>, IProductRepository {
                     .ThenInclude(pv => pv.FilterValue);
 
             if (productIncludes.HasFlag(ProductIncludes.ProductImages))
-                query = query.Include(p => p.ProductImages);
+                query = query.Include(p => p.ProductImages).ThenInclude(pi=>pi.Image);
             if(productIncludes.HasFlag(ProductIncludes.Comments))
                 query = query.Include(p => p.Comments);
         }
@@ -153,8 +156,59 @@ public class ProductRepository:BaseRepository<Product>, IProductRepository {
             throw;
         }
     }
+  public IQueryable<Product> GetQueryWithIncludes(ProductIncludes includes)
+        {
+            // Base'den veya doğrudan DbContext'ten temel sorguyu al
+            IQueryable<Product> query = _context.Products; // Veya base.GetQuery();
 
+            // Enum flag'lerini kontrol et ve Include'ları ekle
+            if (includes == ProductIncludes.None)
+            {
+                return query; // Hiçbir include istenmiyorsa direkt dön
+            }
 
+            if (includes.HasFlag(ProductIncludes.Category))
+                query = query.Include(p => p.Category);
+
+            if (includes.HasFlag(ProductIncludes.Brand))
+                query = query.Include(p => p.Brand);
+
+            if (includes.HasFlag(ProductIncludes.CreatedByUser))
+                query = query.Include(p => p.CreatedBySeller); // Veya User navigation property adı
+
+            if (includes.HasFlag(ProductIncludes.ProductSeller))
+                 query = query.Include(p => p.ProductSellers); // Eğer ProductSeller koleksiyonu varsa
+
+            if (includes.HasFlag(ProductIncludes.ProductFilterValue))
+                 query = query.Include(p => p.FilterValues); // Eğer FilterValue koleksiyonu varsa
+
+            if (includes.HasFlag(ProductIncludes.ProductImages))
+                 // Eğer ProductImages (linking table) koleksiyonu varsa ve Image'i de istiyorsan:
+                 query = query.Include(p => p.ProductImages).ThenInclude(pi => pi.Image);
+                 // Eğer Skip Navigation (ICollection<Image>) varsa:
+                 // query = query.Include(p => p.Images);
+
+            if (includes.HasFlag(ProductIncludes.Comments))
+                 query = query.Include(p => p.Comments);
+
+            // ProductIncludes.All gibi birleşik flag'ler için ayrıca kontrol yapmaya gerek yok,
+            // HasFlag zaten tek tek kontrol edecektir.
+
+            return query;
+        }
+
+     
+
+    public async Task<Product?> GetByIdWithIncludesAsync(int id, ProductIncludes includes)
+    {
+       
+        // Oluşturulan sorguyu kullanarak veriyi çek
+        return await GetQueryWithIncludes(includes)
+            .AsSplitQuery() // Potansiyel "cartesian explosion" önlemek için sorguyu bölebilir (opsiyonel)
+            .FirstOrDefaultAsync(p => p.Id == id);
+    }
+
+ 
     public async Task<List<Product>?> GetProductsByCategoryIdAsync(int categoryId, int includes = -1) {
         return await IncludeQuery(includes).Where(p => p.CategoryId == categoryId).ToListAsync();
     }

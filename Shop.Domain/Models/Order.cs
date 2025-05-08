@@ -12,6 +12,20 @@ public enum OrderStatus
     Cancelled,
     Returned
 }
+public enum PaymentMethod
+{
+    Cash,
+    CreditCard,
+    Installment,
+    WireTransfer
+}
+
+public enum PaymentStatus {
+    Pending,
+    Successful,
+    Cancelled,
+    Failed
+}
 
 public class Order : BaseEntity
 {
@@ -27,15 +41,14 @@ public class Order : BaseEntity
     [Column(TypeName = "decimal(18,2)")]
     public decimal TotalAmount { get; set; }
 
-    [MaxLength(50)]
-    public string? PaymentMethod { get; set; }
+    public PaymentMethod PaymentMethod { get; set; }
 
     public string? PaymentIntentId { get; set; }
-    public string? PaymentStatus { get; set; }
+    public PaymentStatus PaymentStatus { get; set; }
 
 
     public virtual ICollection<OrderItem> OrderItems { get; set; } = new List<OrderItem>();
 
     [MaxLength(50)]
-    public string? OrderNumber { get; set; }
+    public string? OrderNumber { get; set; }//todo:bunu yapılandır seller ürün ve user ile bişeyler yaparsın ö.d.
 }

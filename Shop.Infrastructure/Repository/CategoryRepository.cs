@@ -15,15 +15,8 @@ enum CategoryIncludes {
     All=ParentCategory | SubCategories | Filters | Products | BrandCategories
 }
 
-public interface ICategoryRepository {
-    IQueryable<Category> GetQuery(int includes = -1);
-    Task<Category?> GetByIdAsync(int id, int includes = -1);
-    Task<Category?> GetBySlugAsync(string slug, int includes = -1);
-    Task<List<Category>?> GetAllAsync(int includes = -1);
-    Task CreateAsync(Category entity);
-    Task<bool> AnyAsync(int id);
-    void Update(Category entity);
-    void Delete(Category entity);
+public interface ICategoryRepository: IRepository<Category> {
+ 
 }
 
 public class CategoryRepository : BaseRepository<Category>, ICategoryRepository {

@@ -1,0 +1,30 @@
+.ProductImage-container {
+    /* Your CSS styles here */
+}
+.image-container {
+    width: 422px;
+    max-height: 600px;
+    min-height: 590px;
+}
+.product--image {
+    width: 100%;
+    height: 535px;
+    border: 1px solid rgba(130, 131, 118, 0.6);
+    border-radius: 10px;
+}
+.product-image__other-images {
+    display: flex;
+    flex-direction: row;
+    gap:15px;
+}
+
+.product-image__other-image {
+    width: 48px;
+    height: 64px;
+    border: 1px solid rgba(130, 131, 118, 0.6);
+    border-radius: 10px;
+}
+
+.selected {
+    border: 1px solid rgba(243, 160, 14, 0.6);
+}

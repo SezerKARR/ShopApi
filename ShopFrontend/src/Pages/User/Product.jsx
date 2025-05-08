@@ -9,6 +9,7 @@ import {useBasketContext} from "../../Providers/BasketProvider.jsx";
 import OtherSellers from "../../Components/product/OtherSellers.jsx";
 import ProductTabs from "../../Components/product/ProductTabs.jsx";
 import ProductInfo from "../../Components/product/ProductInfo.jsx";
+import ProductImage from "../../Components/product/ProductImage.jsx";
 
 
 
@@ -30,8 +31,10 @@ const Product = () => {
     useEffect(() => {
         const fetchProduct = async () => {
             try {
-                const res = await axios.get(`${API_URL}/api/product/${productId}?includes=120`);
+                const res = await axios.get(`${API_URL}/api/product/${productId}?includes=255`);
+                
                 const tempProduct = res.data;
+                console.log(tempProduct);
                 tempProduct.productSellers = tempProduct.productSellers.sort((a, b) => a.price - b.price);
                 tempProduct.productImages=tempProduct.productImages.sort((a, b) => a.order - b.order);
                 const mainCategoriesName = await findAllMainCategories(tempProduct);
@@ -97,15 +100,9 @@ const Product = () => {
                 </React.Fragment>))}
             </div>)}
 
-
             <div className={"product__main"}>
-                <div className={"image-container"}>
-                    {productData.product?.productImages[0]?.url && (<img
-                        className="product--image"
-                        alt={productData.product.id}
-                        src={`${API_URL}/${productData.product?.productImages[0]?.url}`}
-                    />)}
-                </div>
+                
+               <ProductImage productImages={productData.product?.productImages} API_URL={API_URL} />
                 <ProductInfo productData={productData} />
                 <OtherSellers productSellers={productData.product.productSellers}
                               currentSellerId={productData.currentProductSeller.id}/>

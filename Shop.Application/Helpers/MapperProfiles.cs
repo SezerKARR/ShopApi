@@ -2,6 +2,7 @@ namespace Shop.Application.Helpers;
 
 using AutoMapper;
 using Domain.Models;
+using Dtos.Address;
 using Dtos.Basket;
 using Dtos.Brand;
 using Dtos.BrandCategory;
@@ -9,7 +10,10 @@ using Dtos.Category;
 using Dtos.Comment;
 using Dtos.Coupon;
 using Dtos.FilterValue;
+using Dtos.Image;
 using Dtos.MainCategory;
+using Dtos.Order;
+using Dtos.OrderItem;
 using Dtos.Product;
 using Dtos.ProductFilterValue;
 using Dtos.ProductImage;
@@ -79,5 +83,19 @@ public class MapperProfiles : Profile{
 
         CreateMap<CreateProductImageDto, ProductImage>();
         CreateMap<ProductImage, ReadProductImageDto>();
+
+        CreateMap<CreateImageDto, Image>();
+        CreateMap<Image, ReadImageDto>();
+        
+        
+        CreateMap<CreateOrderItemDto, OrderItem>();
+        CreateMap<OrderItem, ReadOrderItemDto>();
+
+        CreateMap<CreateOrderDto, Order>();
+        CreateMap<Order, ReadOrderDto>();
+        
+        CreateMap<CreateAddressDto, Address>();
+        CreateMap<Address, ReadAddressDto>();
+
     }
 }

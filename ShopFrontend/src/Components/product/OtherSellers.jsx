@@ -27,8 +27,8 @@ const OtherSellers = ({productSellers, currentSellerId}) => {
             <div className="OtherSellers-container">
                 <div className={"other-sellers__other-sellers-label"}>Other Sellers <span
                     onClick={() => setIsWantSeeAll(!isWantSeeAll)}
-                    className={"other-sellers__other-sellers-label__see-all-label"}>See All<FontAwesomeIcon
-                    icon={faGreaterThan} size={"m"}/></span></div>
+                    className={"other-sellers__other-sellers-label__see-all-label"}>See All
+                    <FontAwesomeIcon icon={faGreaterThan} size={"m"}/></span></div>
                 <div className={"other-sellers__other-sellers-container"}>
                     {twoOtherSellers.map(seller => (
                         <OtherSeller key={seller.id} productSeller={seller}/>

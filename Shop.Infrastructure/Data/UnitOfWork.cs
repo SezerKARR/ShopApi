@@ -17,6 +17,7 @@ public interface IUnitOfWork {
     IFilterValueRepository FilterValueRepository { get; }
     IProductSellerRepository ProductSellerRepository { get;}
     IStockRepository StockRepository { get;  }
+    IImageRepository ImageRepository { get; set; }
     Task BeginTransactionAsync();
     Task CommitTransactionAsync();
     Task RollbackAsync();
@@ -37,11 +38,12 @@ public class UnitOfWork : IUnitOfWork {
     public IFilterValueRepository FilterValueRepository { get; }
     public IProductSellerRepository ProductSellerRepository { get;  }
     public IStockRepository StockRepository { get; }
+    public IImageRepository ImageRepository { get; set; }
 
     private IDbContextTransaction? _transaction;
     public UnitOfWork(AppDbContext context, IProductRepository productRepository, ICommentRepository commentRepository,
         ICategoryRepository categoryRepository, IMainCategoryRepository mainCategoryRepository, IFilterRepository filterRepository,
-        IFilterValueRepository filterValueRepository, IBrandRepository brandRepository, IUserRepository userRepository, IProductFilterValueRepository productFilterValueRepository, IProductSellerRepository productSellerRepository, IStockRepository stockRepository, ISellerRepository sellerRepository) {
+        IFilterValueRepository filterValueRepository, IBrandRepository brandRepository, IUserRepository userRepository, IProductFilterValueRepository productFilterValueRepository, IProductSellerRepository productSellerRepository, IStockRepository stockRepository, ISellerRepository sellerRepository, IImageRepository ımageRepository) {
         _context = context;
         ProductRepository = productRepository;
         CategoryRepository = categoryRepository;
@@ -54,6 +56,7 @@ public class UnitOfWork : IUnitOfWork {
         ProductSellerRepository = productSellerRepository;
         StockRepository = stockRepository;
         SellerRepository = sellerRepository;
+        ImageRepository = ımageRepository;
         CommentRepository = commentRepository;
     }
 

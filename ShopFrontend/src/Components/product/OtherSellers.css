@@ -1,18 +1,18 @@
 .OtherSellers-container {
     border: 1px solid rgba(88, 92, 101, 0.29);
     margin-left: auto;
-    width: 150px;
+    width: 180px;
     height: max-content;
     border-radius: 20px;
-
+    padding-inline: 15px;
     /* Your CSS styles here */
 }
 
 .other-sellers__other-sellers-label {
-
+    display: flex;
+    flex-direction: row;
     gap: 2px;
     padding: 14px 4px 4px 14px;
-    display: flex;
     font-size: 12px;
 }
 
@@ -39,6 +39,7 @@
 }
 
 .other-sellers__other-sellers-container > *:not(:last-child) {
+
     border-bottom: 1px solid #ddd;
 
 }

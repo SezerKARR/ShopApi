@@ -17,14 +17,16 @@ public interface IProductImageService {
 
 public class ProductImageService:IProductImageService {
     private readonly IProductImageRepository _productImageRepository;
+    private readonly IImageService _imageService;
     private readonly IMapper _mapper;
     private readonly ILogger<ProductImage> _logger;
     private readonly IUnitOfWork _unitOfWork;
-    public ProductImageService(IProductImageRepository productImageRepository, IMapper mapper,  IUnitOfWork unitOfWork, ILogger<ProductImage> logger) {
+    public ProductImageService(IProductImageRepository productImageRepository, IMapper mapper,  IUnitOfWork unitOfWork, ILogger<ProductImage> logger, IImageService imageService) {
         _productImageRepository = productImageRepository;
         _mapper = mapper;
         _unitOfWork = unitOfWork;
         _logger = logger;
+        _imageService = imageService;
     }
 
 
@@ -56,7 +58,7 @@ public class ProductImageService:IProductImageService {
         var isProductExist = await _unitOfWork.ProductRepository.AnyAsync(createProductImageDto.ProductId);
         if (!isProductExist)
             return new Response<ReadProductImageDto>("product does not exist.");
-        var sameProductImages=await _productImageRepository.GetProductImagesByProductIdAsync(createProductImageDto.ProductId);
+        var sameProductImages=await _productImageRepository.GetProductImagesByProductIdAsync(createProductImageDto.ProductId,includes:2);
         if (sameProductImages != null && sameProductImages.Any(pi => pi.Order == createProductImageDto.Order))
         {
             var needChangeOrderProductImages = sameProductImages
@@ -76,11 +78,7 @@ public class ProductImageService:IProductImageService {
         {
             var productImage = _mapper.Map<ProductImage>(createProductImageDto);
             productImage.Slug= SlugHelper.GenerateSlug(productImage.Name);
-            if (productImage.Image != null)
-            {
-                productImage.Image.Url = FormManager.Save(createProductImageDto.Image, "uploads/productImage", FormTypes.Image);
-                productImage.Image.CreatedAt = DateTime.Now;
-            }
+          
             await _productImageRepository.CreateAsync(productImage);
             if (!await _unitOfWork.CommitAsync())
             {

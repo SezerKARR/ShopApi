@@ -2,6 +2,7 @@ namespace Shop.Api;
 
 using System.Text.Json.Serialization;
 using Application.Helpers;
+using Application.JsonToSql.Converter;
 using Application.Services;
 using DotNetEnv;
 using Infrastructure.Data;
@@ -34,6 +35,8 @@ public static class ProgramExtensions {
 
         builder.Services.AddMemoryCache();
         builder.Services.AddAutoMapper(typeof(MapperProfiles));
+        
+        builder.Services.AddScoped<ITransactionScopeService, TransactionScopeService>();
 
         builder.Services.AddScoped<IUserRepository, UserRepository>();
         builder.Services.AddScoped<IUserService, UserService>();
@@ -70,6 +73,13 @@ public static class ProgramExtensions {
         builder.Services.AddScoped<ICouponService, CouponService>();
         builder.Services.AddScoped<IProductImageRepository, ProductImageRepository>();
         builder.Services.AddScoped<IProductImageService, ProductImageService>();
+        builder.Services.AddScoped<IImageRepository, ImageRepository>();
+        builder.Services.AddScoped<IImageService, ImageService>();
+        builder.Services.AddScoped<IOrderItemRepository, OrderItemRepository>();
+        builder.Services.AddScoped<IOrderItemService, OrderItemService>();
+        builder.Services.AddScoped<IOrderService, OrderService>();
+        builder.Services.AddScoped<IOrderRepository, OrderRepository>();
+        builder.Services.AddScoped<AddressJsonToSql>();
     }
 
     // Google Authentication yapılandırması
@@ -86,19 +96,27 @@ public static class ProgramExtensions {
     }
 
     // Swagger'ı yapılandır
-    public static void ConfigureSwagger(this WebApplicationBuilder builder) {
+    public static void ConfigureSwagger(this WebApplicationBuilder builder)
+    {
+        // API explorer ve Swagger'i başlatıyoruz
         builder.Services.AddEndpointsApiExplorer();
-        builder.Services.AddSwaggerGen(option => {
-            option.SwaggerDoc("v1", new OpenApiInfo { Title = "Demo API", Version = "v1" });
-            option.AddSecurityDefinition("Google", new OpenApiSecurityScheme
+        builder.Services.AddSwaggerGen(options =>
+        {
+            // Swagger dokümanını tanımlıyoruz
+            options.SwaggerDoc("v1", new OpenApiInfo { Title = "Demo API", Version = "v1" });
+
+            // Google OAuth için bir güvenlik tanımı ekliyoruz
+            options.AddSecurityDefinition("Google", new OpenApiSecurityScheme
             {
-                In = ParameterLocation.Header,
+                In = ParameterLocation.Header, // Güvenlik bilgisi header'da olacak
                 Description = "Please log in using Google",
-                Name = "Authorization",
+                Name = "Authorization", // Header'daki "Authorization" parametresini bekliyoruz
                 Type = SecuritySchemeType.Http,
-                Scheme = "Bearer"
+                Scheme = "Bearer" // OAuth 2.0 Bearer token kullanıyoruz
             });
-            option.AddSecurityRequirement(new OpenApiSecurityRequirement
+
+            // Güvenlik gereksinimini ekliyoruz
+            options.AddSecurityRequirement(new OpenApiSecurityRequirement
             {
                 {
                     new OpenApiSecurityScheme
@@ -106,14 +124,20 @@ public static class ProgramExtensions {
                         Reference = new OpenApiReference
                         {
                             Type = ReferenceType.SecurityScheme,
-                            Id = "Google"
+                            Id = "Google" // Tanımladığımız güvenlik tanımını burada kullanıyoruz
                         }
                     },
                     new string[] { }
                 }
             });
+
+            // XML dokümantasyonunu dahil etmek (isteğe bağlı ama önerilir)
+            var xmlFile = $"{System.Reflection.Assembly.GetExecutingAssembly().GetName().Name}.xml";
+            var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+            options.IncludeXmlComments(xmlPath);
         });
     }
+
 
     // CORS yapılandırması
     public static void ConfigureCors(this WebApplicationBuilder builder) {
@@ -124,6 +148,7 @@ public static class ProgramExtensions {
                     .AllowAnyHeader()
                     .AllowCredentials());
         });
+        
     }
 
     // Middleware yapılandırması
