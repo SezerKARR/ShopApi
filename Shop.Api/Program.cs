@@ -12,10 +12,6 @@ builder.ConfigureSwagger();
 builder.ConfigureCors();
 
 var app = builder.Build();
-using (var scope = app.Services.CreateScope())
-{
-    var service = scope.ServiceProvider.GetRequiredService<AddressJsonToSql>();
-    await service.CreateAddressJsonToSql(); 
-}
+
 app.ConfigureMiddleware();
 app.Run();
