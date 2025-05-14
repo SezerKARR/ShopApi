@@ -14,7 +14,34 @@ public class AddressJsonToSql {
         _context = context;
         _unitOfWork = unitOfWork;
     }
+    public async Task Adjust() {
+        var data =await _unitOfWork.DistrictRepository.GetAllAsync();
+        foreach (var district in data)
+        {
+            string[] parts = district.Coordinates.Split(',');
+            Console.WriteLine(parts[0]);
 
+            decimal lat=0,longi=0;
+            if (parts.Length == 2 &&
+                decimal.TryParse(parts[0].Replace(".",","), out decimal latitude) &&
+                decimal.TryParse(parts[1].Replace(".",","), out decimal longitude))
+            {
+                district.Latitude = latitude;
+                district.Longitude = longitude;
+                Console.WriteLine($"Latitude: {latitude}");
+                Console.WriteLine($"Longitude: {longitude}");
+            }
+            else
+            {
+                await _unitOfWork.RollbackAsync();
+                return;
+                Console.WriteLine("Invalid coordinate format.");
+            }
+           
+        }
+        await _context.SaveChangesAsync();
+        
+    }
     public async Task CreateAddressJsonToSql() {
       
 
@@ -70,8 +97,8 @@ public class AddressJsonToSql {
                     string[] partsdistrict = city.Coordinates.Split(',');
                     decimal latdistrict=0,longidistrict=0;
                     if (parts.Length == 2 &&
-                        decimal.TryParse(parts[0].Replace(".",","), out decimal latitudedistrict) &&
-                        decimal.TryParse(parts[1].Replace(".",","), out decimal longitudedistrict))
+                        decimal.TryParse(partsdistrict[0].Replace(".",","), out decimal latitudedistrict) &&
+                        decimal.TryParse(partsdistrict[1].Replace(".",","), out decimal longitudedistrict))
                     {
                         latdistrict=latitudedistrict;
                         longidistrict=longitudedistrict;

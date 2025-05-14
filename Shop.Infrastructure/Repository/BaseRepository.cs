@@ -21,6 +21,7 @@ public abstract class BaseRepository<T> : IRepository<T> where T : BaseEntity
 
     protected virtual IQueryable<T> IncludeQuery(int includes = -1,IQueryable<T>? queryable=null )
     {
+        if(queryable !=null)return queryable;
         return _queryable; 
     }
 

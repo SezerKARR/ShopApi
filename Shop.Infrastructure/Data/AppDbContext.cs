@@ -56,10 +56,12 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
             .WithMany(category => category.SubCategories)// Alt kategoriler
             .HasForeignKey(category => category.ParentId)
             .OnDelete(DeleteBehavior.Cascade);
+        
         builder.Entity<BasketItem>()
             .HasOne(bi => bi.Basket)
             .WithMany(basket => basket.BasketItems)
             .HasForeignKey(basketItem => basketItem.BasketId);
+        
         builder.Entity<FilterValue>().HasOne(fv => fv.Filter).WithMany(f => f.Values).HasForeignKey(fv => fv.FilterId);
 
         builder.Entity<Stock>().HasOne(s=>s.ProductSeller).WithMany(ps=>ps.Stocks).HasForeignKey(s=>s.ProductSellerId);
@@ -81,7 +83,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
             .HasOne(pi => pi.Image)
             .WithMany() 
             .HasForeignKey(pi => pi.ImageId);
-        
+        builder.Entity<Address>().HasOne(a=>a.User).WithMany(u=>u.Addresses).HasForeignKey(a => a.UserId);
         builder.Entity<District>().HasOne(d=>d.City).WithMany(c=>c.Districts).HasForeignKey(d=>d.CityId);
         builder.Entity<Neighbourhood>().HasOne(n=>n.District).WithMany(n=>n.Neighbourhoods).HasForeignKey(n=>n.DistrictId);
 

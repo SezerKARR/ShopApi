@@ -20,13 +20,10 @@ const Product = () => {
 
     const productSellerId = productSellerParam ? productSellerParam.split("-").pop() : "";
     const productSellerName = productSellerParam ? productSellerParam.split("-").slice(0, -1).join("-") : "";
-    console.log(productSellerParam, "sellerId:", productSellerId, "sellerName:", productSellerName);
     const {API_URL} = useGlobalContext();
     const [productData, setProductData] = useState({
         product: null, mainCategoriesNames: [], currentProductSeller: null
     });
-    const {addToBasket} = useBasketContext();
-    const [activeTab, setActiveTab] = useState("description");
 
     useEffect(() => {
         const fetchProduct = async () => {
@@ -35,8 +32,7 @@ const Product = () => {
                 
                 const tempProduct = res.data;
                 console.log(tempProduct);
-                tempProduct.productSellers = tempProduct.productSellers.sort((a, b) => a.price - b.price);
-                tempProduct.productImages=tempProduct.productImages.sort((a, b) => a.order - b.order);
+                
                 const mainCategoriesName = await findAllMainCategories(tempProduct);
                 setProductData({
                     product: tempProduct,
@@ -78,15 +74,7 @@ const Product = () => {
         }
         return result;
     };
-    const handleFollowClick = () => {
-        console.log("follow");
-    }
-    const handleAskSellerClick = () => {
-        console.log("askSellerClick");
-    }
-    const handleAddToCartClick = () => {
-        addToBasket(productData.product)
-    }
+  
     if (!productData.product && !productData.currentProductSeller) {
         return;
     }
@@ -104,6 +92,7 @@ const Product = () => {
                 
                <ProductImage productImages={productData.product?.productImages} API_URL={API_URL} />
                 <ProductInfo productData={productData} />
+                
                 <OtherSellers productSellers={productData.product.productSellers}
                               currentSellerId={productData.currentProductSeller.id}/>
             </div>

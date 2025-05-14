@@ -1,0 +1,71 @@
+.BasketItem-container {
+    /* Your CSS styles here */
+}
+
+.basket-item {
+    border-top: 1px solid gray;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap:10px;
+}
+
+.custom-checkbox {
+    display: inline-block;
+    position: relative;
+    cursor: pointer;
+    user-select: none;
+    height: 18px;
+    width: 18px;
+    
+}
+
+.custom-checkbox input {
+    opacity: 0;
+    cursor: pointer;
+}
+
+.custom-checkbox .checkmark {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 18px;
+    width: 18px;
+    background-color: #eee;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+}
+
+.custom-checkbox input:checked ~ .checkmark {
+    background-color: orange;
+    border-color: orange;
+}
+
+.custom-checkbox .checkmark:after {
+    content: "";
+    position: absolute;
+    display: none;
+}
+
+.custom-checkbox input:checked ~ .checkmark:after {
+    display: block;
+    left: 6px;
+    top: 2px;
+    width: 4px;
+    height: 9px;
+    border: solid white;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+}
+
+.basket-item__product-title {
+    top:0;
+    
+}
+
+.basket-item__image {
+    border: 1px solid #c5bfbf;
+    border-radius: 4px;
+    width: 100px;
+    height: 100px;
+}

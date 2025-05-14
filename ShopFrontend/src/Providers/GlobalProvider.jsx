@@ -16,7 +16,8 @@ export const GlobalProvider = ({children, setLoading}) => {
 
                 const categoryRes = await axios.get(`${API_URL}/api/category`);
                 const productRes = await axios.get(`${API_URL}/api/product`);
-
+                const userRes = await axios.get(`${API_URL}/api/auth/1`)
+                setUser(userRes.data);
                 setCategories(categoryRes.data);
                 setProducts(productRes.data);
                 setLoading(false);

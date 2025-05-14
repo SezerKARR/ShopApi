@@ -12,9 +12,9 @@ using Infrastructure.Data;
 using Microsoft.Extensions.Logging;
 
 public interface IBasketItemService {
-    Task<Response<List<ReadBasketItemDto>>> GetBasketItemsByBasketIdAsync(int basketId);
+    Task<Response<List<ReadBasketItemDto>>> GetBasketItemsByBasketIdAsync(int basketId,int includes=-1);
     Task<Response<ReadBasketItemDto>> DeleteBasketItemByIdAsync(int id);
-    Task<Response<ReadBasketItemDto>> CreateBasketAsync(CreateBasketItemDto createBasketDto);
+    Task<Response<ReadBasketItemDto>> CreateBasketItemAsync(CreateBasketItemDto createBasketItemDto,int includes=-1);
     Task<Response<ReadBasketItemDto>> UpdateBasketItemQuantityAsync(int id,int quantity);
 }
 public class BasketItemService:IBasketItemService {
@@ -31,10 +31,10 @@ public class BasketItemService:IBasketItemService {
         _logger = logger;
     }
 
-    public async Task<Response<List<ReadBasketItemDto>>> GetBasketItemsByBasketIdAsync(int basketId) {
+    public async Task<Response<List<ReadBasketItemDto>>> GetBasketItemsByBasketIdAsync(int basketId,int includes=-1) {
         try
         {
-            List<BasketItem> basketItems = await _basketItemRepository.GetBasketItemsByBasketId(basketId);
+            List<BasketItem> basketItems = await _basketItemRepository.GetBasketItemsByBasketId(basketId,includes);
             List<ReadBasketItemDto> readBasketItemDtos = _mapper.Map<List<ReadBasketItemDto>>(basketItems);
             return new Response<List<ReadBasketItemDto>>(readBasketItemDtos);
         }
@@ -80,16 +80,39 @@ public class BasketItemService:IBasketItemService {
             return new Response<ReadBasketItemDto>($"An error occurred when Decrease the Basket Item: {e.Message}");
         }
     }
-    public async Task<Response<ReadBasketItemDto>> CreateBasketAsync(CreateBasketItemDto createBasketDto) {
+    public async Task<Response<ReadBasketItemDto>> CreateBasketItemAsync(CreateBasketItemDto createBasketItemDto,int includes=-1) {
+        var basket=await _unitOfWork.BasketRepository.GetBasketByUserIdAsync(createBasketItemDto.UserId,1);
+        if (basket == null)
+        {
+            Basket createBasket = new Basket(userId:createBasketItemDto.UserId);
+           
+            await _unitOfWork.BasketRepository.CreateAsync(createBasket);
+            await _unitOfWork.CommitAsync();
+            basket=createBasket;
+        }
+        var productSeller=await _unitOfWork.ProductSellerRepository.GetByIdAsync(createBasketItemDto.ProductSellerId);
+        if(productSeller == null)return new Response<ReadBasketItemDto>("Product Seller Not Found");
         try
         {
-            BasketItem basketItem = _mapper.Map<BasketItem>(createBasketDto);
-            basketItem.Slug = SlugHelper.GenerateSlug(basketItem.Name);
-          
-            await _basketItemRepository.CreateAsync(basketItem);
+            BasketItem addedItem;
+            var existingItem = basket.BasketItems?.FirstOrDefault(item => item.ProductSellerId == createBasketItemDto.ProductSellerId);
+            if (existingItem != null)
+            {
+                existingItem.Quantity += createBasketItemDto.Quantity;
+                addedItem = existingItem;
+            }
+            else
+            {
+                addedItem = _mapper.Map<BasketItem>(createBasketItemDto);
+                addedItem.Slug = SlugHelper.GenerateSlug(addedItem.Name);
+                addedItem.BasketId = basket.Id;
+                await _basketItemRepository.CreateAsync(addedItem);
+            }
+
+         
             await _unitOfWork.CommitAsync();
             _memoryCache.Remove(CacheKeys.BasketItemList);
-            ReadBasketItemDto readBasketItem = _mapper.Map<ReadBasketItemDto>(basketItem);
+            ReadBasketItemDto readBasketItem = _mapper.Map<ReadBasketItemDto>(addedItem);
             return new Response<ReadBasketItemDto>(readBasketItem);
         }
         catch (Exception ex)
@@ -98,6 +121,6 @@ public class BasketItemService:IBasketItemService {
             return new Response<ReadBasketItemDto>($"An error occurred when saving the BasketItem: {ex.Message}");
         }
     }
-    
+   
 }
 

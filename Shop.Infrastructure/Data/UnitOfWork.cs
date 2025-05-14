@@ -3,6 +3,7 @@ namespace Shop.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 using Repository;
+using Repository.AddressEntity;
 
 public interface IUnitOfWork {
     IProductFilterValueRepository ProductFilterValueRepository { get; }
@@ -18,6 +19,11 @@ public interface IUnitOfWork {
     IProductSellerRepository ProductSellerRepository { get;}
     IStockRepository StockRepository { get;  }
     IImageRepository ImageRepository { get; set; }
+    IDistrictRepository DistrictRepository { get; }
+    IAddressRepository AddressRepository { get; }
+    INeighborhoodRepository NeighborhoodRepository { get; }
+    ICityRepository CityRepository { get; }
+    IBasketRepository BasketRepository { get; }
     Task BeginTransactionAsync();
     Task CommitTransactionAsync();
     Task RollbackAsync();
@@ -39,11 +45,16 @@ public class UnitOfWork : IUnitOfWork {
     public IProductSellerRepository ProductSellerRepository { get;  }
     public IStockRepository StockRepository { get; }
     public IImageRepository ImageRepository { get; set; }
+    public IDistrictRepository DistrictRepository { get; }
+    public IAddressRepository AddressRepository { get; }
+    public INeighborhoodRepository NeighborhoodRepository { get; }
+    public ICityRepository CityRepository { get; }
+    public IBasketRepository BasketRepository { get; }
 
     private IDbContextTransaction? _transaction;
     public UnitOfWork(AppDbContext context, IProductRepository productRepository, ICommentRepository commentRepository,
         ICategoryRepository categoryRepository, IMainCategoryRepository mainCategoryRepository, IFilterRepository filterRepository,
-        IFilterValueRepository filterValueRepository, IBrandRepository brandRepository, IUserRepository userRepository, IProductFilterValueRepository productFilterValueRepository, IProductSellerRepository productSellerRepository, IStockRepository stockRepository, ISellerRepository sellerRepository, IImageRepository ımageRepository) {
+        IFilterValueRepository filterValueRepository, IBrandRepository brandRepository, IUserRepository userRepository, IProductFilterValueRepository productFilterValueRepository, IProductSellerRepository productSellerRepository, IStockRepository stockRepository, ISellerRepository sellerRepository, IImageRepository ımageRepository, IDistrictRepository districtRepository, IAddressRepository addressRepository, INeighborhoodRepository neighborhoodRepository, ICityRepository cityRepository, IBasketRepository basketRepository) {
         _context = context;
         ProductRepository = productRepository;
         CategoryRepository = categoryRepository;
@@ -57,6 +68,11 @@ public class UnitOfWork : IUnitOfWork {
         StockRepository = stockRepository;
         SellerRepository = sellerRepository;
         ImageRepository = ımageRepository;
+        DistrictRepository = districtRepository;
+        AddressRepository = addressRepository;
+        NeighborhoodRepository = neighborhoodRepository;
+        CityRepository = cityRepository;
+        BasketRepository = basketRepository;
         CommentRepository = commentRepository;
     }
 

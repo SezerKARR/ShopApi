@@ -10,6 +10,7 @@ import ProductAdd from "./Pages/Seller/ProductAdd.jsx";
 import Product from "./Pages/User/Product.jsx";
 import {GlobalProvider} from "./Providers/GlobalProvider.jsx";
 import {BasketProvider} from "./Providers/BasketProvider.jsx";
+import Basket from "./Pages/User/Basket.jsx";
 
 
 const Layout = ({children}) => {
@@ -30,25 +31,30 @@ const Layout = ({children}) => {
 };
 const App = () => {
     const [loading, setLoading] = useState(true);
+    const [basketLoading, setBasketLoading] = useState(true);
     return (
         <GlobalProvider setLoading={setLoading}>
             {!loading && (
-                <BasketProvider>
-                    <BrowserRouter future={{v7_startTransition: true, v7_relativeSplatPath: true}}>
-                        <Layout>
-                            <Routes>
-                                <Route path="/" element={<Home/>}/>
-                                <Route path="/login" element={<Login/>}/>
-                                <Route path="/category/:slugAndId" element={<CategoryPage/>}/>
-                                <Route path="/product/:productId" element={<Product/>}/>
+                <BasketProvider setBasketLoading={setBasketLoading}>
+                    {!basketLoading && (
+                        <BrowserRouter future={{v7_startTransition: true, v7_relativeSplatPath: true}}>
+                            <Layout>
+                                <Routes>
+                                    <Route path="/" element={<Home/>}/>
+                                    <Route path="/login" element={<Login/>}/>
+                                    <Route path="/category/:slugAndId" element={<CategoryPage/>}/>
+                                    <Route path="/product/:productId" element={<Product/>}/>
+                                    <Route path="/basket" element={<Basket/>}/>
 
 
-                                {/* Seller Panel */}
-                                <Route path="/admin" element={<SellerHome/>}/>
-                                <Route path="/productAdd" element={<ProductAdd/>}/>
-                            </Routes>
-                        </Layout>
-                    </BrowserRouter>
+                                    {/* Seller Panel */}
+                                    <Route path="/admin" element={<SellerHome/>}/>
+                                    <Route path="/productAdd" element={<ProductAdd/>}/>
+                                </Routes>
+                            </Layout>
+                        </BrowserRouter>
+
+                    )}
                 </BasketProvider>)}
         </GlobalProvider>
     );

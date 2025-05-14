@@ -23,8 +23,4 @@ public class Product : BaseEntity {
     public List<ProductSeller> ProductSellers { get; set; } = new List<ProductSeller>();
     public List<ProductFilterValue> FilterValues { get; set; } = new List<ProductFilterValue>();
     public List<Comment>? Comments { get; set; } = new List<Comment>();
-
-
-
-
 }

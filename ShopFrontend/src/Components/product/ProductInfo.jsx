@@ -6,7 +6,7 @@ import ActionButtons from "./ActionButtons.jsx";
 import DeliveryOptions from "./DeliveryOptions.jsx";
 import Coupon from "./Coupon.jsx";
 
-const ProductInfo = ({productData, onFollowClick, onAskSellerClick, onAddToCartClick }) => {
+const ProductInfo = ({productData, onFollowClick, onAskSellerClick }) => {
     return (
         <div className="product-info">
             <div className="product-info__header">
@@ -27,7 +27,7 @@ const ProductInfo = ({productData, onFollowClick, onAskSellerClick, onAddToCartC
 
             <div className="product-info__price">{productData.product.minPrice} TL</div>
 
-            <ActionButtons onAddToCartClick={onAddToCartClick} />
+            <ActionButtons productId={productData.product.id} />
             <DeliveryOptions />
             <Coupon productSeller={productData.currentProductSeller} />
         </div>

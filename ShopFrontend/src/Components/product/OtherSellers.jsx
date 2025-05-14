@@ -38,24 +38,25 @@ const OtherSellers = ({productSellers, currentSellerId}) => {
             </div>
             {isWantSeeAll &&
                 <>
-                <div className={"other-seller__overlay"} onClick={()=>setIsWantSeeAll(false)}/>
-                
-                <div className={"other-seller__all-seller-container"}>
-                    <div className={"other-seller__all-seller-header"}>
-                        <div className={"other-seller__all-seller__close-button"} onClick={()=>setIsWantSeeAll(false)}>
-                            <FontAwesomeIcon icon={faXmark} size="2xl"/>
+                    <div className={"other-seller__overlay"} onClick={() => setIsWantSeeAll(false)}/>
+
+                    <div className={"other-seller__all-seller-container"}>
+                        <div className={"other-seller__all-seller-header"}>
+                            <div className={"other-seller__all-seller__close-button"}
+                                 onClick={() => setIsWantSeeAll(false)}>
+                                <FontAwesomeIcon icon={faXmark} size="2xl"/>
+                            </div>
+                            <div className={"other-seller__all-seller-title"}>
+                                Other Sellers
+                            </div>
                         </div>
-                        <div className={"other-seller__all-seller-title"}>
-                            Other Sellers 
+                        <div className="other-seller__all-seller__sellers-container">
+                            {productSellers.map(seller => (
+                                <OtherSeller key={seller.id} productSeller={seller} isAllOtherSeller={true}/>
+                            ))}
+
                         </div>
                     </div>
-                    <div className="other-seller__all-seller__sellers-container">
-                        {productSellers.map(seller => (
-                            <OtherSeller key={seller.id} productSeller={seller} isAllOtherSeller={true} />
-                        ))}
-                       
-                    </div>
-                </div>
                 </>
             }
         </>)

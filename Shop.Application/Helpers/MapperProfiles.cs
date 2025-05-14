@@ -4,6 +4,7 @@ using AutoMapper;
 using Domain.Models;
 using Dtos.Address;
 using Dtos.Basket;
+using Dtos.BasketItem;
 using Dtos.Brand;
 using Dtos.BrandCategory;
 using Dtos.Category;
@@ -96,6 +97,9 @@ public class MapperProfiles : Profile{
         
         CreateMap<CreateAddressDto, Address>();
         CreateMap<Address, ReadAddressDto>();
+        
+        CreateMap<CreateBasketItemDto, BasketItem>();
+        CreateMap<BasketItem, ReadBasketItemDto>();
 
     }
 }

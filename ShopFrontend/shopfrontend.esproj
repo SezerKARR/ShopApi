@@ -10,6 +10,5 @@
   </PropertyGroup>
   <ItemGroup>
     <Folder Include="packages\axios.0.16.2\Content\Scripts\" />
-    <Folder Include="public\" />
   </ItemGroup>
 </Project>

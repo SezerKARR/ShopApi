@@ -47,7 +47,7 @@ public class ProductRepository:BaseRepository<Product>, IProductRepository {
             if (productIncludes.HasFlag(ProductIncludes.CreatedByUser))
                 query = query.Include(p => p.CreatedBySeller);
             if (productIncludes.HasFlag(ProductIncludes.ProductSeller))
-                query = query.Include(p => p.ProductSellers).ThenInclude(ps => ps.Seller).ThenInclude(s => s.Coupons);
+                query = query.Include(p => p.ProductSellers.OrderBy(ps=>ps.Price)).ThenInclude(ps => ps.Seller).ThenInclude(s => s.Coupons);
             if (productIncludes.HasFlag(ProductIncludes.ProductFilterValue))
                 query = query
                     .Include(p => p.FilterValues)
@@ -56,7 +56,7 @@ public class ProductRepository:BaseRepository<Product>, IProductRepository {
                     .ThenInclude(pv => pv.FilterValue);
 
             if (productIncludes.HasFlag(ProductIncludes.ProductImages))
-                query = query.Include(p => p.ProductImages).ThenInclude(pi=>pi.Image);
+                query = query.Include(p => p.ProductImages.OrderBy(pi=>pi.Order)).ThenInclude(pi=>pi.Image);
             if(productIncludes.HasFlag(ProductIncludes.Comments))
                 query = query.Include(p => p.Comments);
         }

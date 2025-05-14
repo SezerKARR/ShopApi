@@ -7,6 +7,7 @@ using Application.Services;
 using DotNetEnv;
 using Infrastructure.Data;
 using Infrastructure.Repository;
+using Infrastructure.Repository.AddressEntity;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.EntityFrameworkCore;
@@ -79,6 +80,11 @@ public static class ProgramExtensions {
         builder.Services.AddScoped<IOrderItemService, OrderItemService>();
         builder.Services.AddScoped<IOrderService, OrderService>();
         builder.Services.AddScoped<IOrderRepository, OrderRepository>();
+        builder.Services.AddScoped<IDistrictRepository, DistrictRepository>();
+        builder.Services.AddScoped<ICityRepository, CityRepository>();
+        builder.Services.AddScoped<IAddressRepository, AddressRepository>();
+        builder.Services.AddScoped<IAddressService, AddressService>();
+        builder.Services.AddScoped<INeighborhoodRepository, NeighborhoodRepository>();
         builder.Services.AddScoped<AddressJsonToSql>();
     }
 

@@ -2,6 +2,7 @@
   /* Your CSS styles here */
 }
 .products-Container__product {
+    all: unset;
     cursor: pointer;
     display: flex;
     max-width: 226px;

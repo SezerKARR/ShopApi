@@ -1,6 +1,9 @@
 using System.ComponentModel.DataAnnotations;
 
 namespace Shop.Domain.Models;
+
+using AddressEntities;
+
 /// <summary>
 /// can be user or seller address
 /// </summary>
@@ -19,21 +22,16 @@ public  class Address : BaseEntity
     [MaxLength(20)]
     public string PhoneNumber { get; set; } = null!;
 
-    [Required(ErrorMessage = "Ülke bilgisi gereklidir.")]
-    [MaxLength(100)]
-    public string Country { get; set; } = null!;
 
     [Required(ErrorMessage = "Şehir bilgisi gereklidir.")]
-    [MaxLength(100)]
-    public string City { get; set; } = null!;
-
+    public int CityId { get; set; }
+    public virtual City? City { get; set; }
     [Required(ErrorMessage = "İlçe/Semt bilgisi gereklidir.")]
-    [MaxLength(100)]
-    public string District { get; set; } = null!;
-
-    [Required(ErrorMessage = "Posta kodu gereklidir.")]
-    [MaxLength(20)]
-    public string ZipCode { get; set; } = null!;
+    public int DistrictId { get; set; }
+    public virtual District? District { get; set; }
+    
+    public int NeighborhoodId { get; set; }
+    public virtual Neighbourhood? Neighborhood { get; set; } 
 
     [Required(ErrorMessage = "Açık adres gereklidir.")]
     [MaxLength(500)]
