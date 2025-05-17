@@ -8,11 +8,14 @@ import BasketItem from "../../Components/Basket/BasketItem.jsx";
 const Basket = () => {
     const {basket} = useBasketContext();
     const [selectedItems, setSelectedItems] = React.useState([]);
-    useEffect(()=>{
-        let tempSelectedItems =basket.sellerGroups?.flatMap(group=>group.items.map(item=>item.id));
-        console.log(tempSelectedItems);
+    const [loading, setLoading] = React.useState(true);
+    const basketChanges = {};
+    useEffect(() => {
+        let tempSelectedItems = basket.sellerGroups?.flatMap(group => group.items.map(item => item.id));
+        console.log(basket);
         setSelectedItems(tempSelectedItems);
-    },[basket])
+        setLoading(false);
+    }, [basket])
     const handleSelectedItem = (item, isChecked) => {
         if (isChecked) {
             setSelectedItems([...selectedItems, item]);
@@ -20,12 +23,26 @@ const Basket = () => {
             setSelectedItems(selectedItems.filter(i => i !== item));
         }
     };
-        
+
 
     function handleCheckboxChange(e) {
         console.log(e);
     }
-   
+    const debounceAsync=()=>{
+        const changedItems = basketChanges.filter((change) => {
+            const original = basket.find((item) => item.id === change.id);
+            return !original || original.quantity !== change.quantity;
+        });
+    }
+    const handleItemChange = (item) => {
+        basketChanges[item.id] = item;
+        console.log(basketChanges);
+        
+    }
+    if(loading){
+        return null
+    }
+    
     return (
         <div className="Basket-container__layout">
             <div className={"basket-header__container"}>
@@ -38,55 +55,40 @@ const Basket = () => {
             </div>
             <div className={"Basket-container"}>
 
-                <div className={"basket-container__asd"}>
-                    <div className={"basket-container__infos-container"}>
-
-                        <div className={"basket-info"}>
-                            <div className={"coupons-container"}>
-                                <div className={"coupons-container__coupons-label"}>
-                                    <img src="../../../public/coupon-icon.svg" alt="Coupon icon"/>
-                                    <span>My coupons</span>
-                                </div>
-                                <div className={"coupons-container__add-coupons-code-label"}>
-                                    Add coupon code
-                                    <img src="../../../public/plus.svg" alt="Coupon code"/>
-                                </div>
-                            </div>
-                        </div>
+                <div className={"coupons-container"}>
+                    <div className={"coupons-container__coupons-label"}>
+                        <img src="../../../public/coupon-icon.svg" alt="Coupon icon"/>
+                        <span>My coupons</span>
                     </div>
-
-                    <div className={"basket-container__basket-products"}>
-                        {basket?.sellerGroups?.map((sellerGroup) => (
-                            <div className={"basket-product"} key={sellerGroup.sellerId}>
-                                {console.log(selectedItems)}
-                                <div className={"basket-product__seller-container"}>
-                                    satıcı:
-                                    <span className={"basket-product__seller"}>{sellerGroup.sellerName}</span>
-                                </div>
-                                <div className={"basket-product__product-seller-container"}>
-                                    {sellerGroup?.items?.map((item) => (
-                                        <BasketItem
-                                            key={item.id}
-                                            item={item}
-                                            isSelected={selectedItems.includes(item.id)}
-                                            onSelectChange={(checked) => handleSelectedItem(item.id, checked)}
-                                        />
-                                    ))}
-
-                                </div>
-
-                            </div>
-                        ))
-
-                        }
+                    <div className={"coupons-container__add-coupons-code-label"}>
+                        Add coupon code
+                        <img src="../../../public/plus.svg" alt="Coupon code"/>
                     </div>
                 </div>
+
+                {basket?.sellerGroups?.map((sellerGroup) => (
+                    <div className={"basket-product"} key={sellerGroup.sellerId}>
+                        <div className={"basket-product__seller-container"}>
+                            satıcı:
+                            <span className={"basket-product__seller"}>{sellerGroup.sellerName}</span>
+                        </div>
+                        <div className={"basket-product__product-seller-container"}>
+                            {sellerGroup?.items?.map((item) => (
+                                <BasketItem
+                                    onItemChance={()=>handleItemChange}
+                                    key={item.id}
+                                    item={item}
+                                    isSelected={selectedItems.includes(item.id)}
+                                    onSelectChange={(checked) => handleSelectedItem(item.id, checked)}
+                                />
+                            ))}
+                        </div>
+                    </div>
+                ))
+
+                }
             </div>
-
-
-            {/* Your JSX content here */}
-        </div>
-    );
+        </div>);
 };
 
 export default Basket;

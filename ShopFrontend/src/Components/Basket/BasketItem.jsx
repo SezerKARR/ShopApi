@@ -1,9 +1,10 @@
-import React from 'react';
+import React, {memo} from 'react';
 import './BasketItem.css';
 import {useGlobalContext} from "../../Providers/GlobalProvider.jsx";
 import {useNavigate} from "react-router-dom";
+import BasketItemCount from "./BasketItemCount.jsx";
 
-const BasketItem = ({item, isSelected, onSelectChange}) => {
+const BasketItem = memo(({item, isSelected, onSelectChange,onItemChance}) => {
     const navigate = useNavigate();
     const {API_URL} = useGlobalContext();
     console.log(item);
@@ -20,6 +21,11 @@ const BasketItem = ({item, isSelected, onSelectChange}) => {
         }
         // Sağ tıklama (button === 2) için varsayılan davranış genellikle iyidir (context menu).
     };
+    const handleQuantityChange = (quantity) => {
+        item.quantity = quantity;
+        console.log(quantity);
+        onItemChance(item)
+    }
     return (
         <div className="basket-item">
             <label className="custom-checkbox">
@@ -30,11 +36,22 @@ const BasketItem = ({item, isSelected, onSelectChange}) => {
                 />
                 <span className="checkmark"></span>
             </label>
-            <img alt={item.id}  className={"basket-item__image"} src={`${API_URL}/${item.product.productImages[0]?.image?.url}`}/>
-            <a href={getNavigateProp()}
-               className={"basket-item__product-title"}
-               onMouseDown={handleMouseDown}>{item.product.brandName}<span>{item.product.name}</span></a>
+            <img alt={item.id} className={"basket-item__image"}
+                 // src={`${API_URL}/${item.product.productImages[0]?.image?.url}`}
+            />
+            <div className={"basket-item__info"}>
+                {console.log(item.product)}
+                <a href={getNavigateProp()}
+                   className={"basket-item__product-title"}
+                   onMouseDown={handleMouseDown}>{item.product.brandName}<span>{item.product.name}</span></a>
+                
+                <div className={"basket-item__info__count-money"}>
+                    <BasketItemCount quantity={item.quantity} onItemQuantityChange={()=>handleQuantityChange}/>
+                    <p className={"basket-item__info__basket-count-money__money"}>{item.price}TL</p>
+                </div>
+
+            </div>
         </div>
     );
-};
+});
 export default BasketItem;

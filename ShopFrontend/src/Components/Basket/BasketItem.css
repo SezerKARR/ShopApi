@@ -4,6 +4,9 @@
 
 .basket-item {
     border-top: 1px solid gray;
+    margin-left: -10px;
+    margin-right: -10px;
+    padding: 10px;
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -69,3 +72,17 @@
     width: 100px;
     height: 100px;
 }
+.basket-item__info {
+    padding:10px 20px 10px 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    width: 100%;
+    height: 100%;
+}
+.basket-item__info__count-money {
+    display: flex;
+    flex-direction: row;
+    justify-content:space-between;
+}
+

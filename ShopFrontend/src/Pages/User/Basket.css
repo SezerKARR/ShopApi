@@ -8,10 +8,10 @@
     justify-content: start;
 }
 .Basket-container {
-    
+    gap:10px;
     display: flex;
     flex-direction: column;
-    align-items: start;
+    align-items: center;
     /* Your CSS styles here */
 }
 .basket-header__container {
@@ -34,18 +34,16 @@
     color:#f27c1c;
     
 }
-.basket-container__infos-container {
+
+.coupons-container {
     padding: 10px;
+    
     background-color: white;
     border-radius: 10px;
     display: flex;
-    flex-direction:row;
-}
-.coupons-container {
-    display: flex;
     flex-direction: row;
     justify-content: space-between;
-    width: 500px;
+    width: 800px;
 }
 .coupons-container__coupons-label {
     display: flex;
@@ -68,15 +66,34 @@
     border: 1px solid gray;
     border-radius: 10px;
     background-color: white;
-    gap :10px;
     padding: 10px;
+    gap :10px;
     display: flex;
     flex-direction: column;
 }
 
 .basket-product {
+    padding-inline: 10px;
+    min-width: 800px;
+    display: flex;
+    flex-direction: column;
+    background-color: white;
+    border-radius: 10px;
+    gap:5px;
 }
 
 .basket-product__seller-container {
-
+    padding-top: 5px;
 }
+
+.basket-container__page-body-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.basket-product__product-seller-container {
+    display: flex;
+    flex-direction: column;
+}
+

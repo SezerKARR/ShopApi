@@ -1,5 +1,5 @@
 import React, {memo} from 'react';
-import './Basket.css';
+import './HeaderBasket.css';
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faCartShopping} from "@fortawesome/free-solid-svg-icons";
 import { useGlobalContext} from "../../../Providers/GlobalProvider.jsx";
@@ -7,7 +7,7 @@ import { useBasketContext} from "../../../Providers/BasketProvider.jsx";
 import BasketAdded from "../../Common/BasketAdded.jsx";
 import {useNavigate} from "react-router-dom";
 
-const Basket = memo(() => {
+const HeaderBasket = () => {
     const {basketCount}=useBasketContext();
     const navigate = useNavigate();
     const handleBasketClick=()=>{
@@ -22,5 +22,5 @@ const Basket = memo(() => {
             <p className={'Basket__MyBasket'}>My Basket </p>
         </div>
     );
-});
-export default Basket;
+};
+export default HeaderBasket;

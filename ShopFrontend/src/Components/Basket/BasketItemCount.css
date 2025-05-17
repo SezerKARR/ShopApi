@@ -1,0 +1,9 @@
+.BasketItemCount-container {
+    border:1px solid gray;
+    border-radius:10px;
+    display:flex;
+    flex-direction: row;
+    gap: 5px;
+    padding:2px 5px 2px 5px;
+    user-select: none;
+}
