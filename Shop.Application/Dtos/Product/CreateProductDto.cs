@@ -9,6 +9,7 @@ public class CreateProductDto {
     public required string Name { get; set; }
     public required int CategoryId { get; set; }
     public required int BrandId { get; set; } 
+    public bool IsShippingFree { get; set; } = false;
     public List<CreateProductValueDto>? ProductFilterValues { get; set; }= new List<CreateProductValueDto>();
     public required List<CreateProductImageDto>? ProductImages { get; set; }= new List<CreateProductImageDto>();
     public required decimal Price { get; set; }

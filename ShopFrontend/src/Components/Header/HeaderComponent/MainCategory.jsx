@@ -6,19 +6,19 @@ import {useGlobalContext} from "../../../Providers/GlobalProvider.jsx";
 
 const MainCategory = () => {
     const navigate = useNavigate();
-    const {categories}=useGlobalContext()
+    const {categories} = useGlobalContext()
     const [hoveredMainCategory, setHoveredMainCategory] = useState(null)
-    
+
     const [mainCategories, setMainCategories] = useState(null)
-   
+
     useEffect(() => {
         console.log(categories);
         const filteredCategories = categories.filter(category => category.parentId === -1);
         setMainCategories(filteredCategories);
-       
+
     }, []);
-    
-    
+
+
     const menuRef = useRef(null);
     const HandleCategoryClick = (category) => {
         console.log(category);
@@ -35,16 +35,19 @@ const MainCategory = () => {
                                onClick={() => HandleCategoryClick(childCategory)}>
                                 {childCategory.name}
                             </p>
-                            {GetChildCategories(childCategory.id)?.map(childChildCategory => (
-                                <p key={childChildCategory.id}
-                                   onClick={() => HandleCategoryClick(childChildCategory)}
-                                   className="selected-main-category__category">
-                                    {childChildCategory.name}
-                                </p>
-                            ))}
+                            <div className={"child-category-title-container"}>
+                                {GetChildCategories(childCategory.id)?.map(childChildCategory => (
+                                    <a key={childChildCategory.id}
+                                       href={`/category/${childChildCategory.slug}-${childChildCategory.id}`}
+                                       onClick={() => HandleCategoryClick(childChildCategory)}
+                                       className="selected-main-category__category">
+                                        {childChildCategory.name}
+                                    </a>
+                                ))}
+                            </div>
                         </div>
                     ))}
-                   
+
                 </div>
 
             </div>
@@ -80,12 +83,12 @@ const MainCategory = () => {
             </div>
 
             {hoveredMainCategory && mainCategories && (<>
-                {console.log(hoveredMainCategory)}
-                <SelectedMainCategory mainCategoryId={hoveredMainCategory.id} /></>
+                    {console.log(hoveredMainCategory)}
+                    <SelectedMainCategory mainCategoryId={hoveredMainCategory.id}/></>
             )}
         </div>
     );
-   
+
 };
 
 

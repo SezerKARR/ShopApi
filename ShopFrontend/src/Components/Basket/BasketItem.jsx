@@ -1,15 +1,17 @@
-import React, {memo} from 'react';
+import React, {memo, useRef} from 'react';
 import './BasketItem.css';
 import {useGlobalContext} from "../../Providers/GlobalProvider.jsx";
 import {useNavigate} from "react-router-dom";
 import BasketItemCount from "./BasketItemCount.jsx";
+import {formatAsTL} from "../../utils/Formatter.jsx";
 
-const BasketItem = memo(({item, isSelected, onSelectChange,onItemChance}) => {
+const BasketItem = memo(({basketItem, isSelected, onSelectChange,onItemChance}) => {
     const navigate = useNavigate();
+    const isFirstRender = useRef(true);
     const {API_URL} = useGlobalContext();
-    console.log(item);
+    console.log(basketItem);
     const getNavigateProp = () => {
-        return `/product/${item.product.id}`;
+        return `/product/${basketItem.product.id}`;
     }
     const handleMouseDown = (event) => {
         const url = getNavigateProp();
@@ -19,13 +21,13 @@ const BasketItem = memo(({item, isSelected, onSelectChange,onItemChance}) => {
             navigate(url);
 
         }
-        // Sağ tıklama (button === 2) için varsayılan davranış genellikle iyidir (context menu).
     };
     const handleQuantityChange = (quantity) => {
-        item.quantity = quantity;
+        basketItem.quantity = quantity;
         console.log(quantity);
-        onItemChance(item)
+        onItemChance(basketItem)
     }
+    isFirstRender.current = false;
     return (
         <div className="basket-item">
             <label className="custom-checkbox">
@@ -36,18 +38,19 @@ const BasketItem = memo(({item, isSelected, onSelectChange,onItemChance}) => {
                 />
                 <span className="checkmark"></span>
             </label>
-            <img alt={item.id} className={"basket-item__image"}
-                 // src={`${API_URL}/${item.product.productImages[0]?.image?.url}`}
+            <img alt={basketItem.id} className={"basket-item__image"}
+                 src={`${API_URL}/${basketItem.product.productImages[0]?.image?.url}`}
             />
             <div className={"basket-item__info"}>
-                {console.log(item.product)}
+                {console.log(basketItem.product)}
                 <a href={getNavigateProp()}
                    className={"basket-item__product-title"}
-                   onMouseDown={handleMouseDown}>{item.product.brandName}<span>{item.product.name}</span></a>
+                   style={{textTransform:"uppercase"}}
+                   onMouseDown={handleMouseDown}>{basketItem.product.brandName}<span>{" "+basketItem.product.name}</span></a>
                 
                 <div className={"basket-item__info__count-money"}>
-                    <BasketItemCount quantity={item.quantity} onItemQuantityChange={()=>handleQuantityChange}/>
-                    <p className={"basket-item__info__basket-count-money__money"}>{item.price}TL</p>
+                    <BasketItemCount quantity={basketItem.quantity} onItemQuantityChange={handleQuantityChange}/>
+                    <p className={"basket-item__info__basket-count-money__money"}>{formatAsTL(basketItem.totalPrice)}TL</p>
                 </div>
 
             </div>

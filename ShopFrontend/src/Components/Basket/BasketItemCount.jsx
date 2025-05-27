@@ -1,13 +1,20 @@
-import React, {memo, useEffect, useState} from 'react';
+import React, {memo, useEffect, useRef, useState} from 'react';
 import './BasketItemCount.css';
 import {faMinus, faPlus, faTrash} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 
 const BasketItemCount = memo(({quantity,onItemQuantityChange}) => {
     const [count, setCount] = useState(quantity);
+    const isFirstRender = useRef(true);
     useEffect(() => {
+        if (isFirstRender.current) {
+            isFirstRender.current = false;
+            
+            return;
+        }
         const timer = setTimeout(() => {
-            onItemQuantityChange( count); // Store'a yaz
+            
+            onItemQuantityChange( count);
         }, 300);
 
         return () => clearTimeout(timer);

@@ -76,8 +76,10 @@ const CategoryPage = () => {
 
     const handleProducts = async () => {
         const response = await axios.get(`${API_URL}/api/product/by-category/${categoryId}?includes=2`);
-        console.log(response.data);
-        return response.data;
+        response.data=response.data
+        let productsWihStocks=response.data.filter(p=>p.minPrice!=null)
+        console.log(productsWihStocks);
+        return productsWihStocks;
     };
 
 

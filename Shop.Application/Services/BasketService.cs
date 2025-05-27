@@ -3,12 +3,9 @@ namespace Shop.Application.Services;
 using AutoMapper;
 using Domain.Models;
 using Domain.Models.Common;
-using Dtos.Address;
 using Dtos.Basket;
 using Dtos.BasketItem;
-using Dtos.Image;
 using Dtos.Product;
-using Dtos.ProductImage;
 using Helpers;
 using Infrastructure.Repository;
 using Microsoft.Extensions.Caching.Memory;
@@ -77,8 +74,8 @@ public class BasketService : IBasketService {
             return new Response<ReadBasketDto>($"An error occurred when saving the Basket: {ex.Message}");
         }
     }
-    
-     public ReadBasketDto MapToReadBasket(Basket basket)
+
+    ReadBasketDto MapToReadBasket(Basket? basket)
     {
         // 1. Null Giriş Kontrolü
         if (basket == null)
@@ -89,11 +86,9 @@ public class BasketService : IBasketService {
 
         ReadBasketDto readBasketDto;
 
-        // 2. Temel Eşleştirme (AutoMapper)
         try
         {
             readBasketDto = _mapper.Map<ReadBasketDto>(basket);
-            // Listeleri ve toplamları başlat
             readBasketDto.SellerGroups = new List<ReadGroupedBasketItemsDto>();
             readBasketDto.GrandTotal = 0;
         }
@@ -104,58 +99,65 @@ public class BasketService : IBasketService {
             return new ReadBasketDto { Id = basket.Id, UserId = basket.UserId, SellerGroups = new List<ReadGroupedBasketItemsDto>() };
         }
 
-        // 3. Sepet Öğeleri Kontrolü
         if (basket.BasketItems == null || !basket.BasketItems.Any())
         {
-            return readBasketDto; // Sepet boşsa, temel DTO'yu döndür
+            return readBasketDto; 
         }
 
-        // 4. Gruplama ve Hesaplama
         try
         {
-            // Geçerli öğeleri filtrele VE doğrudan grupla/map'le
+           int totalItems = basket.BasketItems.Count();
             var groupedSellerItems = basket.BasketItems
-                .Where(item => item.ProductSeller?.Seller != null && item.ProductSeller.Product != null) // Önce filtrele
-                .GroupBy(item => item.ProductSeller!.SellerId) // Sonra grupla
-                .Select(sellerGroup => // Her grubu DTO'ya map'le
+                .Where(item => item.ProductSeller is { Seller: not null, Product: not null })
+                .GroupBy(item => item.ProductSeller?.SellerId) 
+                .Select(sellerGroup =>
                 {
                     var itemsDtoList = sellerGroup.Select(item => new ReadBasketItemDto
                     {
                         Id = item.Id,
                         Product = _mapper.Map<ReadProductDto>(item.ProductSeller?.Product),
                         Quantity = item.Quantity,
-                        Price = item.ProductSeller.Price,
-                        ProductSellerId = item.ProductSeller!.Id,
+                        Price = item.ProductSeller?.Price ?? -1,
+                        ProductSellerId = item.ProductSeller?.Id??-1,
                         // ProductImage = item.ProductSeller.Product.ProductImages.FirstOrDefault()?.Image
 
                     }).ToList();
+                    decimal subtotal = itemsDtoList.Sum(i => i.TotalPrice);
+                    bool isSingleItemAndProductHasFreeShipping = 
+                        itemsDtoList is [{ Product.IsShippingFree: true }];
+
+
+                    bool isShippingFree = 
+                        isSingleItemAndProductHasFreeShipping ||
+                        sellerGroup.First().ProductSeller?.Seller?.FreeShippingMinimumOrderAmount <= subtotal;
 
                     return new ReadGroupedBasketItemsDto
                     {
-                        SellerId = sellerGroup.Key,
-                        SellerName = sellerGroup.First().ProductSeller!.Seller!.Name, // İlk öğeden al (Where garantisiyle)
+                        SellerId = sellerGroup.Key??-1,
+                        SellerName = sellerGroup.First().ProductSeller?.Seller?.Name ??"-1", // İlk öğeden al (Where garantisiyle)
                         Items = itemsDtoList,
-                        Subtotal = itemsDtoList.Sum(i => i.TotalPrice) // Ara toplamı hesapla
+                        Subtotal = subtotal ,
+                        FreeShippingMinimumOrderAmount=sellerGroup.First().ProductSeller?.Seller?.FreeShippingMinimumOrderAmount??-1,
+                        IsShippingFree = isShippingFree
+                        
                     };
                 })
                 .ToList(); 
-
-            if (groupedSellerItems.Any()) // Eğer filtreleme/gruplama sonucu bir şey varsa
+            if (groupedSellerItems.Any()) 
             {
                 readBasketDto.SellerGroups = groupedSellerItems;
+                readBasketDto.TotalProductAmount = totalItems;
                 readBasketDto.GrandTotal = groupedSellerItems.Sum(g => g.Subtotal); // Genel toplamı hesapla
             }
-            // Eğer validItems yoksa veya gruplama sonucu boşsa, SellerGroups boş, GrandTotal 0 kalır.
+           
         }
-        catch (Exception ex) // Gruplama/Map'leme sırasında hata olursa
+        catch (Exception ex) 
         {
             Console.WriteLine($"[ERROR] Grouping/Mapping failed for Basket ID {basket.Id}. Check Includes. Exception: {ex.Message}");
-            // Hata durumunda gruplar boş kalır, DTO'nun temel kısmı döner.
             readBasketDto.SellerGroups = new List<ReadGroupedBasketItemsDto>();
             readBasketDto.GrandTotal = 0;
         }
 
-        // 5. Sonuç DTO'yu Döndür
         return readBasketDto;
     }
 

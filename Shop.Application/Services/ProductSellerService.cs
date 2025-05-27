@@ -101,7 +101,7 @@ namespace Shop.Application.Services {
 				if (product.MinPrice>createProductSellerDto.Price|| product.MinPrice==null  )//todo product ilk create edildiğinde min price 0 değeri kaldırılıcak
 				{
 					product.MinPrice = createProductSellerDto.Price;
-					product.MinPriceSellerId = productSeller.Id;
+					product.MinPriceproductSellerId = productSeller.Id;
 				}
 
 

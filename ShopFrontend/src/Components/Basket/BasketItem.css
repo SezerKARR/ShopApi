@@ -65,6 +65,9 @@
     top:0;
     
 }
+.basket-item__product-title span {
+    text-transform: none;
+}
 
 .basket-item__image {
     border: 1px solid #c5bfbf;

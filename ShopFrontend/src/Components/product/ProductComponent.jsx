@@ -1,7 +1,6 @@
-import React, {memo} from 'react';
+import React, {memo, useEffect, useRef} from 'react';
 import {useGlobalContext} from '../../Providers/GlobalProvider.jsx';
 import {useBasketContext} from '../../Providers/BasketProvider.jsx';
-import foto from '../../../public/Foto.png';
 import './ProductComponent.css';
 import {faCamera} from '@fortawesome/free-solid-svg-icons';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
@@ -9,17 +8,24 @@ import {useNavigate} from "react-router-dom";
 
 const ProductComponent = memo(({product}) => {
     const {API_URL} = useGlobalContext();
-    const {addToBasket} = useBasketContext();
+    const {addToBasket,isAdding} = useBasketContext();
     const navigate = useNavigate();
+    const isFirstRender = useRef(true);
     console.log(product);
-
+    useEffect(() => {
+        
+        if (isFirstRender.current) {
+            isFirstRender.current = false;
+        }
+       console.log(isAdding)
+    }, [isAdding]);
     const handleAddToCartClick = (e) => {
         e.preventDefault();
-        addToBasket(product.minPriceSellerId);
+        addToBasket(product.minPriceProductSellerId);
         console.log('Add to cart clicked for product:', product.id);
     };
 
-
+  
     const handleMouseDown = (event) => {
         const url = getNavigateProp();
 
@@ -28,7 +34,6 @@ const ProductComponent = memo(({product}) => {
             navigate(url);
 
         }
-        // Sağ tıklama (button === 2) için varsayılan davranış genellikle iyidir (context menu).
     };
 
     const getNavigateProp = () => {
@@ -73,7 +78,7 @@ const ProductComponent = memo(({product}) => {
 
         <img
             draggable={false}
-            src={product.imageUrl ? `${API_URL}/${product.imageUrl}` : foto}
+            src={product.imageUrl ? `${API_URL}/${product.imageUrl}` : "Foto.png"}
             className="products-Container__product-photo"
             alt="product image"
         />

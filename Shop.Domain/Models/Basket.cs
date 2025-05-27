@@ -8,6 +8,6 @@ public class Basket : BaseEntity {
     }
     public int UserId { get; set; }
     public virtual User? User { get; set; }
-
+    public decimal ShippingFee { get; set; }
     public virtual List<BasketItem>? BasketItems { get; set; }
 }

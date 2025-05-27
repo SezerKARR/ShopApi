@@ -36,7 +36,7 @@ public class BasketRepository:BaseRepository<Basket>, IBasketRepository {
                     .ThenInclude(pi => pi.Image) // ProductImage'dan Image'a git
                     .Include(basket => basket.BasketItems) // Ana navigasyona DÖN (ProductSeller'ın diğer özelliği için)
                     .ThenInclude(bi => bi.ProductSeller)
-                    .ThenInclude(ps => ps.Seller); // ProductSeller'dan Seller'a git
+                    .ThenInclude(ps => ps.Seller);
             if (basketIncludes.HasFlag(BasketIncludes.User))
                 query = query.Include(basket => basket.User);
 

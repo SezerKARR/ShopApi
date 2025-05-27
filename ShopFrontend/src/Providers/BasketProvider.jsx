@@ -16,16 +16,20 @@ export const BasketProvider = ({children,setBasketLoading}) => {
     const {API_URL, user} = useGlobalContext();
     console.log(user);
     const [basket, setBasket] = useState({});
+    const [isAdding, setIsAdding] = useState(false);
     const [basketCount, setBasketCount] = useState(0);
     const [error, setError] = useState(null);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [submitResponse, setSubmitResponse] = useState({success: false, message: ""});
-    const addToBasketByProductSellerId = async (productSellerId, quantity = 1) => {
+    const addToBasketByProductSellerId = async (minPriceProductSellerId, quantity = 1) => {
+        console.log(minPriceProductSellerId);
+        setIsAdding(true);
         const response = await axios.post(`${API_URL}/api/basket`, {
             userId: user.id,
             quantity: quantity,
-            productSellerId: productSellerId
+            productSellerId: minPriceProductSellerId
         });
+        console.log(setIsAdding(false));
         console.log(response.data);
         // setBasketItems(prev => [...prev, product]);
         // setBasketCount(prev => prev + 1);
@@ -40,6 +44,24 @@ export const BasketProvider = ({children,setBasketLoading}) => {
         }
 
     };
+    const updateBasketItems = async (changedBasketItems) => {
+        try {
+            const payload = Object.entries(changedBasketItems).map(([id, quantity]) => ({
+                id: Number(id),
+                quantity
+            }));
+
+            const response = await axios.put(`${API_URL}/api/basketItem/updateItemsForQuantity`, payload);
+
+            return { success: true, data: response.data };
+
+        } catch (error) {
+            console.error("Basket update failed", error);
+
+            return { success: false, error: error.response?.data || error.message };
+        }
+    };
+
     const fetchBasket = useCallback(async () => {
         setBasketLoading(true);
         setError(null);
@@ -91,7 +113,9 @@ export const BasketProvider = ({children,setBasketLoading}) => {
             addToBasket: addToBasketByProductSellerId,
             removeFromBasket,
             clearBasket,
-            addToBasketById
+            addToBasketById,
+            updateBasketItems,
+            isAdding
         }}>
             {children}
             <BasketAdded/>

@@ -19,7 +19,66 @@
 @media (forced-colors: active) {
   /* High contrast styles */
 }
+/* Genel Buton Stilleri ve Hover Davranışı (RGBA ile) */
+button {
+  --button-r: 204;
+  --button-g: 204;
+  --button-b: 204;
 
+  background-color: rgba(
+          var(--button-r),
+          var(--button-g),
+          var(--button-b),
+          0.85 /* %80 opaklık */
+  );
+
+  padding: 10px 15px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease; /* Yumuşak geçiş */
+  font-weight: bold;
+}
+
+button:hover {
+  background-color: rgba(
+          var(--button-r),
+          var(--button-g),
+          var(--button-b),
+          1 /* Tam opak */
+  );
+}
+
+
+.button-primary {
+  --button-r: 227;
+  --button-g: 86;
+  --button-b: 0;
+  color: white;
+}
+
+.button-success {
+  --button-r: 41;
+  --button-g: 163;
+  --button-b: 41;
+  color: white;
+}
+
+.button-warning {
+  --button-r: 243;
+  --button-g: 187;
+  --button-b: 14;
+  color: #333; /* veya white, okunabilirliğe göre */
+}
+
+.button-danger {
+  --button-r: 217;
+  --button-g: 77;
+  --button-b: 77;
+  color: white;
+}
+
+/* ... ve diğer buton tipleriniz için ... */
 
 
 .App {

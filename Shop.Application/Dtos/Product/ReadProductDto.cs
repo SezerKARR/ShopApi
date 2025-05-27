@@ -12,13 +12,14 @@ public class ReadProductDto {
     public string? Slug { get; set; }
     public List<ReadProductImageDto> ProductImages { get; set; } = new List<ReadProductImageDto>();
     public decimal? MinPrice { get; set; }
-    public int? MinPriceSellerId { get; set; }
+    public int? MinPriceProductSellerId { get; set; }
     public string? Description { get; set; }
     public int CategoryId { get; set; }
     public required int CreatedByUserId { get; set; }
     public int? BrandId { get; set; }
     public double? AverageRating { get; set; }
     public int CommentCount { get; set; }
+    public bool IsShippingFree { get; set; } = false;
     public List<ReadCommentDto> Comments { get; set; } = new List<ReadCommentDto>();
     public List<int>? FilterValueIds { get; set; } = new List<int>();
     public List<int>? ProductSellerIds { get; set; } = new List<int>();

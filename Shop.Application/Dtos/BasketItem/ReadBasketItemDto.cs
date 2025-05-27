@@ -1,5 +1,6 @@
 namespace Shop.Application.Dtos.BasketItem;
 
+using System.Globalization;
 using Abstracts;
 using Domain.Models;
 using Product;
@@ -12,5 +13,6 @@ public class ReadBasketItemDto:ReadDto{
     public ReadProductDto? Product { get; set; }
     public decimal Price { get; set; }
     public int ProductSellerId { get; set; }
+   
     public decimal TotalPrice=>Quantity*Price;
 }

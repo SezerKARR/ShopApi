@@ -64,17 +64,23 @@
 .selected-main-category__subcategory {
     z-index: 6;
     break-inside: avoid; 
+    display: flex;
+    flex-direction: column;
     padding: 5px;
     margin-bottom: 10px;
     border-radius: 5px;
 }
+
 .selected-main-category__subcategory-name {
     font-weight: bold;
     font-size: 18px;
     color:orange;
     cursor:pointer;
 }
-
+.child-category-title-container {
+    display: flex;
+    flex-direction: column;
+}
 
 .selected-main-category__category {
     z-index: 5;
@@ -109,3 +115,4 @@
     cursor: pointer;
     color: blue;
 }
+
