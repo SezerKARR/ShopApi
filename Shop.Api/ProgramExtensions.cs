@@ -4,8 +4,12 @@ using System.Text.Json.Serialization;
 using Application.Helpers;
 using Application.JsonToSql.Converter;
 using Application.Services;
+using Domain.Models.Messaging;
+using Domain.Models.Messaging.Smtp;
 using DotNetEnv;
 using Infrastructure.Data;
+using Infrastructure.Messaging.RabbitMQ;
+using Infrastructure.Messaging.Smtp;
 using Infrastructure.Repository;
 using Infrastructure.Repository.AddressEntity;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -36,7 +40,7 @@ public static class ProgramExtensions {
 
         builder.Services.AddMemoryCache();
         builder.Services.AddAutoMapper(typeof(MapperProfiles));
-        
+
         builder.Services.AddScoped<ITransactionScopeService, TransactionScopeService>();
 
         builder.Services.AddScoped<IUserRepository, UserRepository>();
@@ -87,8 +91,14 @@ public static class ProgramExtensions {
         builder.Services.AddScoped<INeighborhoodRepository, NeighborhoodRepository>();
         builder.Services.AddScoped<AddressJsonToSql>();
     }
+    public static void AddInfrastructure(this WebApplicationBuilder builder) {
+        builder.Services.Configure<SmtpSettings>(builder.Configuration.GetSection("SmtpSettings"));
+        builder.Services.Configure<RabbitMQSettings>(builder.Configuration.GetSection("RabbitMQ"));
+        builder.Services.AddSingleton<IMessagePublisher, MessagePublisher>();
+        builder.Services.AddScoped<IEmailService, EmailService>();
+        builder.Services.AddHostedService<EmailQueueConsumer>();
 
-    // Google Authentication yapılandırması
+    }
     public static void ConfigureAuthentication(this WebApplicationBuilder builder) {
         builder.Services.AddAuthentication(options => {
                 options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
@@ -101,27 +111,18 @@ public static class ProgramExtensions {
             });
     }
 
-    // Swagger'ı yapılandır
-    public static void ConfigureSwagger(this WebApplicationBuilder builder)
-    {
-        // API explorer ve Swagger'i başlatıyoruz
+    public static void ConfigureSwagger(this WebApplicationBuilder builder) {
         builder.Services.AddEndpointsApiExplorer();
-        builder.Services.AddSwaggerGen(options =>
-        {
-            // Swagger dokümanını tanımlıyoruz
+        builder.Services.AddSwaggerGen(options => {
             options.SwaggerDoc("v1", new OpenApiInfo { Title = "Demo API", Version = "v1" });
-
-            // Google OAuth için bir güvenlik tanımı ekliyoruz
             options.AddSecurityDefinition("Google", new OpenApiSecurityScheme
             {
-                In = ParameterLocation.Header, // Güvenlik bilgisi header'da olacak
+                In = ParameterLocation.Header,
                 Description = "Please log in using Google",
-                Name = "Authorization", // Header'daki "Authorization" parametresini bekliyoruz
+                Name = "Authorization",
                 Type = SecuritySchemeType.Http,
-                Scheme = "Bearer" // OAuth 2.0 Bearer token kullanıyoruz
+                Scheme = "Bearer"
             });
-
-            // Güvenlik gereksinimini ekliyoruz
             options.AddSecurityRequirement(new OpenApiSecurityRequirement
             {
                 {
@@ -130,22 +131,17 @@ public static class ProgramExtensions {
                         Reference = new OpenApiReference
                         {
                             Type = ReferenceType.SecurityScheme,
-                            Id = "Google" // Tanımladığımız güvenlik tanımını burada kullanıyoruz
+                            Id = "Google"
                         }
                     },
                     new string[] { }
                 }
             });
-
-            // XML dokümantasyonunu dahil etmek (isteğe bağlı ama önerilir)
             var xmlFile = $"{System.Reflection.Assembly.GetExecutingAssembly().GetName().Name}.xml";
             var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
             options.IncludeXmlComments(xmlPath);
         });
     }
-
-
-    // CORS yapılandırması
     public static void ConfigureCors(this WebApplicationBuilder builder) {
         builder.Services.AddCors(options => {
             options.AddPolicy("configurePolicy", configurePolicy =>
@@ -154,10 +150,8 @@ public static class ProgramExtensions {
                     .AllowAnyHeader()
                     .AllowCredentials());
         });
-        
-    }
 
-    // Middleware yapılandırması
+    }
     public static void ConfigureMiddleware(this WebApplication app) {
         app.UseCors("configurePolicy");
         app.UseRouting();

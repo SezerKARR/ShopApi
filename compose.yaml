@@ -1,0 +1,37 @@
+﻿# C:\ASP\ShopApi\compose.yaml dosyasının doğru içeriği
+
+services:
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    volumes:
+      - ./rabbitmq/rabbitmq_delayed_message_exchange-3.13.0.ez:/opt/rabbitmq/plugins/rabbitmq_delayed_message_exchange-3.13.0.ez
+      - ./rabbitmq/enabled_plugins:/etc/rabbitmq/enabled_plugins
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  shop-api:
+    container_name: shop-api
+    build:
+      context: .
+      dockerfile: Shop.Api/Dockerfile
+    ports:
+      - "8080:80"
+    
+    env_file:
+      - ./.env.development
+    
+    environment:
+      - RabbitMQ__HostName=rabbitmq
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:80
+    
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
