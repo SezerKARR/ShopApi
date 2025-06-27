@@ -1,11 +1,19 @@
 
 using DotNetEnv;
+using Microsoft.EntityFrameworkCore;
 using Shop.Api;
 using Shop.Application.JsonToSql.Converter;
+using Shop.Infrastructure.Data;
 
 var builder = WebApplication.CreateBuilder(args);
-Env.Load(".env.development"); 
-builder.ConfigureEnvironmentVariables();
+if (Environment.GetEnvironmentVariable("DOTNET_RUNNING_IN_CONTAINER") == "true")
+{
+    Env.Load("../../.env.docker");
+}
+else
+{
+    Env.Load("../../.env");
+}
 builder.ConfigureDatabase();
 builder.ConfigureServices();
 builder.ConfigureAuthentication();

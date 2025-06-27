@@ -8,16 +8,16 @@ import {useNavigate} from "react-router-dom";
 
 const ProductComponent = memo(({product}) => {
     const {API_URL} = useGlobalContext();
-    const {addToBasket,isAdding} = useBasketContext();
+    const {addToBasket, isAdding} = useBasketContext();
     const navigate = useNavigate();
     const isFirstRender = useRef(true);
     console.log(product);
     useEffect(() => {
-        
+
         if (isFirstRender.current) {
             isFirstRender.current = false;
         }
-       console.log(isAdding)
+        console.log(isAdding)
     }, [isAdding]);
     const handleAddToCartClick = (e) => {
         e.preventDefault();
@@ -25,7 +25,7 @@ const ProductComponent = memo(({product}) => {
         console.log('Add to cart clicked for product:', product.id);
     };
 
-  
+
     const handleMouseDown = (event) => {
         const url = getNavigateProp();
 
@@ -75,14 +75,13 @@ const ProductComponent = memo(({product}) => {
         onDragStart={handleDragStart}
     >
 
-
+        {console.log(product)}
         <img
             draggable={false}
-            src={product.imageUrl ? `${API_URL}/${product.imageUrl}` : "Foto.png"}
+            src={product.imageUrl ? `${API_URL}/${product.imageUrl}` : "/Foto.png"}
             className="products-Container__product-photo"
-            alt="product image"
+            alt={product.name}
         />
-
         <div className="products-Container__product-name">
         <span className="products-Container__product-name-brand">
           {product.brandName + ' '}
@@ -112,22 +111,21 @@ const ProductComponent = memo(({product}) => {
                 <span className="products-Container__product-price-Tl">TL</span>
 
 
+                <svg
+                    onClick={handleAddToCartClick}
+                    onMouseDown={(e) => e.stopPropagation()}
+                    width="12"
+                    height="12"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="addToCart"
+                >
+                    <path
+                        d="M0.5 0.5H0.866019C1 0.5 1.7543 0.8375 1.84699 1.30585L2.875 6.5M2.875 6.5L3.11134 7.69415C3.20404 8.1625 3.61488 8.5 4.09231 8.5H10M2.875 6.5H9.71922C10.1781 6.5 10.5781 6.1877 10.6894 5.74254L11.4701 3.74254C11.6279 3.11139 11.1506 2.5 10.5 2.5M6.5 0.75V2.5M6.5 2.5V4.25M6.5 2.5H8.25M6.5 2.5H4.75M5 11C5 10.7239 4.77614 10.5 4.5 10.5C4.22386 10.5 4 10.7239 4 11C4 11.2761 4.22386 11.5 4.5 11.5C4.77614 11.5 5 11.2761 5 11ZM10 11C10 10.7239 9.77614 10.5 9.5 10.5C9.22386 10.5 9 10.7239 9 11C9 11.2761 9.22386 11.5 9.5 11.5C9.77614 11.5 10 11.2761 10 11Z"
+                        stroke="#1E1E1E"
+                    />
 
-                    <svg
-                        onClick={handleAddToCartClick}
-                        onMouseDown={(e)=>e.stopPropagation()}
-                        width="12"
-                        height="12"
-                        fill="none"
-                        xmlns="http://www.w3.org/2000/svg"
-                        className="addToCart"
-                    >
-                        <path
-                            d="M0.5 0.5H0.866019C1 0.5 1.7543 0.8375 1.84699 1.30585L2.875 6.5M2.875 6.5L3.11134 7.69415C3.20404 8.1625 3.61488 8.5 4.09231 8.5H10M2.875 6.5H9.71922C10.1781 6.5 10.5781 6.1877 10.6894 5.74254L11.4701 3.74254C11.6279 3.11139 11.1506 2.5 10.5 2.5M6.5 0.75V2.5M6.5 2.5V4.25M6.5 2.5H8.25M6.5 2.5H4.75M5 11C5 10.7239 4.77614 10.5 4.5 10.5C4.22386 10.5 4 10.7239 4 11C4 11.2761 4.22386 11.5 4.5 11.5C4.77614 11.5 5 11.2761 5 11ZM10 11C10 10.7239 9.77614 10.5 9.5 10.5C9.22386 10.5 9 10.7239 9 11C9 11.2761 9.22386 11.5 9.5 11.5C9.77614 11.5 10 11.2761 10 11Z"
-                            stroke="#1E1E1E"
-                        />
-
-                    </svg>
+                </svg>
             </div>
         </div>
     </a>);

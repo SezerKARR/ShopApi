@@ -12,8 +12,8 @@ using Shop.Infrastructure.Data;
 namespace Shop.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250520051635_ProductShippingFree")]
-    partial class ProductShippingFree
+    [Migration("20250626112644_Initial")]
+    partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -655,7 +655,7 @@ namespace Shop.Infrastructure.Migrations
                     b.Property<decimal?>("MinPrice")
                         .HasColumnType("decimal(65,30)");
 
-                    b.Property<int?>("MinPriceSellerId")
+                    b.Property<int?>("MinPriceproductSellerId")
                         .HasColumnType("int");
 
                     b.Property<string>("Name")

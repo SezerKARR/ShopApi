@@ -1,9 +1,15 @@
-﻿# C:\ASP\ShopApi\compose.yaml dosyasının doğru içeriği
+﻿# C:\ASP\ShopApi\compose.yaml
 
 services:
+  # RabbitMQ servisi
   rabbitmq:
     image: rabbitmq:3-management
     container_name: rabbitmq
+    env_file:
+      - .env.docker
+    environment:
+      - RABBITMQ_HOST=rabbitmq
+      - RABBITMQ_PORT=5672
     ports:
       - "5672:5672"
       - "15672:15672"
@@ -11,27 +17,47 @@ services:
       - ./rabbitmq/rabbitmq_delayed_message_exchange-3.13.0.ez:/opt/rabbitmq/plugins/rabbitmq_delayed_message_exchange-3.13.0.ez
       - ./rabbitmq/enabled_plugins:/etc/rabbitmq/enabled_plugins
     healthcheck:
-      test: ["CMD", "rabbitmq-diagnostics", "ping"]
+      test: [ "CMD", "rabbitmq-diagnostics", "ping" ]
       interval: 30s
       timeout: 10s
       retries: 5
 
+  # MySQL Veritabanı Servisi
+  mysql-db:
+    image: mysql:8.0
+    container_name: mysql-db
+    restart: always
+    env_file:
+      - .env.docker
+    ports:
+      # Dış portu .env dosyasındaki DB_PORT'tan alıyoruz.
+      - "3307:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+  
   shop-api:
     container_name: shop-api
     build:
       context: .
-      dockerfile: Shop.Api/Dockerfile
+      # Geliştirme için olan yeni Dockerfile'ı kullan
+      dockerfile: src/Shop.Api/Dockerfile
     ports:
       - "8080:80"
-    
     env_file:
-      - ./.env.development
-    
+      - .env.docker
     environment:
-      - RabbitMQ__HostName=rabbitmq
-      - ASPNETCORE_ENVIRONMENT=Development
+      - DB_HOST=mysql-db
+      - RABBITMQ_HOSTNAME=rabbitmq
       - ASPNETCORE_URLS=http://+:80
-    
+      - ASPNETCORE_ENVIRONMENT=Development
+
     depends_on:
       rabbitmq:
         condition: service_healthy
+      mysql-db:
+        condition: service_started
+
+
+# Kalıcı veritabanı verileri için volume tanımı
+volumes:
+  mysql-data:

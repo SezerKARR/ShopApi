@@ -19,20 +19,20 @@ using Microsoft.Extensions.FileProviders;
 using Microsoft.OpenApi.Models;
 
 public static class ProgramExtensions {
-    public static void ConfigureEnvironmentVariables(this WebApplicationBuilder builder) {
-        DotNetEnv.Env.Load(".env.development");
-    }
-
     public static void ConfigureDatabase(this WebApplicationBuilder builder) {
-        var connectionString = $"Host={Env.GetString("DB_HOST")};" +
-                               $"Port={Env.GetString("DB_PORT")};" +
-                               $"Database={Env.GetString("DB_NAME")};" +
-                               $"Username={Env.GetString("DB_USER")};" +
-                               $"Password={Env.GetString("DB_PASSWORD")};";
+        var user = Env.GetString("DB_USER");
+        var password = Env.GetString("DB_PASSWORD");
+        var host = Env.GetString("DB_HOST");
+        Console.WriteLine($"DB_USER: {user},host:{host}, DB_PASSWORD: {(string.IsNullOrEmpty(password) ? "Empty" : "Set")}");
+
+        var connectionString = $"Server={Env.GetString("DB_HOST")};Port={Env.GetString("DB_PORT")};Database={Env.GetString("DB_NAME")};User={user};Password={password};";
+
 
         builder.Services.AddDbContext<AppDbContext>(options =>
             options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
+
     }
+
 
     public static void ConfigureServices(this WebApplicationBuilder builder) {
         builder.Services.AddControllers()
@@ -100,6 +100,8 @@ public static class ProgramExtensions {
 
     }
     public static void ConfigureAuthentication(this WebApplicationBuilder builder) {
+        var GOOGLE_CLIENT_ID = Env.GetString("GOOGLE_CLIENT_ID");
+        Console.WriteLine($"GOOGLE_CLIENT_ID {GOOGLE_CLIENT_ID}");
         builder.Services.AddAuthentication(options => {
                 options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
                 options.DefaultChallengeScheme = GoogleDefaults.AuthenticationScheme;
@@ -108,6 +110,7 @@ public static class ProgramExtensions {
             .AddGoogle(GoogleDefaults.AuthenticationScheme, options => {
                 options.ClientId = Env.GetString("GOOGLE_CLIENT_ID");
                 options.ClientSecret = Env.GetString("GOOGLE_CLIENT_SECRET");
+                // options.CallbackPath = "/signin-google";
             });
     }
 

@@ -14,6 +14,7 @@ public class AddressController: ControllerBase{
     public async Task<ActionResult<ReadAddressDto>> GetAddressById(int id) {
         var response = await _addressService.GetAddressByIdAsync(id);
         if(!response.Success)return BadRequest(response.Message);
+        Console.WriteLine("sa");
         return Ok(response.Resource);
     }
     [HttpPost]
