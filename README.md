@@ -1,5 +1,3 @@
-Aşağıda GitHub'daki ShopApi proene uygun, full-stack bir README dosyası şablonu hazırladım. Hem backend (ASP.NET Core) hem frontend (muhtemelen React) kısımları ele alındı. Geliştirmeye devam ediyorsan "ongoing" şeklinde notlar düşebilirsin:
-
 🛍️ ShopApp – Full-Stack E-Commerce Application
 ShopApp is a full-stack e-commerce platform built with ASP.NET Core on the backend and React on the frontend. It provides a multi-vendor marketplace experience where users can browse products, manage their basket, and complete orders, while sellers can manage their own listings.
 
