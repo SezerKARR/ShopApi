@@ -3,7 +3,6 @@ import BasketAdded from "../Components/Common/BasketAdded.jsx";
 import {useGlobalContext} from "./GlobalProvider.jsx";
 import axios from "axios";
 import * as Yup from "yup";
-import {useFormik} from "formik";
 
 const BasketContext = createContext();
 
@@ -21,48 +20,59 @@ export const BasketProvider = ({children,setBasketLoading}) => {
     const [error, setError] = useState(null);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [submitResponse, setSubmitResponse] = useState({success: false, message: ""});
-    const addToBasketByProductSellerId = async (minPriceProductSellerId, quantity = 1) => {
-        console.log(minPriceProductSellerId);
+ 
+    const addToBasketByProductSellerId = async (productSellerId, quantity = 1) => {
+        console.log(productSellerId);
         setIsAdding(true);
-        const response = await axios.post(`${API_URL}/api/basket`, {
+        const response = await axios.post(`${API_URL}/api/basketItem`, {
             userId: user.id,
             quantity: quantity,
-            productSellerId: minPriceProductSellerId
+            productSellerId: productSellerId
         });
         console.log(setIsAdding(false));
         console.log(response.data);
+        
         // setBasketItems(prev => [...prev, product]);
         // setBasketCount(prev => prev + 1);
     };
-    const addToBasketById = (productId) => {
-        const product = findProductById(productId);
-        if (product) {
-            addToBasketByProductSellerId(product);
-
-        } else {
-            console.log("product not found");
-        }
-
-    };
+    // const addToBasketById = (productId) => {
+    //     const product = findProductById(productId);
+    //     if (product) {
+    //         addToBasketByProductSellerId(product);
+    //
+    //     } else {
+    //         console.log("product not found");
+    //     }
+    //
+    // };
     const updateBasketItems = async (changedBasketItems) => {
+        setBasketLoading(true);
+
         try {
             const payload = Object.entries(changedBasketItems).map(([id, quantity]) => ({
                 id: Number(id),
                 quantity
             }));
 
-            const response = await axios.put(`${API_URL}/api/basketItem/updateItemsForQuantity`, payload);
-
+            const response = await axios.put(`${API_URL}/api/basket/updateItemsForQuantity`, payload);
+            console.log(response.data);
+            
+            setBasket(response.data);
             return { success: true, data: response.data };
 
         } catch (error) {
             console.error("Basket update failed", error);
+            setBasket(null);
 
             return { success: false, error: error.response?.data || error.message };
+        }finally {
+            setBasketLoading(false);
+
+
         }
     };
-
     const fetchBasket = useCallback(async () => {
+        console.log("burada")
         setBasketLoading(true);
         setError(null);
         // Eğer sepet kullanıcıya özelse ve giriş yapılmamışsa çekme
@@ -72,7 +82,7 @@ export const BasketProvider = ({children,setBasketLoading}) => {
         //     return;
         // }
         try {
-            const response = await axios.get(`${API_URL}/api/basket/byUserId/${user.id}?include=3`); // VEYA fetch('/api/basket').then(res => res.json());
+            const response = await axios.get(`${API_URL}/api/basket/byUserId/${user.id}?include=1`); // VEYA fetch('/api/basket').then(res => res.json());
             console.log(response.data);
             setBasket(response.data);
         } catch (err) {
@@ -88,6 +98,7 @@ export const BasketProvider = ({children,setBasketLoading}) => {
     useEffect(() => {
         fetchBasket();
     }, [fetchBasket]);
+    
     const findProductById = async (productId) => {
         console.log(productId);
         const productRes = await axios.get(`${API_URL}/api/product/${productId}`);
@@ -110,10 +121,9 @@ export const BasketProvider = ({children,setBasketLoading}) => {
         <BasketContext.Provider value={{
             basket,
             basketCount,
-            addToBasket: addToBasketByProductSellerId,
+            addToBasketByProductSellerId,
             removeFromBasket,
             clearBasket,
-            addToBasketById,
             updateBasketItems,
             isAdding
         }}>

@@ -26,7 +26,7 @@ const Basket = () => {
             setSelectedItems(selectedItems.filter(i => i !== item));
         }
     };
-
+    
 
     function handleCheckboxChange(e) {
         console.log(e);
@@ -87,7 +87,7 @@ const Basket = () => {
 
                     {basket?.sellerGroups?.map((sellerGroup) => (
                         <div className={"basket-product"} key={sellerGroup.sellerId}>
-                            {console.log(sellerGroup.isShippingFree)}
+                            {console.log(sellerGroup.subtotal)}
                             <div className={"basket-product__seller-container"}>
                                 <div>
                                     satıcı:
@@ -95,7 +95,8 @@ const Basket = () => {
                                 </div>
                                 
                                 {!sellerGroup.isShippingFree &&
-                                    <div className={"basket-product__shipping-threshold-container"}>You're <span className={"basket-product__shipping-threshold__money"}>{sellerGroup.freeShippingMinimumOrderAmount-sellerGroup.subtotal} TL</span> away from free shipping – add more items!</div>}
+                                    <div className={"basket-product__shipping-threshold-container"}>You're <span className={"basket-product__shipping-threshold__money"}>
+                                        {sellerGroup.freeShippingMinimumOrderAmount-sellerGroup.subtotal} TL</span> away from free shipping – add more items!</div>}
 
                             </div>
                             <div className={"basket-product__product-seller-container"}>

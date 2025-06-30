@@ -3,6 +3,7 @@ namespace Shop.Application.Services;
 using AutoMapper;
 using Domain.Models;
 using Domain.Models.Common;
+using Dtos.Basket;
 using Dtos.BasketItem;
 using Helpers;
 using Infrastructure.Repository;
@@ -15,7 +16,6 @@ public interface IBasketItemService {
     Task<Response<List<ReadBasketItemDto>>> GetBasketItemsByBasketIdAsync(int basketId,int includes=-1);
     Task<Response<ReadBasketItemDto>> DeleteBasketItemByIdAsync(int id);
     Task<Response<ReadBasketItemDto>> CreateBasketItemAsync(CreateBasketItemDto createBasketItemDto,int includes=-1);
-    Task<Response<List<ReadBasketItemDto>>> UpdateBasketItemsQuantityAsync(List<UpdateBasketItemDto> updateBasketItemDtos);
 }
 public class BasketItemService:IBasketItemService {
     readonly IMapper _mapper;
@@ -62,33 +62,7 @@ public class BasketItemService:IBasketItemService {
         }
     }
    
-    public async Task<Response<List<ReadBasketItemDto>>> UpdateBasketItemsQuantityAsync(List<UpdateBasketItemDto> updateBasketItemDtos) {
-      
-            
-      
-        try
-        {
-            var updatedBasketItems=new List<BasketItem>();
-            foreach (var updateBasketItem in updateBasketItemDtos)
-            {
-                var existBasketItem = await _basketItemRepository.GetByIdAsync(updateBasketItem.Id);
-                if(existBasketItem == null) return new Response<List<ReadBasketItemDto>>("Basket Item Not Found");
-                existBasketItem.Quantity = updateBasketItem.Quantity;
-                updatedBasketItems.Add(existBasketItem);
-                _basketItemRepository.Update(existBasketItem);
-            }
-         
-            await _unitOfWork.CommitAsync();
-            _memoryCache.Remove(CacheKeys.BasketItemList);
-            List<ReadBasketItemDto> readBasketItemDtos = _mapper.Map<List<ReadBasketItemDto>>(updatedBasketItems);
-            return new Response<List<ReadBasketItemDto>>(readBasketItemDtos);
-        }
-        catch (Exception e)
-        {
-            _logger.LogError(e, "Could not Decrease Basket Item with ID {id}.", updateBasketItemDtos);
-            return new Response<List<ReadBasketItemDto>>($"An error occurred when Decrease the Basket Item: {e.Message}");
-        }
-    }
+   
     public async Task<Response<ReadBasketItemDto>> CreateBasketItemAsync(CreateBasketItemDto createBasketItemDto,int includes=-1) {
         var basket=await _unitOfWork.BasketRepository.GetBasketByUserIdAsync(createBasketItemDto.UserId,1);
         if (basket == null)

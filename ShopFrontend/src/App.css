@@ -84,11 +84,7 @@ button:hover {
 .App {
 }
 
-.content {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
+
 
 .page {
   display: flex;

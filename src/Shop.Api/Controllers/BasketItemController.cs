@@ -10,25 +10,20 @@ public class BasketItemController:ControllerBase {
     public BasketItemController(IBasketItemService basketItemService) {
         _basketItemService = basketItemService;
     }
-    [HttpPut("updateItemsForQuantity")]
-    public async Task<ActionResult<ReadBasketItemDto>> UpdateBasketItem([FromBody] List<UpdateBasketItemDto> updateBasketItemDtos) {
-        if (!ModelState.IsValid)
-        {
-            return BadRequest("Invalid model");
-        }
+   
+    [HttpPost]
+    public async Task<ActionResult<ReadBasketItemDto>> CreateBasketItem(CreateBasketItemDto createBasketItemDto) {
+        if(!ModelState.IsValid) return BadRequest(ModelState);
         try
         {
-            var response= await _basketItemService.UpdateBasketItemsQuantityAsync(updateBasketItemDtos);
-            if (!response.Success)
-            {
-                return BadRequest(response.Message);
-            }            
-            return Ok(response.Resource);
+            var response = await _basketItemService.CreateBasketItemAsync(createBasketItemDto,1);
+            if (!response.Success) return BadRequest(response.Message);
+            var basketItemDto = response.Resource;
+            return Ok(basketItemDto);
         }
-        catch (Exception e)
+        catch (Exception ex)
         {
-            Console.WriteLine(e);
-            return BadRequest(e.Message);
+            return BadRequest(ex.Message);
         }
     }
 }

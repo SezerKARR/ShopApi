@@ -10,7 +10,7 @@ public class ReadBasketDto:ReadDto {
     public int Id { get; set; }
     public int UserId { get; set; }
     public ReadUserDto? User { get; set; }
-
+    public int BasketItemCount { get; set; }
     public List<ReadGroupedBasketItemsDto>? SellerGroups { get; set; }
     public decimal? GrandTotal { get; set; }
     public int TotalProductAmount {get; set;}

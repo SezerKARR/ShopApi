@@ -7,7 +7,8 @@ public class Product : BaseEntity {
 
     public required int CategoryId { get; set; }
     public  Category? Category { get; set; }
-
+    public int BaseProductImageId { get; set; }
+    public ProductImage? BaseProductImage {get; set;}
     public List<ProductImage> ProductImages { get; set; } = new List<ProductImage>();
     
     public decimal? MinPrice { get; set; }

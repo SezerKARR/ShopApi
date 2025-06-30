@@ -25,6 +25,7 @@ public enum ProductIncludes {
     ProductFilterValue = 32,
     ProductImages = 64,
     Comments = 128,
+    BaseProductImage=256,
     All = Brand | Category | ProductFilterValue
 }
 
@@ -54,7 +55,8 @@ public class ProductRepository:BaseRepository<Product>, IProductRepository {
                     .ThenInclude(pv => pv.Filter)
                     .Include(p => p.FilterValues)
                     .ThenInclude(pv => pv.FilterValue);
-
+            if(productIncludes.HasFlag(ProductIncludes.BaseProductImage))
+                query = query.Include(p => p.BaseProductImage).ThenInclude(bpi=>bpi.Image);
             if (productIncludes.HasFlag(ProductIncludes.ProductImages))
                 query = query.Include(p => p.ProductImages.OrderBy(pi=>pi.Order)).ThenInclude(pi=>pi.Image);
             if(productIncludes.HasFlag(ProductIncludes.Comments))

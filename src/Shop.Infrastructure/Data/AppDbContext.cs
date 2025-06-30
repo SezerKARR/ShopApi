@@ -41,7 +41,12 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
             .HasForeignKey(a => a.UserId)   // Address'teki Foreign Key UserId'dir
             .IsRequired(false)              // Bu ForeignKey zorunlu DEĞİLDİR (Address.UserId null olabilir)
             .OnDelete(DeleteBehavior.ClientSetNull); // User silinirse Address'deki UserId null olsun (veya Restrict/Cascade)
-      
+        builder.Entity<Product>()
+            .HasOne(p => p.BaseProductImage)
+            .WithMany() 
+            .HasForeignKey(p => p.BaseProductImageId)
+            .OnDelete(DeleteBehavior.Restrict); 
+
 
         
         builder.Entity<Coupon>().HasOne(coupon => coupon.Seller).WithMany(s=>s.Coupons).HasForeignKey(coupon => coupon.SellerId);

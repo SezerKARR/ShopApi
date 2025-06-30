@@ -39,10 +39,9 @@ const BasketItem = memo(({basketItem, isSelected, onSelectChange,onItemChance}) 
                 <span className="checkmark"></span>
             </label>
             <img alt={basketItem.id} className={"basket-item__image"}
-                 src={`${API_URL}/${basketItem.product.productImages[0]?.image?.url}`}
+                 src={`${API_URL}/${basketItem.product.baseProductImage?.image?.url}`}
             />
             <div className={"basket-item__info"}>
-                {console.log(basketItem.product)}
                 <a href={getNavigateProp()}
                    className={"basket-item__product-title"}
                    style={{textTransform:"uppercase"}}

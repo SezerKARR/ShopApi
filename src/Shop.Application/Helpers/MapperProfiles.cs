@@ -99,7 +99,6 @@ public class MapperProfiles : Profile{
         CreateMap<Address, ReadAddressDto>();
         
         CreateMap<CreateBasketItemDto, BasketItem>();
-        CreateMap<BasketItem, ReadBasketItemDto>();
-
+        CreateMap<BasketItem, ReadBasketItemDto>().ForMember(dest => dest.Price, opt => opt.MapFrom(src => src.ProductSeller.Price));
     }
 }

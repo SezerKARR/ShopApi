@@ -18,6 +18,7 @@ public interface IBasketService {
     Task<Response<ReadBasketDto?>> GetBasketByUserIdAsync(int userId,int includes=-1);
     Task<Response<ReadBasketDto?>> GetBasketByIdAsync(int id);
     Task<Response<ReadBasketDto>> CreateBasketAsync(CreateBasketDto createBasketDto);
+    Task<Response<ReadBasketDto>> UpdateBasketItemsQuantityAsync(List<UpdateBasketItemDto> updateBasketItemDtos);
 }
 
 public class BasketService : IBasketService {
@@ -74,7 +75,44 @@ public class BasketService : IBasketService {
             return new Response<ReadBasketDto>($"An error occurred when saving the Basket: {ex.Message}");
         }
     }
+    public async Task<Response<ReadBasketDto>> UpdateBasketItemsQuantityAsync(List<UpdateBasketItemDto> updateBasketItemDtos) {
+      
+            
+      
+        try
+        {
+            int basketId=-1;
+            foreach (var updateBasketItem in updateBasketItemDtos)
+            {
+                var existBasketItem = await _unitOfWork.BasketItemRepository.GetByIdAsync(updateBasketItem.Id,2);
+                if(existBasketItem == null) return new Response<ReadBasketDto>("Basket Item Not Found");
+                existBasketItem.Quantity = updateBasketItem.Quantity;
+                if (existBasketItem.Quantity == 0)
+                {
+                    _unitOfWork.BasketItemRepository.Delete(existBasketItem);
+                   
+                    continue;
 
+                }
+                _unitOfWork.BasketItemRepository.Update(existBasketItem);
+                basketId = existBasketItem.BasketId;
+            }
+            Console.WriteLine(basketId);
+            await _unitOfWork.CommitAsync();
+            _memoryCache.Remove(CacheKeys.BasketItemList);
+            _memoryCache.Remove(CacheKeys.BasketList);
+            var basket = await _unitOfWork.BasketRepository.GetByIdAsync(basketId, 1);
+            ReadBasketDto readBasketDto = MapToReadBasket(basket);
+            Console.WriteLine("grandTotal"+readBasketDto.GrandTotal);
+
+            return new Response<ReadBasketDto>(readBasketDto);
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e, "Could not Decrease Basket Item with ID {id}.", updateBasketItemDtos);
+            return new Response<ReadBasketDto>($"An error occurred when Decrease the Basket Item: {e.Message}");
+        }
+    }
     ReadBasketDto MapToReadBasket(Basket? basket)
     {
         // 1. Null Giriş Kontrolü
@@ -108,11 +146,10 @@ public class BasketService : IBasketService {
         {
            int totalItems = basket.BasketItems.Count();
             var groupedSellerItems = basket.BasketItems
-                .Where(item => item.ProductSeller is { Seller: not null, Product: not null })
                 .GroupBy(item => item.ProductSeller?.SellerId) 
                 .Select(sellerGroup =>
                 {
-                    var itemsDtoList = sellerGroup.Select(item => new ReadBasketItemDto
+                    var itemsDtoList = sellerGroup.OrderBy(item => item.Id).Select(item => new ReadBasketItemDto
                     {
                         Id = item.Id,
                         Product = _mapper.Map<ReadProductDto>(item.ProductSeller?.Product),
@@ -122,7 +159,8 @@ public class BasketService : IBasketService {
                         // ProductImage = item.ProductSeller.Product.ProductImages.FirstOrDefault()?.Image
 
                     }).ToList();
-                    decimal subtotal = itemsDtoList.Sum(i => i.TotalPrice);
+                    decimal subtotal = itemsDtoList.Sum(i => i.Quantity * i.Price);
+
                     bool isSingleItemAndProductHasFreeShipping = 
                         itemsDtoList is [{ Product.IsShippingFree: true }];
 

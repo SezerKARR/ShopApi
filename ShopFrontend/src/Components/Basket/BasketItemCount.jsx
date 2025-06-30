@@ -41,7 +41,13 @@ const BasketItemCount = memo(({quantity,onItemQuantityChange}) => {
                 <TrashIconHandler/>
 
             </div>
-            {count}
+            <input
+                className="BasketItemCount__count-input"
+                value={count}
+                onChange={(e) => setCount(e.target.value)}
+            type={"text"}/>
+                            
+                
             <div onMouseDown={increaseClickHandler}>
 
                 <FontAwesomeIcon icon={faPlus} color="orange" style={{cursor: "pointer"}}/>

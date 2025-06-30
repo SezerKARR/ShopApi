@@ -19,6 +19,7 @@ public class ReadProductDto {
     public int? BrandId { get; set; }
     public double? AverageRating { get; set; }
     public int CommentCount { get; set; }
+    public ReadProductImageDto? BaseProductImage { get; set; }
     public bool IsShippingFree { get; set; } = false;
     public List<ReadCommentDto> Comments { get; set; } = new List<ReadCommentDto>();
     public List<int>? FilterValueIds { get; set; } = new List<int>();

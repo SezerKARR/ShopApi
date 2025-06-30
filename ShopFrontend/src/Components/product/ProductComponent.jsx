@@ -8,7 +8,7 @@ import {useNavigate} from "react-router-dom";
 
 const ProductComponent = memo(({product}) => {
     const {API_URL} = useGlobalContext();
-    const {addToBasket, isAdding} = useBasketContext();
+    const {addToBasketByProductSellerId, isAdding} = useBasketContext();
     const navigate = useNavigate();
     const isFirstRender = useRef(true);
     console.log(product);
@@ -19,9 +19,15 @@ const ProductComponent = memo(({product}) => {
         }
         console.log(isAdding)
     }, [isAdding]);
-    const handleAddToCartClick = (e) => {
+    const handleAddToCartClick = async (e) => {
         e.preventDefault();
-        addToBasket(product.minPriceProductSellerId);
+        try {
+            await addToBasketByProductSellerId(product.minPriceProductSellerId);
+            // işlem başarılıysa devam edebilirsin, örneğin yönlendirme veya mesaj gösterme
+        } catch (err) {
+            console.error("Sepete ekleme sırasında hata oluştu", err);
+            // hata durumunda kullanıcıya bilgi verebilirsin
+        }
         console.log('Add to cart clicked for product:', product.id);
     };
 
@@ -78,13 +84,13 @@ const ProductComponent = memo(({product}) => {
         {console.log(product)}
         <img
             draggable={false}
-            src={product.imageUrl ? `${API_URL}/${product.imageUrl}` : "/Foto.png"}
+            src={product.baseProductImage.image.url ? `${API_URL}/${product.baseProductImage.image.url}` : "/Foto.png"}
             className="products-Container__product-photo"
             alt={product.name}
         />
         <div className="products-Container__product-name">
         <span className="products-Container__product-name-brand">
-          {product.brandName + ' '}
+          {/*{product.brandName + ' '}*/}
         </span>
             {product.name}
         </div>

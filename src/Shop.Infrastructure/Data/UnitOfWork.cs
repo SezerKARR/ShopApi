@@ -24,6 +24,7 @@ public interface IUnitOfWork {
     INeighborhoodRepository NeighborhoodRepository { get; }
     ICityRepository CityRepository { get; }
     IBasketRepository BasketRepository { get; }
+    IBasketItemRepository BasketItemRepository { get; }
     Task BeginTransactionAsync();
     Task CommitTransactionAsync();
     Task RollbackAsync();
@@ -50,11 +51,12 @@ public class UnitOfWork : IUnitOfWork {
     public INeighborhoodRepository NeighborhoodRepository { get; }
     public ICityRepository CityRepository { get; }
     public IBasketRepository BasketRepository { get; }
+    public IBasketItemRepository BasketItemRepository { get; }
 
     private IDbContextTransaction? _transaction;
     public UnitOfWork(AppDbContext context, IProductRepository productRepository, ICommentRepository commentRepository,
         ICategoryRepository categoryRepository, IMainCategoryRepository mainCategoryRepository, IFilterRepository filterRepository,
-        IFilterValueRepository filterValueRepository, IBrandRepository brandRepository, IUserRepository userRepository, IProductFilterValueRepository productFilterValueRepository, IProductSellerRepository productSellerRepository, IStockRepository stockRepository, ISellerRepository sellerRepository, IImageRepository ımageRepository, IDistrictRepository districtRepository, IAddressRepository addressRepository, INeighborhoodRepository neighborhoodRepository, ICityRepository cityRepository, IBasketRepository basketRepository) {
+        IFilterValueRepository filterValueRepository, IBrandRepository brandRepository, IUserRepository userRepository, IProductFilterValueRepository productFilterValueRepository, IProductSellerRepository productSellerRepository, IStockRepository stockRepository, ISellerRepository sellerRepository, IImageRepository ımageRepository, IDistrictRepository districtRepository, IAddressRepository addressRepository, INeighborhoodRepository neighborhoodRepository, ICityRepository cityRepository, IBasketRepository basketRepository, IBasketItemRepository basketItemRepository) {
         _context = context;
         ProductRepository = productRepository;
         CategoryRepository = categoryRepository;
@@ -73,6 +75,7 @@ public class UnitOfWork : IUnitOfWork {
         NeighborhoodRepository = neighborhoodRepository;
         CityRepository = cityRepository;
         BasketRepository = basketRepository;
+        BasketItemRepository = basketItemRepository;
         CommentRepository = commentRepository;
     }
 

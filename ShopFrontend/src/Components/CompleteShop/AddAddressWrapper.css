@@ -1,0 +1,74 @@
+.add-address-wrapper {
+    position: fixed;
+    top: 0;
+    right: 0;
+    z-index: 1001;
+    width: 400px;
+    height: 100vh;
+    background: white;
+    pointer-events: auto;
+    border-radius: 10px;
+    
+}
+
+.add-address-wrapper__close-button {
+    position: relative;
+    margin: 20px;
+    border-radius: 10px;
+}
+
+.add-address-wrapper__address-form {
+    display: flex;
+    flex-direction: column;
+    gap:10px;
+    margin-left: 60px;
+}
+
+.address-form__section-title {
+    position: relative;
+    display: flex;
+    align-items: center;
+    font-weight: bold;
+    color: #3b82f6; /* mavi renk */
+    margin-bottom: 16px;
+    font-size: 16px;
+}
+
+.address-form__section-title::after {
+    content: "";
+    flex-grow: 1;
+    height: 1px;
+    background-color: #ccc;
+    margin-left: 10px;
+}
+.address-form__receiver-label {
+}
+.address-form__receiver-info {
+    
+}
+
+.address-form__section-title {
+}
+
+.address-form__name-fields {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+}
+.address-form__name-fields >input{
+    all: unset;
+    background-color: #888888;
+    
+    border:1px solid gray;
+    width: 40%;
+    border-radius: 4px;
+}
+.address-form__name-fields >input:hover{
+    background-color: rgba(136, 136, 136, 0.58);
+
+}
+.address-form__name-fields >input:focus{
+    background-color: rgba(136, 136, 136, 0);
+
+}
+

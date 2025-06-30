@@ -5,12 +5,12 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBookmark, faHeart } from "@fortawesome/free-regular-svg-icons";
 import {useBasketContext} from "../../Providers/BasketProvider.jsx";
 
-const ActionButtons = ({ productId }) => {
-    const {addToBasketById} = useBasketContext();
+const ActionButtons = ({productSeller}) => {
+    const {addToBasketByProductSellerId} = useBasketContext();
     return (
         <div className="save-container">
             <div className="add-basket-container"
-                 onClick={()=>addToBasketById(productId)}
+                 onClick={()=>addToBasketByProductSellerId(productSeller.id)}
             >
                 <svg
                     width="24"

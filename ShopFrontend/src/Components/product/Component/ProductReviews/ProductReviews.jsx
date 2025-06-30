@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import './ProductReviews.css';
-import StarRating from "./StarRating.jsx";
+import StarRating from "../../StarRating.jsx";
 
 const ProductReviews = ({comments, currentSellerId}) => {
     // useEffect(() => {

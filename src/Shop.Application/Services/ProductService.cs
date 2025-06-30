@@ -21,6 +21,8 @@ public interface IProductService {
     Task<Response<ReadProductDto>> GetProductByIdAsync(int id, int includes = -1);
     Task<Response<ReadProductDto>> CreateProductAsync(CreateProductDto createProductDto);
     Task<Response<ReadProductDto>> DeleteProductAsync(int id, int includes = -1);
+    Task<Response<ReadProductDto>> ChangeBaseProductImageAsync(int productId, int baseProductImageId);
+
 
     // Task<Response<List<ReadProductDto>>> GetProductsAsync(QueryObject queryObject);
     // Response<IQueryable<ReadProductDto>> GetProductsQueryable();
@@ -104,7 +106,25 @@ public class ProductService:IProductService {
             return new Response<ReadProductDto>($"An error occurred: {ex.Message}");
         }
     }
-
+    public async Task<Response<ReadProductDto>> ChangeBaseProductImageAsync(int productId, int baseProductImageId) {
+        try
+        {
+            var product = await _productRepository.GetByIdAsync(productId);
+            if (product == null) { return new Response<ReadProductDto>($"Product with id: {productId} not found."); }
+            product.BaseProductImageId = baseProductImageId;
+            if (!await _unitOfWork.CommitAsync())
+            {
+                return new Response<ReadProductDto>("An error occurred when creating a new product.");
+            }
+            ReadProductDto productDto = _mapper.Map<ReadProductDto>(product);
+            return new Response<ReadProductDto>(productDto);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "An error occurred while fetching product by id.");
+            return new Response<ReadProductDto>($"An error occurred: {ex.Message}");
+        }
+    }
 
     // public async Task<Response<ReadProductDto>> GetProductBySlugAsync(string slug, int includes = -1) {
     //     try

@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import './ProductTabs.css';
 import ProductQA from "./ProductQA.jsx";
-import ProductReviews from "./ProductReviews.jsx";
+import ProductReviews from "./Component/ProductReviews/ProductReviews.jsx";
 import ProductDescription from "./ProductDescription.jsx";
 
 const ProductTabs = ({ product }) => {

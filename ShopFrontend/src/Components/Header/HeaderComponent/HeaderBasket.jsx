@@ -6,7 +6,7 @@ import { useBasketContext} from "../../../Providers/BasketProvider.jsx";
 import {useNavigate} from "react-router-dom";
 
 const HeaderBasket = memo(() => {
-    const {basketCount}=useBasketContext();
+    const {basket}=useBasketContext();
     const navigate = useNavigate();
     const handleBasketClick=()=>{
         navigate("/basket");
@@ -15,7 +15,7 @@ const HeaderBasket = memo(() => {
         <a href={"/basket"} className={'Basket__Container'} onClick={handleBasketClick}>
             <div className={'Basket__Cart'}>
                 <FontAwesomeIcon icon={faCartShopping} size="2x" className={'Basket__Cart'}/>
-                <p className={'BasketCircle'}>{basketCount}</p>
+                <p className={'BasketCircle'}>{basket.totalProductAmount}</p>
             </div>
             <p className={'Basket__MyBasket'}>My Basket </p>
         </a>

@@ -628,6 +628,9 @@ namespace Shop.Infrastructure.Migrations
                     b.Property<double?>("AverageRating")
                         .HasColumnType("double");
 
+                    b.Property<int>("BaseProductImageId")
+                        .HasColumnType("int");
+
                     b.Property<int>("BrandId")
                         .HasColumnType("int");
 
@@ -662,6 +665,8 @@ namespace Shop.Infrastructure.Migrations
                         .HasColumnType("longtext");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("BaseProductImageId");
 
                     b.HasIndex("BrandId");
 
@@ -1087,6 +1092,12 @@ namespace Shop.Infrastructure.Migrations
 
             modelBuilder.Entity("Shop.Domain.Models.Product", b =>
                 {
+                    b.HasOne("Shop.Domain.Models.ProductImage", "BaseProductImage")
+                        .WithMany()
+                        .HasForeignKey("BaseProductImageId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.HasOne("Shop.Domain.Models.Brand", "Brand")
                         .WithMany("Products")
                         .HasForeignKey("BrandId")
@@ -1104,6 +1115,8 @@ namespace Shop.Infrastructure.Migrations
                         .HasForeignKey("CreatedBySellerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("BaseProductImage");
 
                     b.Navigation("Brand");
 

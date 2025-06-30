@@ -9,10 +9,8 @@ using Microsoft.AspNetCore.Mvc;
 [ApiController]
 public class BasketController :ControllerBase {
     readonly IBasketService _basketService;
-    readonly IBasketItemService _basketItemService;
-    public BasketController(IBasketService basketService, IBasketItemService basketItemService) {
+    public BasketController(IBasketService basketService) {
         _basketService = basketService;
-        _basketItemService = basketItemService;
     }
     [HttpGet]
     public async Task<ActionResult<ReadBasketDto>> GetBaskets() {
@@ -59,6 +57,27 @@ public class BasketController :ControllerBase {
         }
         return BadRequest(response.Message);
     }
+    [HttpPut("updateItemsForQuantity")]
+    public async Task<ActionResult<ReadBasketDto>> UpdateItemsForQuantity([FromBody] List<UpdateBasketItemDto> updateBasketItemDtos) {
+        if (!ModelState.IsValid)
+        {
+            return BadRequest("Invalid model");
+        }
+        try
+        {
+            var response= await _basketService.UpdateBasketItemsQuantityAsync(updateBasketItemDtos);
+            if (!response.Success)
+            {
+                return BadRequest(response.Message);
+            }            
+            return Ok(response.Resource);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            return BadRequest(e.Message);
+        }
+    }
     // [HttpPost]
     // public async Task<ActionResult<ReadBasketDto>> CreateBasket([FromBody]CreateBasketDto basket) {
     //     if (!ModelState.IsValid) return BadRequest(ModelState);
@@ -79,21 +98,6 @@ public class BasketController :ControllerBase {
     //         return StatusCode(500, ex + "Internal server error");
     //     }
     // }
-    [HttpPost]
-    public async Task<ActionResult<ReadBasketItemDto>> CreateBasketItem(CreateBasketItemDto createBasketItemDto) {
-        if(!ModelState.IsValid) return BadRequest(ModelState);
-        try
-        {
-            var response = await _basketItemService.CreateBasketItemAsync(createBasketItemDto,1);
-            if (!response.Success) return BadRequest(response.Message);
-            var basketItemDto = response.Resource;
-            return Ok(basketItemDto);
-        }
-        catch (Exception ex)
-        {
-            return BadRequest(ex.Message);
-        }
-    }
-
+ 
 
 }

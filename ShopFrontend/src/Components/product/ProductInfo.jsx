@@ -26,8 +26,8 @@ const ProductInfo = ({productData, onFollowClick, onAskSellerClick }) => {
             />
 
             <div className="product-info__price">{productData.product.minPrice} TL</div>
-
-            <ActionButtons productId={productData.product.id} />
+            {console.log(productData)}
+            <ActionButtons   productSeller={productData.currentProductSeller}/>
             <DeliveryOptions />
             <Coupon productSeller={productData.currentProductSeller} />
         </div>

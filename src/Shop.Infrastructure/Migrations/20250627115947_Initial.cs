@@ -440,21 +440,20 @@ namespace Shop.Infrastructure.Migrations
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
-                name: "Products",
+                name: "Comments",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    Description = table.Column<string>(type: "longtext", nullable: true)
+                    UserId = table.Column<int>(type: "int", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    ProductId = table.Column<int>(type: "int", nullable: false),
+                    OrderItemId = table.Column<int>(type: "int", nullable: false),
+                    Content = table.Column<string>(type: "varchar(300)", maxLength: 300, nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    CategoryId = table.Column<int>(type: "int", nullable: false),
-                    MinPrice = table.Column<decimal>(type: "decimal(65,30)", nullable: true),
-                    MinPriceproductSellerId = table.Column<int>(type: "int", nullable: true),
-                    BrandId = table.Column<int>(type: "int", nullable: false),
-                    CreatedBySellerId = table.Column<int>(type: "int", nullable: false),
-                    CommentCount = table.Column<int>(type: "int", nullable: false),
-                    IsShippingFree = table.Column<bool>(type: "tinyint(1)", nullable: false),
-                    AverageRating = table.Column<double>(type: "double", nullable: true),
+                    ImageUrls = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Rating = table.Column<int>(type: "int", nullable: false),
                     Name = table.Column<string>(type: "longtext", nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     Slug = table.Column<string>(type: "longtext", nullable: true)
@@ -463,23 +462,37 @@ namespace Shop.Infrastructure.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Products", x => x.Id);
+                    table.PrimaryKey("PK_Comments", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Products_Brand_BrandId",
-                        column: x => x.BrandId,
-                        principalTable: "Brand",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_Products_Categories_CategoryId",
-                        column: x => x.CategoryId,
-                        principalTable: "Categories",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_Products_Users_CreatedBySellerId",
-                        column: x => x.CreatedBySellerId,
+                        name: "FK_Comments_Users_UserId",
+                        column: x => x.UserId,
                         principalTable: "Users",
+                        principalColumn: "Id");
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
+                name: "OrderItems",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    OrderId = table.Column<int>(type: "int", nullable: false),
+                    ProductSellerId = table.Column<int>(type: "int", nullable: false),
+                    Quantity = table.Column<int>(type: "int", nullable: false),
+                    Name = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Slug = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    IsActive = table.Column<bool>(type: "tinyint(1)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_OrderItems", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_OrderItems_Orders_OrderId",
+                        column: x => x.OrderId,
+                        principalTable: "Orders",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 })
@@ -517,12 +530,6 @@ namespace Shop.Infrastructure.Migrations
                         principalTable: "Filters",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_ProductFilterValues_Products_ProductId",
-                        column: x => x.ProductId,
-                        principalTable: "Products",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
@@ -550,10 +557,57 @@ namespace Shop.Infrastructure.Migrations
                         principalTable: "Images",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
+                name: "Products",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    Description = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    CategoryId = table.Column<int>(type: "int", nullable: false),
+                    BaseProductImageId = table.Column<int>(type: "int", nullable: false),
+                    MinPrice = table.Column<decimal>(type: "decimal(65,30)", nullable: true),
+                    MinPriceproductSellerId = table.Column<int>(type: "int", nullable: true),
+                    BrandId = table.Column<int>(type: "int", nullable: false),
+                    CreatedBySellerId = table.Column<int>(type: "int", nullable: false),
+                    CommentCount = table.Column<int>(type: "int", nullable: false),
+                    IsShippingFree = table.Column<bool>(type: "tinyint(1)", nullable: false),
+                    AverageRating = table.Column<double>(type: "double", nullable: true),
+                    Name = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Slug = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    IsActive = table.Column<bool>(type: "tinyint(1)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Products", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_ProductImages_Products_ProductId",
-                        column: x => x.ProductId,
-                        principalTable: "Products",
+                        name: "FK_Products_Brand_BrandId",
+                        column: x => x.BrandId,
+                        principalTable: "Brand",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Products_Categories_CategoryId",
+                        column: x => x.CategoryId,
+                        principalTable: "Categories",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Products_ProductImages_BaseProductImageId",
+                        column: x => x.BaseProductImageId,
+                        principalTable: "ProductImages",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Products_Users_CreatedBySellerId",
+                        column: x => x.CreatedBySellerId,
+                        principalTable: "Users",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 })
@@ -593,39 +647,6 @@ namespace Shop.Infrastructure.Migrations
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
-                name: "OrderItems",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    OrderId = table.Column<int>(type: "int", nullable: false),
-                    ProductSellerId = table.Column<int>(type: "int", nullable: false),
-                    Quantity = table.Column<int>(type: "int", nullable: false),
-                    Name = table.Column<string>(type: "longtext", nullable: true)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    Slug = table.Column<string>(type: "longtext", nullable: true)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    IsActive = table.Column<bool>(type: "tinyint(1)", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_OrderItems", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_OrderItems_Orders_OrderId",
-                        column: x => x.OrderId,
-                        principalTable: "Orders",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_OrderItems_ProductSellers_ProductSellerId",
-                        column: x => x.ProductSellerId,
-                        principalTable: "ProductSellers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                })
-                .Annotation("MySql:CharSet", "utf8mb4");
-
-            migrationBuilder.CreateTable(
                 name: "Stock",
                 columns: table => new
                 {
@@ -649,50 +670,6 @@ namespace Shop.Infrastructure.Migrations
                         principalTable: "ProductSellers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
-                })
-                .Annotation("MySql:CharSet", "utf8mb4");
-
-            migrationBuilder.CreateTable(
-                name: "Comments",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    UserId = table.Column<int>(type: "int", nullable: true),
-                    CreatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false),
-                    ProductId = table.Column<int>(type: "int", nullable: false),
-                    OrderItemId = table.Column<int>(type: "int", nullable: false),
-                    Content = table.Column<string>(type: "varchar(300)", maxLength: 300, nullable: true)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    ImageUrls = table.Column<string>(type: "longtext", nullable: true)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    Rating = table.Column<int>(type: "int", nullable: false),
-                    Name = table.Column<string>(type: "longtext", nullable: true)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    Slug = table.Column<string>(type: "longtext", nullable: true)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    IsActive = table.Column<bool>(type: "tinyint(1)", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Comments", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Comments_OrderItems_OrderItemId",
-                        column: x => x.OrderItemId,
-                        principalTable: "OrderItems",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_Comments_Products_ProductId",
-                        column: x => x.ProductId,
-                        principalTable: "Products",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_Comments_Users_UserId",
-                        column: x => x.UserId,
-                        principalTable: "Users",
-                        principalColumn: "Id");
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
@@ -837,6 +814,11 @@ namespace Shop.Infrastructure.Migrations
                 column: "ProductId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Products_BaseProductImageId",
+                table: "Products",
+                column: "BaseProductImageId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Products_BrandId",
                 table: "Products",
                 column: "BrandId");
@@ -908,6 +890,46 @@ namespace Shop.Infrastructure.Migrations
                 column: "SellerId",
                 principalTable: "Users",
                 principalColumn: "Id");
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_Comments_OrderItems_OrderItemId",
+                table: "Comments",
+                column: "OrderItemId",
+                principalTable: "OrderItems",
+                principalColumn: "Id",
+                onDelete: ReferentialAction.Cascade);
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_Comments_Products_ProductId",
+                table: "Comments",
+                column: "ProductId",
+                principalTable: "Products",
+                principalColumn: "Id",
+                onDelete: ReferentialAction.Cascade);
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_OrderItems_ProductSellers_ProductSellerId",
+                table: "OrderItems",
+                column: "ProductSellerId",
+                principalTable: "ProductSellers",
+                principalColumn: "Id",
+                onDelete: ReferentialAction.Cascade);
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_ProductFilterValues_Products_ProductId",
+                table: "ProductFilterValues",
+                column: "ProductId",
+                principalTable: "Products",
+                principalColumn: "Id",
+                onDelete: ReferentialAction.Cascade);
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_ProductImages_Products_ProductId",
+                table: "ProductImages",
+                column: "ProductId",
+                principalTable: "Products",
+                principalColumn: "Id",
+                onDelete: ReferentialAction.Cascade);
         }
 
         /// <inheritdoc />
@@ -916,6 +938,22 @@ namespace Shop.Infrastructure.Migrations
             migrationBuilder.DropForeignKey(
                 name: "FK_Brand_Users_SellerId",
                 table: "Brand");
+
+            migrationBuilder.DropForeignKey(
+                name: "FK_Products_Users_CreatedBySellerId",
+                table: "Products");
+
+            migrationBuilder.DropForeignKey(
+                name: "FK_Products_Brand_BrandId",
+                table: "Products");
+
+            migrationBuilder.DropForeignKey(
+                name: "FK_Products_Categories_CategoryId",
+                table: "Products");
+
+            migrationBuilder.DropForeignKey(
+                name: "FK_ProductImages_Products_ProductId",
+                table: "ProductImages");
 
             migrationBuilder.DropTable(
                 name: "BasketItems");
@@ -933,9 +971,6 @@ namespace Shop.Infrastructure.Migrations
                 name: "ProductFilterValues");
 
             migrationBuilder.DropTable(
-                name: "ProductImages");
-
-            migrationBuilder.DropTable(
                 name: "Stock");
 
             migrationBuilder.DropTable(
@@ -946,9 +981,6 @@ namespace Shop.Infrastructure.Migrations
 
             migrationBuilder.DropTable(
                 name: "FilterValues");
-
-            migrationBuilder.DropTable(
-                name: "Images");
 
             migrationBuilder.DropTable(
                 name: "Orders");
@@ -963,13 +995,7 @@ namespace Shop.Infrastructure.Migrations
                 name: "Addresses");
 
             migrationBuilder.DropTable(
-                name: "Products");
-
-            migrationBuilder.DropTable(
                 name: "Neighbourhoods");
-
-            migrationBuilder.DropTable(
-                name: "Categories");
 
             migrationBuilder.DropTable(
                 name: "Districts");
@@ -982,6 +1008,18 @@ namespace Shop.Infrastructure.Migrations
 
             migrationBuilder.DropTable(
                 name: "Brand");
+
+            migrationBuilder.DropTable(
+                name: "Categories");
+
+            migrationBuilder.DropTable(
+                name: "Products");
+
+            migrationBuilder.DropTable(
+                name: "ProductImages");
+
+            migrationBuilder.DropTable(
+                name: "Images");
         }
     }
 }

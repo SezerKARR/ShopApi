@@ -23,9 +23,9 @@ public class BasketItemRepository:BaseRepository<BasketItem>,IBasketItemReposito
         {
             BasketItemInclude basketItemInclude=(BasketItemInclude)includes;
             if(basketItemInclude.HasFlag(BasketItemInclude.Basket))
-                query.Include(bi=>bi.Basket).ThenInclude(b=>b.BasketItems);
+                query=query.Include(bi=>bi.Basket).ThenInclude(b=>b.BasketItems);
             if(basketItemInclude.HasFlag(BasketItemInclude.ProductSeller))
-                query.Include(bi=>bi.ProductSeller).ThenInclude(ps=>ps.Product);
+                query=query.Include(bi=>bi.ProductSeller).ThenInclude(ps=>ps.Product);
                 
         }
         return query;
