@@ -15,15 +15,15 @@ ShopApp is a full-stack e-commerce platform built with ASP.NET Core on the backe
 
   📦 Address management
 
-##🧑‍💼 Seller Panel
+## 🧑‍💼 Seller Panel
   🛒 Add/update/delete products
 
   📊 Manage product prices and stock
 
   🚚 Define shipping conditions (e.g., free shipping thresholds)
 
-⚙️ Technologies
-🔧 Backend (API)
+# ⚙️ Technologies
+## 🔧 Backend (API)
 ASP.NET Core 8
 
 Entity Framework Core with Code-First approach
@@ -36,7 +36,7 @@ JWT Authentication
 
 AutoMapper, FluentValidation, Swagger, Serilog
 
-🖥️ Frontend
+## 🖥️ Frontend
 React.js with functional components
 
 React Router v6
@@ -47,8 +47,8 @@ TailwindCSS / CSS Modules for styling
 
 Auth0 for user authentication
 
-🚀 Getting Started
-📦 Prerequisites
+# 🚀 Getting Started
+## 📦 Prerequisites
 .NET 8 SDK
 
 Node.js
@@ -59,38 +59,7 @@ Redis server (optional, for caching)
 
 Auth0 account
 
-🧩 Folder Structure
-bash
-Kopyala
-Düzenle
-ShopApi/
-├── Controllers/
-├── DTOs/
-├── Entities/
-├── Mappings/
-├── Repositories/
-├── Services/
-├── Middleware/
-├── Program.cs
-├── appsettings.json
-└── ...
-Frontend (optional, external repo):
 
-bash
-Kopyala
-Düzenle
-shop-client/
-├── src/
-│   ├── components/
-│   ├── pages/
-│   ├── providers/
-│   └── App.jsx
-└── ...
-🔧 Setup
-🖥️ Backend Setup
-bash
-Kopyala
-Düzenle
 # Clone repo
 git clone https://github.com/SezerKARR/ShopApi.git
 cd ShopApi
@@ -111,16 +80,27 @@ cd shop-client
 # Install dependencies
 npm install
 
-# Create a .env file for Auth0 and API base URL
-VITE_API_URL=http://localhost:5092
-VITE_AUTH0_DOMAIN=your-auth0-domain
-VITE_AUTH0_CLIENT_ID=your-client-id
+# 📦 Database Configuration
+DB_HOST=YOUR_DB_HOST
+DB_PORT=3306
+DB_NAME=shopapi
+DB_USER=YOUR_DB_USER
+DB_PASSWORD=YOUR_DB_PASSWORD
+
+# 🐇 RabbitMQ Configuration
+RABBITMQ_HOST=YOUR_RABBITMQ_HOST
+RabbitMQ__HostName=YOUR_RABBITMQ_HOST
+
+# 🔐 Google OAuth Configuration (Auth0, Google Login)
+GOOGLE_CLIENT_ID=YOUR_GOOGLE_CLIENT_ID
+GOOGLE_CLIENT_SECRET=YOUR_GOOGLE_CLIENT_SECRET
+GOOGLE_PROJECT_ID=YOUR_GOOGLE_PROJECT_ID
+GOOGLE_AUTH_URI=https://accounts.google.com/o/oauth2/auth
+GOOGLE_TOKEN_URI=https://oauth2.googleapis.com/token
+GOOGLE_AUTH_PROVIDER_X509_CERT_URL=https://www.googleapis.com/oauth2/v1/certs
+GOOGLE_REDIRECT_URIS=http://localhost:5173/signin-google
 
 # Run the frontend
 npm run dev
-🔐 Authentication & Authorization
-JWT tokens are managed via Auth0
 
-Middleware checks for token and role-based access
 
-Frontend uses Auth0 React SDK
