@@ -3,24 +3,24 @@ Aşağıda GitHub'daki ShopApi proene uygun, full-stack bir README dosyası şab
 🛍️ ShopApp – Full-Stack E-Commerce Application
 ShopApp is a full-stack e-commerce platform built with ASP.NET Core on the backend and React on the frontend. It provides a multi-vendor marketplace experience where users can browse products, manage their basket, and complete orders, while sellers can manage their own listings.
 
-📌 Features
-🧑‍💻 User Side
-🔐 JWT-based Authentication (via Auth0)
+# 📌 Features
+## 🧑‍💻 User Side
+  🔐 JWT-based Authentication (via Auth0)
 
-🛍️ Product listing & filtering
+  🛍️ Product listing & filtering
 
-🧺 Shopping basket with real-time quantity updates
+  🧺 Shopping basket with real-time quantity updates
 
-💳 Checkout workflow
+  💳 Checkout workflow
 
-📦 Address management
+  📦 Address management
 
-🧑‍💼 Seller Panel
-🛒 Add/update/delete products
+##🧑‍💼 Seller Panel
+  🛒 Add/update/delete products
 
-📊 Manage product prices and stock
+  📊 Manage product prices and stock
 
-🚚 Define shipping conditions (e.g., free shipping thresholds)
+  🚚 Define shipping conditions (e.g., free shipping thresholds)
 
 ⚙️ Technologies
 🔧 Backend (API)
